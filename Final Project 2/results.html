@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Results - Molycop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="images/molycop-logo.png" alt="Molycop" height="40" class="me-2" style="max-height: 40px;">
+                Molycop
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="upload.html">Upload</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Success Message -->
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Processing Complete!</strong> Your video has been successfully processed and is ready for download.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Results Summary -->
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Processing Results
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-file-video me-2"></i>Original File</h6>
+                                <p class="mb-2" id="originalFileName">sample_video.mp4</p>
+                                <small class="text-muted">Size: <span id="originalFileSize">25.4 MB</span> | Duration: <span id="originalDuration">2:34</span></small>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-cogs me-2"></i>Processing Details</h6>
+                                <p class="mb-2">Detection Mode: <span id="processingMode">6mm</span></p>
+                                <small class="text-muted">Processing Time: <span id="processingTime">1:23</span> | Quality: <span id="outputQuality">High</span></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Player Section -->
+                <div class="card shadow-lg border-0 mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-play-circle me-2"></i>
+                            Processed Video
+                        </h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <!-- Video Player -->
+                        <div class="video-container">
+                            <video id="processedVideo" class="w-100" controls poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjhmOWZhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzZjNzU3ZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPllvdXIgUHJvY2Vzc2VkIFZpZGVvPC90ZXh0Pjwvc3ZnPg==">
+                                <source id="videoSource" src="" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+
+                        <!-- Video Controls -->
+                        <div class="p-3 bg-light">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-outline-primary btn-sm" id="playPauseBtn">
+                                            <i class="fas fa-play"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-primary btn-sm" id="muteBtn">
+                                            <i class="fas fa-volume-up"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-primary btn-sm" id="fullscreenBtn">
+                                            <i class="fas fa-expand"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    <small class="text-muted">
+                                        <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download and Actions -->
+                <div class="row g-4">
+                    <div class="col-md-8">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-download me-2"></i>
+                                    Download Options
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="download-option">
+                                            <h6>High Quality (MP4)</h6>
+                                            <p class="text-muted mb-2">Best quality, larger file size</p>
+                                            <button class="btn btn-primary w-100" id="downloadHighQuality">
+                                                <i class="fas fa-download me-2"></i>
+                                                Download HD (45.2 MB)
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="download-option">
+                                            <h6>Standard Quality (MP4)</h6>
+                                            <p class="text-muted mb-2">Good quality, smaller file size</p>
+                                            <button class="btn btn-outline-primary w-100" id="downloadStandard">
+                                                <i class="fas fa-download me-2"></i>
+                                                Download SD (23.1 MB)
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-share me-2"></i>
+                                    Share & Actions
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary" id="shareBtn">
+                                        <i class="fas fa-share-alt me-2"></i>
+                                        Share Link
+                                    </button>
+                                    <button class="btn btn-outline-secondary" id="processAnotherBtn">
+                                        <i class="fas fa-plus me-2"></i>
+                                        Process Another
+                                    </button>
+                                    <button class="btn btn-outline-info" id="viewDetailsBtn">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Processing Statistics -->
+                <div class="card mt-4 border-0 bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            Processing Statistics
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-3 text-center">
+                                <h5 class="text-primary" id="objectsDetected">127</h5>
+                                <p class="mb-0 text-muted">Objects Detected</p>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <h5 class="text-success" id="accuracyScore">94.2%</h5>
+                                <p class="mb-0 text-muted">Accuracy Score</p>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <h5 class="text-info" id="processingFrames">3,240</h5>
+                                <p class="mb-0 text-muted">Frames Processed</p>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <h5 class="text-warning" id="processingSpeed">1.8x</h5>
+                                <p class="mb-0 text-muted">Processing Speed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Molycop</h5>
+                    <p class="mb-0">COMP 4910 Final Project</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">&copy; 2024 All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/results.js"></script>
+</body>
+</html>
+
+

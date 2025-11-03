@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Options - Molycop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="images/molycop-logo.png" alt="Molycop" height="40" class="me-2" style="max-height: 40px;">
+                Molycop
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="upload.html">Upload</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Selected Files Summary -->
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="fas fa-file-video me-2"></i>
+                            Selected Files
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="selectedFilesList" class="list-group list-group-flush">
+                            <!-- Files will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Processing Options -->
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-cogs me-2"></i>
+                            Configure Processing Options
+                        </h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Detection Mode Selection -->
+                        <div class="mb-5">
+                            <h5 class="mb-3">Detection Mode</h5>
+                            <p class="text-muted mb-4">Choose the detection sensitivity for your video processing:</p>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <div class="detection-option" data-mode="4mm">
+                                        <div class="card h-100 border-2">
+                                            <div class="card-body text-center p-4">
+                                                <div class="detection-icon mb-3">
+                                                    <i class="fas fa-search fa-3x text-primary"></i>
+                                                </div>
+                                                <h5 class="card-title">4mm Detection</h5>
+                                                <p class="card-text">
+                                                    High precision detection for detailed analysis. 
+                                                    Best for fine-grained object recognition.
+                                                </p>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="detectionMode" 
+                                                           id="detection4mm" value="4mm">
+                                                    <label class="form-check-label" for="detection4mm">
+                                                        Select 4mm Mode
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="detection-option" data-mode="6mm">
+                                        <div class="card h-100 border-2">
+                                            <div class="card-body text-center p-4">
+                                                <div class="detection-icon mb-3">
+                                                    <i class="fas fa-crosshairs fa-3x text-primary"></i>
+                                                </div>
+                                                <h5 class="card-title">6mm Detection</h5>
+                                                <p class="card-text">
+                                                    Balanced detection mode for general use. 
+                                                    Optimal balance between precision and performance.
+                                                </p>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="detectionMode" 
+                                                           id="detection6mm" value="6mm" checked>
+                                                    <label class="form-check-label" for="detection6mm">
+                                                        Select 6mm Mode
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="detection-option" data-mode="8mm">
+                                        <div class="card h-100 border-2">
+                                            <div class="card-body text-center p-4">
+                                                <div class="detection-icon mb-3">
+                                                    <i class="fas fa-bullseye fa-3x text-primary"></i>
+                                                </div>
+                                                <h5 class="card-title">8mm Detection</h5>
+                                                <p class="card-text">
+                                                    Broader detection range for larger objects. 
+                                                    Good balance of speed and coverage.
+                                                </p>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="detectionMode" 
+                                                           id="detection8mm" value="8mm">
+                                                    <label class="form-check-label" for="detection8mm">
+                                                        Select 8mm Mode
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="detection-option" data-mode="10mm">
+                                        <div class="card h-100 border-2">
+                                            <div class="card-body text-center p-4">
+                                                <div class="detection-icon mb-3">
+                                                    <i class="fas fa-bullseye fa-3x text-primary"></i>
+                                                </div>
+                                                <h5 class="card-title">10mm Detection</h5>
+                                                <p class="card-text">
+                                                    Wide detection range for large objects. 
+                                                    Fastest processing with maximum coverage.
+                                                </p>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="detectionMode" 
+                                                           id="detection10mm" value="10mm">
+                                                    <label class="form-check-label" for="detection10mm">
+                                                        Select 10mm Mode
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Options -->
+                        <div class="mb-4">
+                            <h5 class="mb-3">Additional Options</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="highQuality" checked>
+                                        <label class="form-check-label" for="highQuality">
+                                            <strong>High Quality Output</strong>
+                                            <br><small class="text-muted">Process with maximum quality settings</small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="emailNotification">
+                                        <label class="form-check-label" for="emailNotification">
+                                            <strong>Email Notification</strong>
+                                            <br><small class="text-muted">Get notified when processing is complete</small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Processing Summary -->
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle me-2"></i>Processing Summary</h6>
+                            <div id="processingSummary">
+                                <p class="mb-1"><strong>Files:</strong> <span id="fileCount">0</span> video(s)</p>
+                                <p class="mb-1"><strong>Detection Mode:</strong> <span id="selectedMode">6mm</span></p>
+                                <p class="mb-0"><strong>Estimated Time:</strong> <span id="estimatedTime">2-5 minutes</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <button type="button" class="btn btn-outline-secondary me-md-2" onclick="goBack()">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Back to Upload
+                            </button>
+                            <button type="button" id="startProcessingBtn" class="btn btn-primary btn-lg">
+                                <i class="fas fa-play me-2"></i>
+                                Start Processing
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Molycop</h5>
+                    <p class="mb-0">COMP 4910 Final Project</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">&copy; 2024 All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/options.js"></script>
+</body>
+</html>
+
+
