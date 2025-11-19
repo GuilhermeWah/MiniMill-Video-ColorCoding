@@ -1,0 +1,37 @@
+# MillPresenter Implementation Plan & Status
+
+## Phase 1: Foundation & Setup ✅
+- [x] **Project Structure**: Create folders (`core`, `ui`, `configs`, `scripts`).
+- [x] **Environment**: `setup.ps1` for venv and dependencies.
+- [x] **Documentation**: `design_decisions.md` and `technical_primer.md`.
+- [x] **AI Instructions**: `.github/copilot-instructions.md` updated.
+- [x] **Core: Playback**: `FrameLoader` with PyAV and rotation support (`core/playback.py`).
+  - *Verified by*: `tests/test_playback.py` (Metadata, Iteration, Seeking)
+
+## Phase 2: The Vision Engine (Current Focus) 🚧
+- [x] **Data Models**: Define `Ball` and `FrameDetections` dataclasses (`core/models.py`).
+  - *Verified by*: `tests/test_models.py` (Serialization integrity)
+- [x] **Vision Pipeline**: Implement `Processor` with Hough + Contours + Annulus logic (`core/processor.py`).
+  - *Verified by*: `tests/test_processor.py` (Detection, Annulus Logic/Hole Rejection)
+- [x] **Caching**: Implement JSONL writer/reader (`core/cache.py`).
+  - *Verified by*: `tests/test_cache.py` (Write/Read cycle, Append, Clear)
+- [x] **Orchestrator**: Create the loop that processes video -> results (`core/orchestrator.py`).
+  - *Verified by*: `tests/test_orchestrator.py` (Mocked processor/cache interaction, progress reporting)
+- [x] **CLI Runner**: A script to run detection on a video file without UI (for testing).
+  - *Verified by*: `tests/test_cli_runner.py` (Help text + synthetic end-to-end run)
+
+## Phase 3: The UI Player
+- [ ] **Overlay Renderer**: The shared drawing logic (`core/overlay.py`).
+- [ ] **Main Window**: PyQt window with video widget (`ui/main_window.py`).
+- [ ] **Playback Logic**: Timer-based frame updates using `FrameLoader` + `ResultsCache`.
+- [ ] **Toggles**: Buttons to switch 4/6/8/10mm classes on/off.
+
+## Phase 4: Calibration & Polish
+- [ ] **Calibration Tool**: UI to measure the blue ring and set `px_per_mm`.
+- [ ] **ROI Tool**: UI to draw the "Ignore" mask.
+- [ ] **Exporter**: Render video to MP4 with overlays.
+- [ ] **Packaging**: `build.ps1` with PyInstaller.
+
+## Phase 5: Validation
+- [ ] **Visual Checklist**: Verify overlays against the "Visual Acceptance Checklist".
+- [ ] **Performance Bench**: Ensure 60fps playback on target hardware.

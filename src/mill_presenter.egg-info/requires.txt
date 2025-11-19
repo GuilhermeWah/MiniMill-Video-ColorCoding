@@ -1,0 +1,5 @@
+PyQt6>=6.6.0
+opencv-python>=4.9.0
+av>=11.0.0
+numpy>=1.26.0
+PyYAML>=6.0

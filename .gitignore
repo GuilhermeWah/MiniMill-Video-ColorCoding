@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+.vscode/
+build/
+dist/
+exports/
+configs/site_*/
+*.mp4
+*.mov
+data/

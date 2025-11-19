@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: mill_presenter
+Version: 0.1.0
+Summary: Grinding mill video analysis and presentation tool
+Author-email: MillPresenter Team <team@example.com>
+License: Proprietary
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: PyQt6>=6.6.0
+Requires-Dist: opencv-python>=4.9.0
+Requires-Dist: av>=11.0.0
+Requires-Dist: numpy>=1.26.0
+Requires-Dist: PyYAML>=6.0
