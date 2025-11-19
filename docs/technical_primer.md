@@ -1,6 +1,6 @@
 # MillPresenter Technical Primer & Contributor Guide
 
-Welcome to the MillPresenter project! This document is designed to get you up to speed with the specific technical challenges we face and the computer vision concepts we use to solve them.
+ This document is designed to get you up to speed with the specific technical challenges we face and the computer vision concepts we use to solve them.
 
 ## 1. The Core Challenge: "Presentation-First"
 This is not just a video player, and it is not just a research script. It is a **presentation tool**.
