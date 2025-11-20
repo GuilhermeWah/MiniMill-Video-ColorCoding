@@ -36,9 +36,12 @@ class PlaybackController(QObject):
         # If we don't have an iterator, or if we just seeked (which resets it),
         # we need to create one starting from _next_frame_to_decode.
         # Note: seek() sets _frame_iter to None.
+        # If we've reached the end, reset to frame 0 for replay.
+        frame_count = getattr(self._frame_loader, "frame_count", None)
+        if frame_count is not None and self._next_frame_to_decode >= frame_count:
+            self._next_frame_to_decode = 0
         if self._frame_iter is None:
             self._frame_iter = self._frame_loader.iter_frames(start_frame=self._next_frame_to_decode)
-            
         if self.is_playing:
             return
         interval = self._compute_interval_ms()
