@@ -153,3 +153,85 @@ pytest tests/
     *   Ensure arguments are parsed and passed to these components.
     *   Ensure the script waits for `orchestrator.run()` to complete.
     *   Use a calibration override (`px_per_mm = 15.0`) and a relaxed contour threshold (`vision.min_circularity = 0.65`) for the synthetic MP4 the test generates so that the detected circle classifies into the 4 mm bin.
+
+---
+
+## 6. UI Player (Milestone 3)
+**Files:** `tests/test_overlay.py`, `tests/test_ui_basic.py`, `tests/test_main_window.py`, `tests/test_playback_controller.py`, `tests/test_app_entry.py`
+
+### `test_overlay_renderer_init`
+*   **Goal**: Verify the `OverlayRenderer` initializes correctly with configuration.
+*   **Success Criteria**:
+    *   Input: A config dictionary with color definitions.
+    *   **Pass**: The renderer creates `QPen` objects for each class ID defined in the config.
+
+### `test_draw_all_classes`
+*   **Goal**: Ensure the renderer attempts to draw all detections when all classes are visible.
+*   **Success Criteria**:
+    *   Input: A frame with 3 balls (classes 4, 8, 10) and `visible_classes={4, 8, 10}`.
+    *   **Pass**: The mocked `painter.drawEllipse` is called 3 times.
+
+### `test_draw_filtered_classes`
+*   **Goal**: Verify that toggling visibility off for a class prevents it from being drawn.
+*   **Success Criteria**:
+    *   Input: A frame with 3 balls (classes 4, 8, 10) and `visible_classes={4}`.
+    *   **Pass**: The mocked `painter.drawEllipse` is called only once (for the class 4 ball).
+
+### `test_draw_scaling`
+*   **Goal**: Ensure overlays are scaled correctly when the video is resized in the UI.
+*   **Success Criteria**:
+    *   Input: A ball at (100, 100) with radius 10, and a scale factor of 0.5.
+    *   **Pass**: `painter.drawEllipse` is called with coordinates (50, 50) and radius 5.
+
+### `test_video_widget_init` & `test_video_widget_set_frame`
+*   **Goal**: Verify the `VideoWidget` (QOpenGLWidget) can be instantiated and accept video frames.
+*   **Success Criteria**:
+    *   Input: A `QImage` frame.
+    *   **Pass**: The widget stores the image and triggers an update (repaint).
+
+### `test_main_window_init`
+*   **Goal**: Verify the main application window assembles its components correctly.
+*   **Success Criteria**:
+    *   Input: App configuration.
+    *   **Pass**: The window contains a `VideoWidget`, a "Play" button, and toggle buttons for all sizes (4, 6, 8, 10 mm).
+
+### `test_size_toggle_updates_visible_classes`
+*   **Goal**: Ensure each toggle button truly hides/shows its class in the overlay.
+*   **Success Criteria**:
+    *   Input: Click a toggle off and on with `VideoWidget.visible_classes` observed.
+    *   **Pass**: Removing a class drops it from `visible_classes` (and triggers `update()`), re-enabling adds it back.
+
+### `test_playback_controller_play_starts_timer`
+*   **Goal**: Ensure starting playback kicks off the timer using the video FPS.
+*   **Success Criteria**:
+    *   Input: Mocked `FrameLoader` reporting its FPS and returning at least one frame.
+    *   **Pass**: The controller calls `timer.start(interval)` and flips `is_playing` to `True`.
+
+### `test_playback_controller_process_frame_updates_widget`
+*   **Goal**: Verify each tick delivers the next frame + detections to the `VideoWidget`.
+*   **Success Criteria**:
+    *   Input: A mocked frame iterator and cached detections for the requested frame.
+    *   **Pass**: `VideoWidget.set_frame(QImage, FrameDetections)` is called with a correctly sized `QImage`, and `current_frame_index` reflects the decoded frame.
+
+### `test_playback_controller_handles_end_of_stream`
+*   **Goal**: Ensure we gracefully stop playback when the iterator is exhausted.
+*   **Success Criteria**:
+    *   Input: A mocked iterator that raises `StopIteration` after the last frame.
+    *   **Pass**: The controller stops the timer and sets `is_playing` back to `False` so the UI knows playback finished.
+
+### `test_playback_controller_seek`
+*   **Goal**: Verify that the controller can jump to a specific frame index and update the view immediately.
+*   **Success Criteria**:
+    *   Input: A mocked `FrameLoader` and `VideoWidget`.
+    *   Action: Call `controller.seek(10)`.
+    *   **Pass**:
+        *   `controller.current_frame_index` updates to 10.
+        *   `video_widget.set_frame` is called immediately with the new frame.
+        *   `frame_loader.iter_frames` is re-initialized starting from frame 10.
+
+### `test_slider_controls_seeking`
+*   **Goal**: Verify that the UI slider is connected to the playback controller.
+*   **Success Criteria**:
+    *   Input: `MainWindow` with a mocked controller.
+    *   Action: Simulate `slider.sliderMoved` signal.
+    *   **Pass**: `controller.seek` is called with the correct value.

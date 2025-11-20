@@ -18,6 +18,19 @@ python scripts/run_detection.py --input content/DSC_3310.MOV `
     --output exports/detections.jsonl --config configs/sample.config.yaml
 ```
 
+### Run the playback UI (Phase 3)
+
+Once you have both the video file and the cached detections (JSONL), launch the PyQt player with:
+
+```powershell
+python -m mill_presenter.app `
+    --video content/DSC_3310.MOV `
+    --detections exports/detections.jsonl `
+    --config configs/sample.config.yaml
+```
+
+`--config` is optional (defaults to `configs/sample.config.yaml`). The player wires `FrameLoader ➜ ResultsCache ➜ PlaybackController ➜ VideoWidget`, so playback never re-runs detection— it only reads the cached circles.
+
 Why those scripts exist:
 - `scripts/setup.ps1` – rebuilds `.venv` exactly like my machine. 
 - `scripts/run.ps1` – placeholder launcher for the PyQt shell when we wire it up. (We'll implement Daniel's UI later. PyQT for now just to make it simpler to debug)

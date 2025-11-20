@@ -27,3 +27,25 @@ This document captures key questions asked during development, providing context
 1.  **Isolation**: The CLI test involves file I/O, argument parsing, and the full orchestrator loop. `repro_synthetic.py` strips all that away to test *just* the `VisionProcessor` against a single numpy array.
 2.  **Parameter Tuning**: Synthetic data (perfect white circle on black) is mathematically perfect, which can paradoxically fail in computer vision pipelines tuned for noisy, real-world images (e.g., a bilateral filter might blur a perfect edge differently, or Hough parameters might be too strict).
 3.  **Debugging**: It allows us to print internal states (contours found, edges detected) instantly without waiting for a full video run.
+
+## Architecture & Logic
+
+### Q: What is "Playback Logic" and why is it separate from the Video Widget?
+**Context**: During Phase 3 (UI Player), we distinguished between the `VideoWidget` (display) and the `PlaybackController` (logic).
+
+**Answer**:
+"Playback Logic" is the engine that drives the application time. It coordinates three critical components in real-time:
+1.  **The Heartbeat (QTimer)**: A timer firing ~60 times a second (16.6ms) to advance the frame clock.
+2.  **Synchronization**: It ensures that when we show **Frame #N** from the video file, we simultaneously fetch and draw **Detections for Frame #N** from the cache. Without this, overlays would drift or lag behind the video.
+3.  **State Management**: It handles Play/Pause states, scrubbing (seeking to a specific index), and looping behavior, keeping the UI responsive while heavy decoding happens in the background.
+
+By separating this from the `VideoWidget`, we keep the widget "dumb" (just drawing what it's told) and the controller "smart" (deciding *what* to draw and *when*).
+
+### Q: Why use PyAV instead of OpenCV (`cv2.VideoCapture`)?
+**Context**: import av` in `playback.py`: why we aren't using the standard OpenCV video loader.
+
+**Answer**:
+1.  **Seeking Accuracy (The "Scrubbing" Problem)**: OpenCV's `set(cv2.CAP_PROP_POS_FRAMES)` is notoriously imprecise. It often lands on the nearest "Keyframe" (which could be 2 seconds away) but reports that it's on the correct frame. This causes the video to "jump" or "stutter" when you drag the timeline. PyAV allows us to seek to a keyframe and then deterministically decode forward to the *exact* frame we need.
+2.  **Rotation Metadata**: Videos recorded on phones (like `DSC_3310.MOV`) often have a metadata flag saying "Rotate 90 degrees." OpenCV usually ignores this, giving you a sideways video. PyAV exposes this metadata so we can rotate the frame automatically.
+3.  **Performance**: PyAV is a direct Python binding to FFmpeg. It allows us to keep frames in efficient memory buffers and potentially leverage hardware decoding (NVDEC) more transparently than OpenCV's high-level wrapper.
+

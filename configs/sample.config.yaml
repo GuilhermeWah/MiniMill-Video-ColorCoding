@@ -23,3 +23,11 @@ vision:
   
 paths:
   detections_dir: ./exports
+
+overlay:
+  line_width: 2
+  colors:
+    4: "#FF0000"
+    6: "#00FF00"
+    8: "#0000FF"
+    10: "#FFFF00"
