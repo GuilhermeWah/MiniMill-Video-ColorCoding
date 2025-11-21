@@ -32,10 +32,15 @@
 - [x] **Scrubber**: Slider to seek through the video.
   - *Verified by*: `tests/test_playback_controller.py` (Seek logic) and `tests/test_main_window.py` (Slider connection)
 
-## Phase 4: Calibration & Polish
-- [ ] **Calibration Tool**: UI to measure the blue ring and set `px_per_mm`.
-- [ ] **ROI Tool**: UI to draw the "Ignore" mask.
-- [ ] **Exporter**: Render video to MP4 with overlays.
+## Phase 4: Calibration & Polish ✅
+- [x] **Calibration Tool**: UI to measure the blue ring and set `px_per_mm`.
+  - *Verified by*: `tests/test_calibration_tool.py` (Click handling, Distance calc)
+- [x] **Config Persistence**: Save calibration/settings to YAML.
+  - *Verified by*: `tests/test_config_saving.py` (Read/Write cycle)
+- [x] **ROI Tool**: UI to draw the "Ignore" mask.
+  - *Verified by*: `tests/test_roi_tool.py` (Painting logic, Mask generation)
+- [x] **Exporter**: Render video to MP4 with overlays.
+  - *Verified by*: `tests/test_exporter.py` (Frame iteration, Overlay drawing, ROI filtering)
 - [ ] **Packaging**: `build.ps1` with PyInstaller.
 
 ## Phase 5: Validation

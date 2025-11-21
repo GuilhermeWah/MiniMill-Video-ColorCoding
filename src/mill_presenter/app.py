@@ -37,10 +37,10 @@ def load_config(path: str) -> dict:
     return data
 
 
-def create_main_window(config: dict, video_path: str, detections_path: str) -> Tuple[MainWindow, FrameLoader, ResultsCache]:
+def create_main_window(config: dict, video_path: str, detections_path: str, config_path: str = None) -> Tuple[MainWindow, FrameLoader, ResultsCache]:
     frame_loader = FrameLoader(video_path)
     results_cache = ResultsCache(detections_path)
-    window = MainWindow(config, frame_loader=frame_loader, results_cache=results_cache)
+    window = MainWindow(config, frame_loader=frame_loader, results_cache=results_cache, config_path=config_path)
     return window, frame_loader, results_cache
 
 
@@ -50,7 +50,7 @@ def main():
     config = load_config(args.config)
 
     app = QApplication(sys.argv)
-    window, frame_loader, _ = create_main_window(config, args.video, args.detections)
+    window, frame_loader, _ = create_main_window(config, args.video, args.detections, config_path=args.config)
 
     # Ensure resources are released on exit
     app.aboutToQuit.connect(frame_loader.close)

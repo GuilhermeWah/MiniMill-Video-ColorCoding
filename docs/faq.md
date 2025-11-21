@@ -49,3 +49,37 @@ By separating this from the `VideoWidget`, we keep the widget "dumb" (just drawi
 2.  **Rotation Metadata**: Videos recorded on phones (like `DSC_3310.MOV`) often have a metadata flag saying "Rotate 90 degrees." OpenCV usually ignores this, giving you a sideways video. PyAV exposes this metadata so we can rotate the frame automatically.
 3.  **Performance**: PyAV is a direct Python binding to FFmpeg. It allows us to keep frames in efficient memory buffers and potentially leverage hardware decoding (NVDEC) more transparently than OpenCV's high-level wrapper.
 
+### Q: How does the app identify balls? (High-Level Overview)
+**Context**: User asked for an explanation of the overall behavior and detection logic.
+
+**Answer**:
+The app uses a **"Scan Once, Play Forever"** workflow:
+1.  **Detection (Offline)**: We process the video *once* using a dual-path pipeline:
+    *   **Preprocessing**: Bilateral Filter + CLAHE to handle noise and lighting.
+    *   **Detection**: Fuses results from **Hough Circles** (good for shapes) and **Contours** (good for edges).
+    *   **Logic**: We explicitly handle "hollow rings" (ignoring the inner hole) and filter out bolts using an **ROI Mask**.
+    *   **Output**: Results are saved to `detections.jsonl`.
+2.  **Playback (Real-time)**: The UI simply reads the JSON file and draws circles. This ensures smooth 60fps playback and instant toggling without re-running the heavy vision math.
+
+### Q: How do Calibration and ROI affect detection?
+**Context**: After adding the Calibration Tool and ROI painter, it’s important to understand which parts of the system they influence.
+
+**Answer**:
+1.  **Calibration (`px_per_mm`)**:
+    - Lives in the config YAML under `calibration.px_per_mm`.
+    - Is used **only** in the vision pipeline to convert pixel radii into millimeters for binning (4/6/8/10mm).
+    - Changing calibration requires an **offline re-run** of detection (`run_detection.py`) to regenerate `detections.jsonl`.
+2.  **ROI Mask (`roi_mask.png`)**:
+    - Is used in two places:
+        - During detection: the `VisionProcessor` drops any candidate whose center falls in a masked (ignored) region.
+        - During export: `VideoExporter` reloads `roi_mask.png` and re-filters cached detections so exported overlays match what the operator expects.
+    - Toggling ROI edit mode in the UI does **not** re-run detection; it just updates the mask file for the next detection/export run.
+
+### Q: Why does the Exporter reuse the OverlayRenderer instead of drawing directly with OpenCV?
+**Context**: MP4 export could, in theory, draw circles directly with `cv2.circle`, bypassing Qt.
+
+**Answer**:
+1.  **Visual Consistency**: The MP4 a client receives must look exactly like what they saw during the live demo (same colors, radii, and line widths). Reusing `OverlayRenderer` guarantees a single source of truth.
+2.  **Lower Cognitive Load**: Contributors only need to reason about drawing logic in one place. There is no special “export look.”
+3.  **Future-Proofing**: If we later add legends, text labels, or more complex overlays, they will automatically appear in both the UI and exports as long as they go through `OverlayRenderer`.
+

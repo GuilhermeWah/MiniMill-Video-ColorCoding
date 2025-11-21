@@ -1,33 +1,35 @@
-calibration:
-  method: ring         # ring | two_point | known_ball
-  ring_inner_diameter_mm: 180.0
-  px_per_mm: null      # computed then saved
-
 bins_mm:
-  - {label: 4,  min: 3.0, max: 5.0}
-  - {label: 6,  min: 5.0, max: 7.0}
-  - {label: 8,  min: 7.0, max: 9.0}
-  - {label: 10, min: 9.0, max: 11.0}
-
-performance:
-  decode_mode: auto         # auto (NVDEC if avail) | cpu_only
-  preview_downscale: off    # off | 960x540
-  overlay_mode: auto_outlines  # auto_outlines | full
-
-vision:
-  # Parameters for the "Dense Pile" scenario (default)
-  hough_param1: 50  # Canny high threshold passed to Hough
-  hough_param2: 40  # Accumulator threshold (higher = fewer circles, fewer false positives)
-  min_dist_px: 20   # Minimum distance between centers (increased to reduce duplicates)
-  min_circularity: 0.75  # Contour-based detections must exceed this circularity score
-  
+- label: 4
+  max: 5.0
+  min: 3.0
+- label: 6
+  max: 7.0
+  min: 5.0
+- label: 8
+  max: 9.0
+  min: 7.0
+- label: 10
+  max: 11.0
+  min: 9.0
+calibration:
+  method: ring
+  px_per_mm: 8.396298160792803
+  ring_inner_diameter_mm: 180.0
+overlay:
+  colors:
+    4: '#FF0000'
+    6: '#00FF00'
+    8: '#0000FF'
+    10: '#FFFF00'
+  line_width: 2
 paths:
   detections_dir: ./exports
-
-overlay:
-  line_width: 2
-  colors:
-    4: "#FF0000"
-    6: "#00FF00"
-    8: "#0000FF"
-    10: "#FFFF00"
+performance:
+  decode_mode: auto
+  overlay_mode: auto_outlines
+  preview_downscale: false
+vision:
+  hough_param1: 50
+  hough_param2: 40
+  min_circularity: 0.75
+  min_dist_px: 20
