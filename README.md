@@ -1,4 +1,4 @@
-# MGrinding Millr – Quick Note from me,  Gui
+# MGrinding Millr Quick Note 
 
 Guys, quick overview before you move on. This repo is the repo we discussed earlier. I tried my best for documenting it in the clearest way possible. I’m following the component diagram I shared (FrameLoader ➜ ProcessorOrchestrator ➜ ResultsCache ➜ OverlayRenderer ➜ UI/Exporter) as closely as possible so everything is cleanly separated. Detection happens once, offline, so the live player just paints cached circles with no interrruption.
 
