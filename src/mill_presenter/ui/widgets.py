@@ -1,7 +1,7 @@
 from PyQt6.QtOpenGLWidgets import QOpenGLWidget
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtGui import QPainter, QImage, QPen, QColor
-from PyQt6.QtCore import Qt, pyqtSignal, QPointF
+from PyQt6.QtCore import Qt, pyqtSignal, QPointF, QRectF
 from mill_presenter.core.overlay import OverlayRenderer
 from mill_presenter.core.models import FrameDetections
 from typing import Optional, Set, List, Tuple
@@ -24,6 +24,12 @@ class VideoWidget(QOpenGLWidget):
         self.interaction_mode = 'none' # 'none', 'calibration', 'roi'
         self.calibration_points: List[Tuple[float, float]] = []
         self.roi_mask: Optional[QImage] = None
+        
+        # Zoom & Pan State
+        self.zoom_scale = 1.0
+        self.pan_pos = QPointF(0, 0)
+        self.is_panning = False
+        self.last_mouse_pos = QPointF()
 
     def set_interaction_mode(self, mode: str):
         self.interaction_mode = mode
@@ -34,37 +40,91 @@ class VideoWidget(QOpenGLWidget):
         self.calibration_points = points
         self.update()
 
-    def set_roi_mask(self, mask: QImage):
+    def set_roi_mask(self, mask: Optional[QImage]):
         self.roi_mask = mask
         self.update()
+
+    def _get_base_transform_params(self):
+        """Calculates the base scaling and offset to fit image in widget."""
+        if not self.current_image:
+            return 1.0, 0.0, 0.0
+            
+        widget_w = self.width()
+        widget_h = self.height()
+        img_w = self.current_image.width()
+        img_h = self.current_image.height()
+        
+        if img_w == 0 or img_h == 0: return 1.0, 0.0, 0.0
+
+        scale_w = widget_w / img_w
+        scale_h = widget_h / img_h
+        base_scale = min(scale_w, scale_h)
+        
+        base_dx = (widget_w - img_w * base_scale) / 2
+        base_dy = (widget_h - img_h * base_scale) / 2
+        
+        return base_scale, base_dx, base_dy
 
     def _widget_to_image_coords(self, pos) -> Tuple[float, float]:
         if not self.current_image:
             return -1, -1
             
-        target_rect = self.rect()
-        scaled_image = self.current_image.scaled(
-            target_rect.size(),
-            Qt.AspectRatioMode.KeepAspectRatio,
-            Qt.TransformationMode.SmoothTransformation
-        )
+        base_scale, base_dx, base_dy = self._get_base_transform_params()
         
-        x_offset = (target_rect.width() - scaled_image.width()) // 2
-        y_offset = (target_rect.height() - scaled_image.height()) // 2
+        # Reverse Transform:
+        # Screen -> (Remove Pan) -> (Remove Zoom around Center) -> (Remove Base Offset) -> (Remove Base Scale)
         
-        scale = 1.0
-        if self.current_image.width() > 0:
-            scale = scaled_image.width() / self.current_image.width()
-            
-        click_x = pos.x() - x_offset
-        click_y = pos.y() - y_offset
+        center_x = self.width() / 2
+        center_y = self.height() / 2
         
-        img_x = click_x / scale
-        img_y = click_y / scale
+        # 1. Relative to center, remove pan
+        rel_x = pos.x() - (center_x + self.pan_pos.x())
+        rel_y = pos.y() - (center_y + self.pan_pos.y())
+        
+        # 2. Remove Zoom
+        unzoomed_x = rel_x / self.zoom_scale
+        unzoomed_y = rel_y / self.zoom_scale
+        
+        # 3. Back to widget coords (unzoomed)
+        widget_x = unzoomed_x + center_x
+        widget_y = unzoomed_y + center_y
+        
+        # 4. Remove Base Fit
+        img_x = (widget_x - base_dx) / base_scale
+        img_y = (widget_y - base_dy) / base_scale
         
         return img_x, img_y
 
+    def wheelEvent(self, event):
+        if not self.current_image:
+            return
+            
+        delta = event.angleDelta().y()
+        zoom_factor = 1.1 if delta > 0 else 0.9
+        
+        self.zoom_scale *= zoom_factor
+        
+        # Clamp zoom
+        self.zoom_scale = max(1.0, min(self.zoom_scale, 20.0))
+        
+        # If zooming out to 1.0, reset pan
+        if self.zoom_scale <= 1.01:
+            self.zoom_scale = 1.0
+            self.pan_pos = QPointF(0, 0)
+            
+        self.update()
+
     def mousePressEvent(self, event):
+        # Handle Panning
+        # Middle Button: Always Pan
+        # Left Button: Pan only if mode is 'none' (Standard drag-to-pan)
+        if event.button() == Qt.MouseButton.MiddleButton or \
+           (event.button() == Qt.MouseButton.LeftButton and self.interaction_mode == 'none'):
+            self.is_panning = True
+            self.last_mouse_pos = event.position()
+            self.setCursor(Qt.CursorShape.ClosedHandCursor)
+            return
+
         if self.interaction_mode == 'none' or not self.current_image:
             super().mousePressEvent(event)
             return
@@ -76,22 +136,37 @@ class VideoWidget(QOpenGLWidget):
             self.mouse_pressed.emit(img_x, img_y, event.button() == Qt.MouseButton.LeftButton)
 
     def mouseMoveEvent(self, event):
+        # Handle Panning
+        if self.is_panning:
+            delta = event.position() - self.last_mouse_pos
+            self.pan_pos += delta
+            self.last_mouse_pos = event.position()
+            self.update()
+            return
+
         if self.interaction_mode == 'none' or not self.current_image:
             super().mouseMoveEvent(event)
             return
             
         img_x, img_y = self._widget_to_image_coords(event.pos())
-        if 0 <= img_x < self.current_image.width() and 0 <= img_y < self.current_image.height():
-            self.mouse_moved.emit(img_x, img_y)
+        # Allow moving outside image bounds for some tools? 
+        # ROI tool might need to drag outside.
+        # But let's keep the check for now, or relax it.
+        # ROI tool handles dragging.
+        self.mouse_moved.emit(img_x, img_y)
 
     def mouseReleaseEvent(self, event):
+        if self.is_panning and (event.button() == Qt.MouseButton.MiddleButton or event.button() == Qt.MouseButton.LeftButton):
+            self.is_panning = False
+            self.setCursor(Qt.CursorShape.ArrowCursor)
+            return
+
         if self.interaction_mode == 'none' or not self.current_image:
             super().mouseReleaseEvent(event)
             return
             
         img_x, img_y = self._widget_to_image_coords(event.pos())
-        if 0 <= img_x < self.current_image.width() and 0 <= img_y < self.current_image.height():
-            self.mouse_released.emit(img_x, img_y)
+        self.mouse_released.emit(img_x, img_y)
 
     def set_frame(self, image: QImage, detections: Optional[FrameDetections]):
         self.current_image = image
@@ -100,74 +175,55 @@ class VideoWidget(QOpenGLWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
+        painter.fillRect(self.rect(), Qt.GlobalColor.black)
         
-        if self.current_image:
-            # Draw video frame
-            # Scale image to fit widget while maintaining aspect ratio
-            target_rect = self.rect()
-            scaled_image = self.current_image.scaled(
-                target_rect.size(),
-                Qt.AspectRatioMode.KeepAspectRatio,
-                Qt.TransformationMode.SmoothTransformation
-            )
-            
-            # Center the image
-            x = (target_rect.width() - scaled_image.width()) // 2
-            y = (target_rect.height() - scaled_image.height()) // 2
-            
-            painter.drawImage(x, y, scaled_image)
-            
-            # Calculate scale factor for overlays
-            # Original image width vs Scaled image width
-            if self.current_image.width() > 0:
-                scale = scaled_image.width() / self.current_image.width()
-            else:
-                scale = 1.0
-            
-            # Translate painter to image origin
-            painter.translate(x, y)
-            
-            # Draw overlays
-            if self.current_detections:
-                self.renderer.draw(painter, self.current_detections, self.visible_classes, scale)
-                
-            # Draw ROI Mask
-            if self.roi_mask:
-                # Scale mask to fit
-                # The mask is same size as original image
-                # We need to draw it scaled
-                # QPainter.drawImage handles scaling if we specify target rect
-                # But we already translated painter to (x,y) and scaled? No, we translated to (x,y).
-                # We need to draw the mask at (0,0) with size (scaled_image.width(), scaled_image.height())
-                
-                # Actually, we can just draw it.
-                # But wait, the mask is ARGB.
-                # We want to draw it scaled.
-                
-                target_w = scaled_image.width()
-                target_h = scaled_image.height()
-                painter.drawImage(
-                    0, 0, 
-                    self.roi_mask.scaled(target_w, target_h, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.FastTransformation)
-                )
+        if not self.current_image:
+            return
 
-            # Draw Calibration UI
-            if self.interaction_mode == 'calibration' and self.calibration_points:
-                painter.setPen(QPen(Qt.GlobalColor.cyan, 2))
-                painter.setBrush(Qt.BrushStyle.NoBrush)
+        base_scale, base_dx, base_dy = self._get_base_transform_params()
+        
+        painter.save()
+        
+        # Apply Zoom/Pan Transform
+        center_x = self.width() / 2
+        center_y = self.height() / 2
+        
+        painter.translate(center_x + self.pan_pos.x(), center_y + self.pan_pos.y())
+        painter.scale(self.zoom_scale, self.zoom_scale)
+        painter.translate(-center_x, -center_y)
+        
+        # Apply Base Fit Transform (Move to Image Space)
+        painter.translate(base_dx, base_dy)
+        painter.scale(base_scale, base_scale)
+        
+        # Now we are in Image Coordinates! (0,0) is top-left of image, 1 unit = 1 pixel
+        
+        # Draw Video Frame
+        # Since we are in Image Coords, we draw at (0,0) with size (w, h)
+        target_rect = QRectF(0, 0, self.current_image.width(), self.current_image.height())
+        painter.drawImage(target_rect, self.current_image)
+        
+        # Draw Overlays (scale=1.0 because painter is already scaled)
+        if self.current_detections:
+            self.renderer.draw(painter, self.current_detections, self.visible_classes, 1.0)
+            
+        # Draw ROI Mask
+        if self.roi_mask:
+            painter.drawImage(target_rect, self.roi_mask)
+
+        # Draw Calibration UI
+        if self.interaction_mode == 'calibration' and self.calibration_points:
+            painter.setPen(QPen(Qt.GlobalColor.cyan, 2))
+            painter.setBrush(Qt.BrushStyle.NoBrush)
+            
+            # Draw points
+            for px, py in self.calibration_points:
+                painter.drawEllipse(QPointF(px, py), 5, 5)
                 
-                # Draw points
-                for px, py in self.calibration_points:
-                    painter.drawEllipse(QPointF(px * scale, py * scale), 5, 5)
-                    
-                # Draw line if 2 points
-                if len(self.calibration_points) == 2:
-                    p1 = self.calibration_points[0]
-                    p2 = self.calibration_points[1]
-                    painter.drawLine(
-                        QPointF(p1[0] * scale, p1[1] * scale),
-                        QPointF(p2[0] * scale, p2[1] * scale)
-                    )
-        else:
-            # Draw placeholder or background
-            painter.fillRect(self.rect(), Qt.GlobalColor.black)
+            # Draw line if 2 points
+            if len(self.calibration_points) == 2:
+                p1 = self.calibration_points[0]
+                p2 = self.calibration_points[1]
+                painter.drawLine(QPointF(p1[0], p1[1]), QPointF(p2[0], p2[1]))
+                
+        painter.restore()

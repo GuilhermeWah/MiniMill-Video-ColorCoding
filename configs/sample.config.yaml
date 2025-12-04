@@ -13,7 +13,7 @@ bins_mm:
   min: 9.0
 calibration:
   method: ring
-  px_per_mm: 8.396298160792803
+  px_per_mm: 4.215156474823916
   ring_inner_diameter_mm: 180.0
 overlay:
   colors:

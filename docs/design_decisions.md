@@ -62,10 +62,17 @@ Beads are rings, not solid balls.
 
 - **Why?** Some structures (bolts, shell edges, flanges) are visually similar to beads and hard to mask purely via thresholds. Operators know these regions intuitively.
 - **Decision:**
-  - Implement an interactive `ROIController` that paints an ARGB mask aligned to the video frame.
-  - Encode ignore regions as semi-transparent red during editing, then save a derived grayscale `roi_mask.png` where white = valid, darker = ignored.
-  - Make the **detection** pipeline consume `roi_mask.png` to drop any candidate whose center lies outside the valid area.
-  - Reuse the same mask in the **exporter** so baked videos faithfully match on-screen overlays.
+  - **Interactive Circle**: Instead of a "painting" tool (which is messy and hard to make perfect), we use a geometric Circle Tool. The user can drag the center or resize the rim. This matches the physical reality of the mill drum.
+  - **Auto-Detect**: We use a large-radius Hough Transform to automatically find the drum rim when the tool opens, giving the user a 90% correct starting point.
+  - **Mask Generation**: We generate `roi_mask.png` by drawing a filled white circle on a black background.
+  - **Detection**: The pipeline drops any candidate whose center lies on a black pixel.
+
+## Handling Spinning Drum Background
+
+- **The Problem:** The back of the mill drum rotates. It has holes and bolts that move. A static ROI mask cannot block them because they change position every frame.
+- **The Solution:**
+  1.  **Static ROI**: Blocks the non-moving outer rim, wheels, and floor.
+  2.  **Brightness Filter**: Blocks the moving holes inside the drum. Holes are dark; beads are shiny. We reject any candidate with `avg_brightness < 50`.
 
 ## Exporter: MP4 with Baked Overlays
 

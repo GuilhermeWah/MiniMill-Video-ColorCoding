@@ -33,6 +33,11 @@ We use classic Computer Vision (OpenCV), not Deep Learning (AI), because it is f
 *   **The Risk:** The system might think the 10mm bead is actually two beads: one big, one small.
 *   **The Solution:** We use "Annulus Logic." Before accepting a detection, we check: *Is this small circle perfectly centered inside a larger circle?* If yes, it is a **hole**, not a bead. We ignore it and only keep the outer circle.
 
+### F. Brightness Filter (The "Black Hole" Rejection)
+*   **The Problem:** The back of the mill drum has holes that rotate. These are dark circles moving on a dark background.
+*   **The Risk:** The detector might see these moving holes as beads.
+*   **The Solution:** We check the average brightness of the pixels inside every candidate circle. Beads are shiny (bright); holes are empty (dark). If `avg_brightness < 50`, we discard it immediately.
+
 ## 3. Architecture for Contributors
 The codebase is split into two distinct worlds that barely talk to each other:
 
@@ -68,14 +73,14 @@ The codebase is split into two distinct worlds that barely talk to each other:
         - Turning `FrameDetections` + visible class set `{4,6,8,10}` into QPainter circles.
         - Pre-allocating colored pens based on `overlay.colors` in the YAML config.
         - Being re-used by both the live UI and the MP4 exporter for pixel-perfect consistency.
-    - **`ui/calibration_controller.py :: CalibrationController`** – Calibration tool. Responsible for:
+    - **ui/calibration_controller.py :: CalibrationController** – Calibration tool. Responsible for:
         - Managing a 2-click workflow on `VideoWidget` to define a known physical distance.
         - Computing `px_per_mm` and storing it in `config['calibration']['px_per_mm']`.
         - Updating the overlayed calibration line and points.
-    - **`ui/roi_controller.py :: ROIController`** – ROI painter. Responsible for:
-        - Converting mouse drags into strokes on an ARGB `QImage` the same size as the frame.
-        - Encoding **ignored** regions as semi-transparent red in the UI and turning that into a grayscale `roi_mask.png` for the vision pipeline.
-        - Providing `is_point_valid(x, y)` for tests and future tools.
+    - **`ui/roi_controller.py :: ROIController`** – ROI Manager. Responsible for:
+        - Managing an interactive **Circle Tool** (Move center, Drag rim to resize) to define the valid mill area.
+        - Running **Auto-Detect** (Hough Circles) to snap the ROI to the drum rim automatically.
+        - Generating the `roi_mask.png` (white circle on black background) for the vision pipeline.
     - **`ui/main_window.py :: MainWindow`** – Presentation shell. Responsible for:
         - Wiring up the `VideoWidget`, control buttons (Play/Pause, Toggles, Calibrate, ROI Mask, Export), and slider.
         - Hosting the status bar instructions for calibration/ROI modes.

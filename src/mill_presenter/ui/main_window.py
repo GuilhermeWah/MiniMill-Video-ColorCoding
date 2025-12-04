@@ -1,5 +1,5 @@
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
-from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QPushButton, QSlider, QInputDialog, QMessageBox, QStatusBar, QFileDialog, QProgressDialog
+from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QPushButton, QSlider, QInputDialog, QMessageBox, QStatusBar, QFileDialog, QProgressDialog, QLabel
 import yaml
 from mill_presenter.ui.widgets import VideoWidget
 from mill_presenter.ui.playback_controller import PlaybackController
@@ -71,6 +71,10 @@ class MainWindow(QMainWindow):
         self.slider.setRange(0, 0)
         self.slider.sliderMoved.connect(self._on_slider_moved)
         controls_layout.addWidget(self.slider)
+        
+        # Time Label
+        self.time_label = QLabel("00:00 / 00:00")
+        controls_layout.addWidget(self.time_label)
         
         # Calibration Button
         self.calibrate_btn = QPushButton("Calibrate")
@@ -232,6 +236,20 @@ class MainWindow(QMainWindow):
         self.slider.blockSignals(True)
         self.slider.setValue(frame_index)
         self.slider.blockSignals(False)
+        
+        # Update Time Label
+        if self.frame_loader and self.frame_loader.fps > 0:
+            current_seconds = frame_index / self.frame_loader.fps
+            total_seconds = self.frame_loader.total_frames / self.frame_loader.fps
+            
+            current_str = self._format_time(current_seconds)
+            total_str = self._format_time(total_seconds)
+            self.time_label.setText(f"{current_str} / {total_str}")
+
+    def _format_time(self, seconds: float) -> str:
+        m = int(seconds // 60)
+        s = int(seconds % 60)
+        return f"{m:02d}:{s:02d}"
 
     def toggle_playback(self, playing: bool):
         if not self.playback_controller:

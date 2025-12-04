@@ -83,3 +83,19 @@ The app uses a **"Scan Once, Play Forever"** workflow:
 2.  **Lower Cognitive Load**: Contributors only need to reason about drawing logic in one place. There is no special “export look.”
 3.  **Future-Proofing**: If we later add legends, text labels, or more complex overlays, they will automatically appear in both the UI and exports as long as they go through `OverlayRenderer`.
 
+### Q: Why did we change the ROI tool from "Painting" to "Circle"?
+**Context**: Originally, the ROI tool allowed users to paint red "ignore" zones. We replaced this with a resizeable circle.
+
+**Answer**:
+1.  **Precision**: It is very hard to paint a perfect circle with a mouse. Users would accidentally mask valid beads near the edge or leave gaps.
+2.  **Reality**: The mill drum *is* a circle. A geometric tool matches the physical object better than a freehand brush.
+3.  **Automation**: A circle can be auto-detected (using Hough Transforms). A freehand mask cannot.
+
+### Q: How do we handle the moving holes in the back of the drum?
+**Context**: The ROI mask is static, but the drum rotates. The holes in the back plate move, and they look like dark circles.
+
+**Answer**:
+We use a **Brightness Filter**.
+- **Observation**: Beads are metallic and reflect light (high brightness). The holes are empty space and dark (low brightness).
+- **Logic**: Even if a hole looks like a circle geometrically, we check the average pixel intensity inside it. If it's too dark (`< 50`), we assume it's a hole and ignore it. This works regardless of where the hole moves.
+

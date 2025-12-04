@@ -19,6 +19,7 @@ def main():
     parser.add_argument("--output", required=True, help="Path to output .jsonl file")
     parser.add_argument("--config", required=True, help="Path to configuration .yaml file")
     parser.add_argument("--roi", help="Path to ROI mask image (optional)")
+    parser.add_argument("--limit", type=int, help="Limit number of frames to process (optional)")
     
     args = parser.parse_args()
     
@@ -46,15 +47,32 @@ def main():
         
         orchestrator = ProcessorOrchestrator(loader, processor, cache)
         
-        # Load ROI if provided
-        if args.roi:
+        # Load ROI if provided, or search for default
+        roi_path = args.roi
+        if not roi_path:
+            # Check default locations
+            possible_paths = [
+                "roi_mask.png",
+                "content/roi_mask.png",
+                os.path.join(os.path.dirname(__file__), "../roi_mask.png"),
+                os.path.join(os.path.dirname(__file__), "../content/roi_mask.png")
+            ]
+            for p in possible_paths:
+                if os.path.exists(p):
+                    roi_path = p
+                    logger.info(f"Found default ROI mask at: {p}")
+                    break
+        
+        if roi_path:
             import cv2
-            logger.info(f"Loading ROI mask: {args.roi}")
-            roi_mask = cv2.imread(args.roi, cv2.IMREAD_GRAYSCALE)
+            logger.info(f"Loading ROI mask: {roi_path}")
+            roi_mask = cv2.imread(roi_path, cv2.IMREAD_GRAYSCALE)
             if roi_mask is None:
-                logger.warning(f"Failed to load ROI mask from {args.roi}. Proceeding without it.")
+                logger.warning(f"Failed to load ROI mask from {roi_path}. Proceeding without it.")
             else:
                 orchestrator.set_roi_mask(roi_mask)
+        else:
+            logger.warning("No ROI mask provided or found. Detection will run on full frame (risk of false positives).")
         
         # 3. Run Pipeline
         def progress_cb(percent):
@@ -66,7 +84,7 @@ def main():
             sys.stdout.flush()
             
         logger.info("Starting detection...")
-        orchestrator.run(progress_callback=progress_cb)
+        orchestrator.run(progress_callback=progress_cb, limit=args.limit)
         print() # Newline after progress bar
         logger.info("Detection completed successfully.")
         

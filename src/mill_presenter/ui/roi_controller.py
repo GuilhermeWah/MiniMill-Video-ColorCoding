@@ -1,16 +1,21 @@
 from PyQt6.QtGui import QImage, QPainter, QColor, QPen
 from PyQt6.QtCore import Qt, QPoint
 import os
+import cv2
+import numpy as np
 
 class ROIController:
     def __init__(self, widget):
         self.widget = widget
         self.is_active = False
         self.mask_image: QImage = None
-        self.brush_size = 20
-        self.last_point = None
-        self.is_drawing = False
-        self.draw_color = Qt.GlobalColor.black # Black = Ignore
+        
+        # Circle Mode State
+        self.center_point = None
+        self.current_radius = 0
+        self.is_dragging = False
+        self.is_moving = False
+        self.move_offset = QPoint(0, 0)
 
     def start(self):
         self.is_active = True
@@ -18,171 +23,194 @@ class ROIController:
             width = self.widget.current_image.width()
             height = self.widget.current_image.height()
             
-            # Load existing or create new
-            # For now, create new white mask (all valid)
+            # Create a new mask layer
             self.mask_image = QImage(width, height, QImage.Format.Format_ARGB32)
-            self.mask_image.fill(Qt.GlobalColor.transparent) # Transparent for overlay? 
-            # Wait, the mask itself should be B&W. But for display we might want overlay.
-            # Let's keep the mask as a separate Grayscale image for logic, 
-            # and maybe an ARGB image for display?
-            # Or just use one ARGB image where we paint Red with Alpha for "Ignore".
-            # And when saving, we convert to B&W.
             
-            # Let's use ARGB for the "Overlay" layer.
-            # Transparent = Valid.
-            # Red (semi-transparent) = Ignore.
-            self.mask_image.fill(Qt.GlobalColor.transparent)
+            # Initialize with full Red (Ignore everything by default)
+            self.mask_image.fill(QColor(255, 0, 0, 128))
+            
+            # Try auto-detect if no circle is defined
+            if self.center_point is None:
+                self.auto_detect_mill()
             
         if hasattr(self.widget, 'set_interaction_mode'):
             self.widget.set_interaction_mode('roi')
             self.widget.set_roi_mask(self.mask_image)
+            
+        # If we have a circle (from auto-detect or previous), update mask
+        if self.center_point:
+            self._update_mask()
+
+    def auto_detect_mill(self):
+        """Attempts to automatically find the mill drum circle."""
+        if not self.widget or not self.widget.current_image:
+            return
+
+        try:
+            # Convert QImage to numpy array
+            qimg = self.widget.current_image
+            qimg = qimg.convertToFormat(QImage.Format.Format_RGB888)
+            
+            width = qimg.width()
+            height = qimg.height()
+            
+            ptr = qimg.bits()
+            ptr.setsize(height * width * 3)
+            arr = np.frombuffer(ptr, np.uint8).reshape((height, width, 3))
+            
+            # Preprocess
+            gray = cv2.cvtColor(arr, cv2.COLOR_RGB2GRAY)
+            gray = cv2.medianBlur(gray, 5)
+            
+            # HoughCircles for the drum (large circle)
+            # We expect the drum to be roughly centered and large (e.g. > 30% of height)
+            min_r = int(min(width, height) * 0.35)
+            max_r = int(min(width, height) * 0.48) # Slightly less than half
+            
+            circles = cv2.HoughCircles(
+                gray, 
+                cv2.HOUGH_GRADIENT, 
+                dp=1, 
+                minDist=min_r, # Only expect one main drum
+                param1=50, 
+                param2=30, 
+                minRadius=min_r, 
+                maxRadius=max_r
+            )
+            
+            if circles is not None:
+                circles = np.uint16(np.around(circles))
+                # Take the strongest/largest circle
+                best_circle = circles[0][0]
+                cx, cy, r = int(best_circle[0]), int(best_circle[1]), int(best_circle[2])
+                
+                # Apply slightly smaller radius to be safe (inside the rim)
+                safe_r = int(r * 0.96) 
+                
+                self.center_point = QPoint(cx, cy)
+                self.current_radius = safe_r
+                print(f"Auto-detected mill at ({cx}, {cy}) r={safe_r}")
+                
+        except Exception as e:
+            print(f"Auto-detect failed: {e}")
 
     def cancel(self):
         self.is_active = False
         if hasattr(self.widget, 'set_interaction_mode'):
             self.widget.set_interaction_mode('none')
+            # Clear the mask overlay from the widget so it doesn't persist
+            self.widget.set_roi_mask(None)
 
     def handle_mouse_press(self, x: int, y: int, left_button: bool):
         if not self.is_active or not self.mask_image:
             return
         
-        self.is_drawing = True
-        self.last_point = QPoint(int(x), int(y))
-        
-        # Left click = Paint Ignore (Red overlay)
-        # Right click = Erase (Transparent)
-        if left_button:
-            self.draw_color = QColor(255, 0, 0, 128) # Semi-transparent Red
-        else:
-            self.draw_color = Qt.GlobalColor.transparent # Erase to transparent
+        if not left_button:
+             # Reset
+            self.center_point = None
+            self.current_radius = 0
+            self._update_mask()
+            return
 
-        self._paint_point(x, y)
+        click_point = QPoint(int(x), int(y))
+
+        # Check if we are interacting with an existing circle
+        if self.center_point and self.current_radius > 0:
+            dx = x - self.center_point.x()
+            dy = y - self.center_point.y()
+            dist = (dx**2 + dy**2)**0.5
+            
+            # Zone 1: Center (Move) - Inner 70%
+            if dist < self.current_radius * 0.7:
+                self.is_moving = True
+                self.move_offset = click_point - self.center_point
+                return
+            
+            # Zone 2: Rim (Resize) - Outer 30% or slightly outside (+30px tolerance)
+            if dist < self.current_radius + 30:
+                self.is_dragging = True
+                # We keep the existing center_point, so dragging will just update the radius
+                return
+
+        # Otherwise, start defining a NEW circle center
+        self.center_point = click_point
+        self.current_radius = 0
+        self.is_dragging = True
+        
+        self._update_mask()
 
     def handle_mouse_move(self, x: int, y: int):
-        if not self.is_drawing or not self.mask_image:
+        current_point = QPoint(int(x), int(y))
+        
+        if self.is_moving and self.center_point:
+            # Move the center
+            self.center_point = current_point - self.move_offset
+            self._update_mask()
             return
-        self._paint_line(self.last_point, QPoint(int(x), int(y)))
-        self.last_point = QPoint(int(x), int(y))
+
+        if self.is_dragging and self.center_point:
+            # Calculate radius
+            dx = x - self.center_point.x()
+            dy = y - self.center_point.y()
+            self.current_radius = int((dx**2 + dy**2)**0.5)
+            self._update_mask()
 
     def handle_mouse_release(self, x: int, y: int):
-        self.is_drawing = False
-        self.last_point = None
+        self.is_dragging = False
+        self.is_moving = False
+        # Circle is now defined.
 
-    def _paint_point(self, x, y):
-        painter = QPainter(self.mask_image)
-        
-        if self.draw_color == Qt.GlobalColor.transparent:
-            # Erasing requires CompositionMode
-            painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_Clear)
-        else:
-            painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOver)
+    def _update_mask(self):
+        if not self.mask_image:
+            return
             
-        painter.setPen(Qt.PenStyle.NoPen)
-        painter.setBrush(self.draw_color)
-        painter.drawEllipse(QPoint(int(x), int(y)), self.brush_size // 2, self.brush_size // 2)
-        painter.end()
-        self.widget.update()
-
-    def _paint_line(self, p1, p2):
-        painter = QPainter(self.mask_image)
+        # Reset to full Red (Ignore)
+        self.mask_image.fill(QColor(255, 0, 0, 128))
         
-        if self.draw_color == Qt.GlobalColor.transparent:
+        if self.center_point and self.current_radius > 0:
+            painter = QPainter(self.mask_image)
+            painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+            
+            # Cut out the "Valid" circle (make it transparent)
             painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_Clear)
-        else:
+            painter.setBrush(Qt.GlobalColor.transparent)
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.drawEllipse(self.center_point, self.current_radius, self.current_radius)
+            
+            # Draw a helper outline so the user can see the boundary clearly
             painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOver)
-
-        pen = QPen(self.draw_color)
-        pen.setWidth(self.brush_size)
-        pen.setCapStyle(Qt.PenCapStyle.RoundCap)
-        painter.setPen(pen)
-        painter.drawLine(p1, p2)
-        painter.end()
+            painter.setBrush(Qt.BrushStyle.NoBrush)
+            painter.setPen(QPen(Qt.GlobalColor.yellow, 2, Qt.PenStyle.DashLine))
+            painter.drawEllipse(self.center_point, self.current_radius, self.current_radius)
+            
+            painter.end()
+            
         self.widget.update()
 
     def save(self, path: str):
         if not self.mask_image:
             return
             
-        # Convert Overlay to B&W Mask
-        # Transparent -> White (Valid)
-        # Red -> Black (Ignore)
+        # Create a robust binary mask for the Vision Pipeline
+        # We want: White (255) = Valid (Inside Circle), Black (0) = Ignore (Outside)
         
-        # Create target image
-        bw_mask = QImage(self.mask_image.size(), QImage.Format.Format_Grayscale8)
-        bw_mask.fill(Qt.GlobalColor.white) # Default valid
+        width = self.mask_image.width()
+        height = self.mask_image.height()
         
-        painter = QPainter(bw_mask)
-        # Draw the overlay onto the white background
-        # But we need to turn Red pixels into Black pixels.
-        # We can iterate or use a trick.
-        # Since we only have Transparent or Red, we can just draw the alpha channel?
-        # Or just draw the overlay as Black.
+        # 1. Create a black canvas (Ignore everything)
+        final_mask = QImage(width, height, QImage.Format.Format_Grayscale8)
+        final_mask.fill(QColor(0, 0, 0)) # Black
         
-        # Let's iterate for correctness or use a mask.
-        # Actually, if we draw the mask_image onto the white background, 
-        # the Red pixels will appear red. We want them Black.
-        
-        # Better approach:
-        # Create a temporary image filled with Black.
-        # Use the mask_image's alpha channel as a mask to draw Black onto White?
-        
-        # Simple way:
-        # 1. Fill bw_mask with White.
-        # 2. Iterate pixels? Slow in Python.
-        
-        # 3. Use QPainter with CompositionMode?
-        # If we draw the mask_image using a Black brush where alpha > 0?
-        
-        # Let's try:
-        # Draw the mask_image onto bw_mask.
-        # Then convert to Grayscale. Red (brightness ~76) will be dark gray.
-        # Threshold it?
-        
-        # Let's assume for now we just save the overlay and handle conversion later, 
-        # OR implement a proper conversion.
-        
-        # Fast conversion:
-        # 1. Extract Alpha channel.
-        # 2. Invert it (Alpha 0 -> White, Alpha 128 -> Black).
-        
-        alpha = self.mask_image.alphaChannel()
-        # Alpha: 0 (Transparent/Valid) -> 0
-        # Alpha: 128 (Red/Ignore) -> 128
-        
-        # We want:
-        # 0 -> 255 (White)
-        # >0 -> 0 (Black)
-        
-        alpha.invertPixels() 
-        # Now:
-        # 0 -> 255 (White)
-        # 128 -> 127 (Gray)
-        
-        # Threshold to make it binary
-        # We want anything not White to be Black.
-        # Or anything that was painted (Alpha > 0) to be Black.
-        
-        # Let's just save the alpha channel inverted and thresholded.
-        # But QImage doesn't have easy threshold.
-        
-        # Fallback: Save as PNG, let OpenCV handle it?
-        # Or just save the overlay as is (roi_overlay.png) and let the processor use it?
-        # The processor expects B&W.
-        
-        # Let's try to paint Black where Alpha is non-zero.
-        painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOver)
-        # This is getting complicated for a simple mask.
-        
-        # Let's just save the alpha channel inverted.
-        # 0 (Valid) -> 255 (White)
-        # 128 (Ignore) -> 127 (Gray) -> Processor treats < 128 as Black?
-        # Processor uses standard threshold usually.
-        
-        bw_mask = alpha
-        bw_mask.invertPixels()
-        
-        # Save
-        bw_mask.save(path)
+        # 2. Draw the White Circle (Valid Region) if defined
+        if self.center_point and self.current_radius > 0:
+            painter = QPainter(final_mask)
+            painter.setRenderHint(QPainter.RenderHint.Antialiasing, False) # Aliasing is fine for masks
+            painter.setBrush(QColor(255, 255, 255)) # White Fill
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.drawEllipse(self.center_point, self.current_radius, self.current_radius)
+            painter.end()
+            
+        final_mask.save(path)
 
     def is_point_valid(self, x, y):
         if not self.mask_image:

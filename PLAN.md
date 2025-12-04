@@ -31,18 +31,22 @@
   - *Verified by*: `tests/test_main_window.py` (Toggle muting/unmuting visible classes)
 - [x] **Scrubber**: Slider to seek through the video.
   - *Verified by*: `tests/test_playback_controller.py` (Seek logic) and `tests/test_main_window.py` (Slider connection)
+- [x] **Time Display**: Show current/total time on the playback bar.
+  - *Verified by*: Manual verification in UI.
 
 ## Phase 4: Calibration & Polish ✅
 - [x] **Calibration Tool**: UI to measure the blue ring and set `px_per_mm`.
   - *Verified by*: `tests/test_calibration_tool.py` (Click handling, Distance calc)
 - [x] **Config Persistence**: Save calibration/settings to YAML.
   - *Verified by*: `tests/test_config_saving.py` (Read/Write cycle)
-- [x] **ROI Tool**: UI to draw the "Ignore" mask.
-  - *Verified by*: `tests/test_roi_tool.py` (Painting logic, Mask generation)
+- [x] **ROI Tool**: Interactive Circle Tool with Auto-Detect.
+  - *Verified by*: `tests/test_roi_tool.py` (Circle geometry, Mask generation)
 - [x] **Exporter**: Render video to MP4 with overlays.
   - *Verified by*: `tests/test_exporter.py` (Frame iteration, Overlay drawing, ROI filtering)
 - [ ] **Packaging**: `build.ps1` with PyInstaller.
 
-## Phase 5: Validation
+## Phase 5: Validation & Refinement 🚧
+- [x] **Detection Tuning**: Improve accuracy for missing balls and false positives.
+  - *Verified by*: Manual verification with `scripts/run_detection.py` and `roi_mask.png` generation.
 - [ ] **Visual Checklist**: Verify overlays against the "Visual Acceptance Checklist".
 - [ ] **Performance Bench**: Ensure 60fps playback on target hardware.
