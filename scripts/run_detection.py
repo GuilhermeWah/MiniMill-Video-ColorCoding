@@ -53,8 +53,10 @@ def main():
             # Check default locations
             possible_paths = [
                 "roi_mask.png",
+                "exports/roi_mask.png",  # Config default location
                 "content/roi_mask.png",
                 os.path.join(os.path.dirname(__file__), "../roi_mask.png"),
+                os.path.join(os.path.dirname(__file__), "../exports/roi_mask.png"),
                 os.path.join(os.path.dirname(__file__), "../content/roi_mask.png")
             ]
             for p in possible_paths:

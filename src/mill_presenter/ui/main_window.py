@@ -4,6 +4,7 @@ import yaml
 from mill_presenter.ui.widgets import VideoWidget
 from mill_presenter.ui.playback_controller import PlaybackController
 from mill_presenter.ui.calibration_controller import CalibrationController
+from mill_presenter.ui.drum_calibration_controller import DrumCalibrationController
 from mill_presenter.ui.roi_controller import ROIController
 from mill_presenter.core.exporter import VideoExporter
 
@@ -38,6 +39,7 @@ class MainWindow(QMainWindow):
         self.results_cache = results_cache
         self.playback_controller = None
         self.calibration_controller = None
+        self.drum_calibration_controller = None
         self.roi_controller = None
         self.setWindowTitle("MillPresenter")
         self.resize(1280, 720)
@@ -76,11 +78,17 @@ class MainWindow(QMainWindow):
         self.time_label = QLabel("00:00 / 00:00")
         controls_layout.addWidget(self.time_label)
         
-        # Calibration Button
-        self.calibrate_btn = QPushButton("Calibrate")
+        # Manual Calibration Button (2-point)
+        self.calibrate_btn = QPushButton("Manual")
         self.calibrate_btn.setCheckable(True)
         self.calibrate_btn.toggled.connect(self.toggle_calibration)
         controls_layout.addWidget(self.calibrate_btn)
+        
+        # Drum Calibration Button (auto-detect)
+        self.drum_btn = QPushButton("Drum")
+        self.drum_btn.setCheckable(True)
+        self.drum_btn.toggled.connect(self.toggle_drum_calibration)
+        controls_layout.addWidget(self.drum_btn)
 
         # ROI Button
         self.roi_btn = QPushButton("ROI Mask")
@@ -93,7 +101,7 @@ class MainWindow(QMainWindow):
         self.export_btn.clicked.connect(self.export_video)
         controls_layout.addWidget(self.export_btn)
 
-        # Toggles
+        # Toggles - Size filter buttons with colored backgrounds
         self.toggles = {}
         colors = self.config.get('overlay', {}).get('colors', {})
         
@@ -102,10 +110,27 @@ class MainWindow(QMainWindow):
             btn.setCheckable(True)
             btn.setChecked(True)
             
-            # Apply color from config
-            color_hex = colors.get(size, "#000000")
-            # Simple styling: colored text
-            btn.setStyleSheet(f"color: {color_hex}; font-weight: bold;")
+            # Apply color from config - colored background with contrasting text
+            color_hex = colors.get(size, "#808080")
+            # Use white text for dark colors, black for light (yellow)
+            text_color = "#000000" if size == 10 else "#FFFFFF"  # Yellow needs black text
+            btn.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {color_hex};
+                    color: {text_color};
+                    font-weight: bold;
+                    border: none;
+                    padding: 5px 10px;
+                    border-radius: 3px;
+                }}
+                QPushButton:checked {{
+                    background-color: {color_hex};
+                }}
+                QPushButton:!checked {{
+                    background-color: #555555;
+                    color: #AAAAAA;
+                }}
+            """)
             
             btn.toggled.connect(lambda checked, s=size: self.toggle_class(s, checked))
             controls_layout.addWidget(btn)
@@ -113,15 +138,40 @@ class MainWindow(QMainWindow):
 
         # Initialize Controllers
         self.calibration_controller = CalibrationController(self.video_widget, self.config)
+        self.drum_calibration_controller = DrumCalibrationController(self.video_widget, self.config)
+        self.drum_calibration_controller.on_calibration_confirmed = self._on_drum_calibration_confirmed
         self.roi_controller = ROIController(self.video_widget)
         
         # Connect ROI signals
         self.video_widget.mouse_pressed.connect(self.roi_controller.handle_mouse_press)
         self.video_widget.mouse_moved.connect(self.roi_controller.handle_mouse_move)
         self.video_widget.mouse_released.connect(self.roi_controller.handle_mouse_release)
+        
+        # Connect Drum Calibration mouse signals
+        self.video_widget.mouse_pressed.connect(self._on_drum_mouse_press)
+        self.video_widget.mouse_moved.connect(self._on_drum_mouse_move)
+        self.video_widget.mouse_released.connect(self._on_drum_mouse_release)
 
         if frame_loader and results_cache:
             self.attach_playback_sources(frame_loader, results_cache)
+
+    def _on_drum_mouse_press(self, x, y, is_right_click):
+        """Forward mouse press to drum calibration controller."""
+        if self.drum_calibration_controller and self.drum_calibration_controller.is_active:
+            from PyQt6.QtCore import QPoint
+            self.drum_calibration_controller.handle_mouse_press(QPoint(int(x), int(y)))
+
+    def _on_drum_mouse_move(self, x, y):
+        """Forward mouse move to drum calibration controller."""
+        if self.drum_calibration_controller and self.drum_calibration_controller.is_active:
+            from PyQt6.QtCore import QPoint
+            self.drum_calibration_controller.handle_mouse_move(QPoint(int(x), int(y)))
+
+    def _on_drum_mouse_release(self, x, y):
+        """Forward mouse release to drum calibration controller."""
+        if self.drum_calibration_controller and self.drum_calibration_controller.is_active:
+            from PyQt6.QtCore import QPoint
+            self.drum_calibration_controller.handle_mouse_release(QPoint(int(x), int(y)))
 
     def export_video(self):
         if not self.frame_loader or not self.results_cache:
@@ -164,16 +214,48 @@ class MainWindow(QMainWindow):
             # Disable other modes
             if hasattr(self, 'roi_btn') and self.roi_btn.isChecked():
                 self.roi_btn.setChecked(False)
+            if hasattr(self, 'drum_btn') and self.drum_btn.isChecked():
+                self.drum_btn.setChecked(False)  # Cancel drum mode
 
             # Pause playback
             if self.playback_controller and self.playback_controller.is_playing:
                 self.play_button.setChecked(False) # This triggers toggle_playback(False)
             
             self.calibration_controller.start()
-            self.statusBar().showMessage("Calibration Mode: Click the START point of the known object.")
+            self.statusBar().showMessage("Manual Calibration: Click the START point of the known object.")
         else:
             self.calibration_controller.cancel()
             self.statusBar().clearMessage()
+
+    def toggle_drum_calibration(self, active: bool):
+        if active:
+            # Disable other modes
+            if hasattr(self, 'roi_btn') and self.roi_btn.isChecked():
+                self.roi_btn.setChecked(False)
+            if hasattr(self, 'calibrate_btn') and self.calibrate_btn.isChecked():
+                self.calibrate_btn.setChecked(False)  # Cancel manual mode
+
+            # Pause playback
+            if self.playback_controller and self.playback_controller.is_playing:
+                self.play_button.setChecked(False)
+            
+            # Auto-detect drum and show overlay for confirmation
+            success = self.drum_calibration_controller.auto_detect_and_show()
+            if success:
+                self.statusBar().showMessage("Drum Calibration: Drag to adjust, then press Enter to confirm or Escape to cancel.")
+            else:
+                self.statusBar().showMessage("Failed to detect drum. Try manual calibration.")
+                self.drum_btn.setChecked(False)
+        else:
+            self.drum_calibration_controller.cancel()
+            self.statusBar().clearMessage()
+
+    def _on_drum_calibration_confirmed(self, px_per_mm, center_point, radius):
+        """Called when user confirms drum calibration."""
+        self.save_config()
+        self.drum_btn.setChecked(False)
+        msg = f"Drum Calibration saved: {px_per_mm:.2f} px/mm"
+        self.statusBar().showMessage(msg, 5000)
 
     def _on_video_clicked(self, x, y):
         if self.calibration_controller and self.calibration_controller.is_active:
@@ -298,3 +380,28 @@ class MainWindow(QMainWindow):
             mask_path = f"{detections_dir}/roi_mask.png"
             self.roi_controller.save(mask_path)
             self.statusBar().showMessage(f"ROI Mask saved to {mask_path}", 5000)
+
+    def keyPressEvent(self, event):
+        """Handle keyboard input for drum calibration confirmation."""
+        if self.drum_calibration_controller and self.drum_calibration_controller.is_active:
+            if event.key() == Qt.Key.Key_Return or event.key() == Qt.Key.Key_Enter:
+                # Prompt for diameter before confirming
+                current_diameter = self.drum_calibration_controller.drum_diameter_mm
+                diameter, ok = QInputDialog.getDouble(
+                    self, "Drum Calibration", 
+                    "Enter drum diameter in mm:",
+                    value=current_diameter, min=10.0, max=1000.0, decimals=1
+                )
+                if ok:
+                    # Update the diameter and confirm
+                    self.drum_calibration_controller.drum_diameter_mm = diameter
+                    # Also update config for persistence
+                    if 'calibration' not in self.config:
+                        self.config['calibration'] = {}
+                    self.config['calibration']['drum_diameter_mm'] = diameter
+                    self.drum_calibration_controller.confirm()
+                # If cancelled, stay in calibration mode
+            elif event.key() == Qt.Key.Key_Escape:
+                self.drum_btn.setChecked(False)  # This triggers toggle_drum_calibration(False)
+        else:
+            super().keyPressEvent(event)

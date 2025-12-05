@@ -9,12 +9,12 @@ bins_mm:
   max: 9.0
   min: 7.0
 - label: 10
-  max: 11.0
+  max: 12.0
   min: 9.0
 calibration:
+  drum_diameter_mm: 200.0
   method: ring
-  px_per_mm: 4.215156474823916
-  ring_inner_diameter_mm: 180.0
+  px_per_mm: 3.831016051083482
 overlay:
   colors:
     4: '#FF0000'
@@ -30,6 +30,6 @@ performance:
   preview_downscale: false
 vision:
   hough_param1: 50
-  hough_param2: 40
-  min_circularity: 0.75
-  min_dist_px: 20
+  hough_param2: 20
+  min_circularity: 0.55
+  min_dist_px: 15

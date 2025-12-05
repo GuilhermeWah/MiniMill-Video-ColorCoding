@@ -21,9 +21,10 @@ class VideoWidget(QOpenGLWidget):
         self.current_detections: Optional[FrameDetections] = None
         self.visible_classes: Set[int] = {4, 6, 8, 10} # Default all visible
         
-        self.interaction_mode = 'none' # 'none', 'calibration', 'roi'
+        self.interaction_mode = 'none' # 'none', 'calibration', 'roi', 'drum_calibration'
         self.calibration_points: List[Tuple[float, float]] = []
         self.roi_mask: Optional[QImage] = None
+        self.drum_calibration_overlay: Optional[QImage] = None  # For drum auto-detect
         
         # Zoom & Pan State
         self.zoom_scale = 1.0
@@ -42,6 +43,11 @@ class VideoWidget(QOpenGLWidget):
 
     def set_roi_mask(self, mask: Optional[QImage]):
         self.roi_mask = mask
+        self.update()
+
+    def set_drum_calibration_overlay(self, overlay: Optional[QImage]):
+        """Set the drum calibration overlay image."""
+        self.drum_calibration_overlay = overlay
         self.update()
 
     def _get_base_transform_params(self):
@@ -210,6 +216,10 @@ class VideoWidget(QOpenGLWidget):
         # Draw ROI Mask
         if self.roi_mask:
             painter.drawImage(target_rect, self.roi_mask)
+
+        # Draw Drum Calibration Overlay
+        if self.drum_calibration_overlay:
+            painter.drawImage(target_rect, self.drum_calibration_overlay)
 
         # Draw Calibration UI
         if self.interaction_mode == 'calibration' and self.calibration_points:
