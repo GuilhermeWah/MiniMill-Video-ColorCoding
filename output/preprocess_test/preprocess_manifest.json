@@ -1,0 +1,412 @@
+{
+  "step": "STEP_03",
+  "title": "Preprocessing Baseline Stabilization",
+  "timestamp": "2025-12-12T08:48:25.162957",
+  "config": {
+    "enable_tophat": true,
+    "enable_clahe": true,
+    "enable_blur": true,
+    "enable_glare_suppression": false,
+    "tophat_kernel_size": 21,
+    "clahe_clip_limit": 3.0,
+    "clahe_tile_grid_size": [
+      8,
+      8
+    ],
+    "blur_type": "bilateral",
+    "blur_diameter": 7,
+    "blur_sigma_color": 75,
+    "blur_sigma_space": 75,
+    "glare_threshold": 245,
+    "glare_mode": "cap"
+  },
+  "frames_processed": 18,
+  "aggregate_metrics": {
+    "edge_clarity_avg": 146.95873465087334,
+    "contrast_improvement_avg": 23.530766147221552,
+    "glare_reduction_avg": -1.0060482019829036
+  },
+  "results": [
+    {
+      "frame_id": "IMG_6535_frame_0",
+      "video": "IMG_6535.MOV",
+      "resolution": "3840x2160",
+      "metrics": {
+        "edge_clarity": 57.63182467435404,
+        "contrast_before": 26.452677749658896,
+        "contrast_after": 51.647387907498235,
+        "histogram_min": 5,
+        "histogram_max": 255,
+        "histogram_spread": 250,
+        "glare_pct_before": 0.031061711918948187,
+        "glare_pct_after": 0.3023702765371466
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\IMG_6535_frame_0_original.png",
+        "preprocessed": "output\\preprocess_test\\IMG_6535_frame_0_preprocessed.png",
+        "stages": "output\\preprocess_test\\IMG_6535_frame_0_stages.png",
+        "comparison": "output\\preprocess_test\\IMG_6535_frame_0_comparison.png"
+      }
+    },
+    {
+      "frame_id": "IMG_6535_frame_100",
+      "video": "IMG_6535.MOV",
+      "resolution": "3840x2160",
+      "metrics": {
+        "edge_clarity": 56.77155965128513,
+        "contrast_before": 27.508695178030056,
+        "contrast_after": 52.532584227199216,
+        "histogram_min": 6,
+        "histogram_max": 255,
+        "histogram_spread": 249,
+        "glare_pct_before": 0.025745219447645736,
+        "glare_pct_after": 0.41950055948757387
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\IMG_6535_frame_100_original.png",
+        "preprocessed": "output\\preprocess_test\\IMG_6535_frame_100_preprocessed.png",
+        "stages": "output\\preprocess_test\\IMG_6535_frame_100_stages.png",
+        "comparison": "output\\preprocess_test\\IMG_6535_frame_100_comparison.png"
+      }
+    },
+    {
+      "frame_id": "IMG_6535_frame_171",
+      "video": "IMG_6535.MOV",
+      "resolution": "3840x2160",
+      "metrics": {
+        "edge_clarity": 59.96255524439832,
+        "contrast_before": 26.643801488544486,
+        "contrast_after": 52.51756211337095,
+        "histogram_min": 4,
+        "histogram_max": 255,
+        "histogram_spread": 251,
+        "glare_pct_before": 0.0380526902079837,
+        "glare_pct_after": 0.3385391702001806
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\IMG_6535_frame_171_original.png",
+        "preprocessed": "output\\preprocess_test\\IMG_6535_frame_171_preprocessed.png",
+        "stages": "output\\preprocess_test\\IMG_6535_frame_171_stages.png",
+        "comparison": "output\\preprocess_test\\IMG_6535_frame_171_comparison.png"
+      }
+    },
+    {
+      "frame_id": "IMG_6535_frame_343",
+      "video": "IMG_6535.MOV",
+      "resolution": "3840x2160",
+      "metrics": {
+        "edge_clarity": 49.07880592183128,
+        "contrast_before": 26.028057557511847,
+        "contrast_after": 51.51054922841558,
+        "histogram_min": 4,
+        "histogram_max": 255,
+        "histogram_spread": 251,
+        "glare_pct_before": 0.021810177775973053,
+        "glare_pct_after": 0.3167708545696509
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\IMG_6535_frame_343_original.png",
+        "preprocessed": "output\\preprocess_test\\IMG_6535_frame_343_preprocessed.png",
+        "stages": "output\\preprocess_test\\IMG_6535_frame_343_stages.png",
+        "comparison": "output\\preprocess_test\\IMG_6535_frame_343_comparison.png"
+      }
+    },
+    {
+      "frame_id": "IMG_6535_frame_514",
+      "video": "IMG_6535.MOV",
+      "resolution": "3840x2160",
+      "metrics": {
+        "edge_clarity": 43.84765998302096,
+        "contrast_before": 27.967680999495368,
+        "contrast_after": 52.63620956864268,
+        "histogram_min": 5,
+        "histogram_max": 255,
+        "histogram_spread": 250,
+        "glare_pct_before": 0.03269433559123792,
+        "glare_pct_after": 0.44918082060689224
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\IMG_6535_frame_514_original.png",
+        "preprocessed": "output\\preprocess_test\\IMG_6535_frame_514_preprocessed.png",
+        "stages": "output\\preprocess_test\\IMG_6535_frame_514_stages.png",
+        "comparison": "output\\preprocess_test\\IMG_6535_frame_514_comparison.png"
+      }
+    },
+    {
+      "frame_id": "IMG_6535_frame_676",
+      "video": "IMG_6535.MOV",
+      "resolution": "3840x2160",
+      "metrics": {
+        "edge_clarity": 48.78670685937008,
+        "contrast_before": 26.456699227335342,
+        "contrast_after": 51.1671538154472,
+        "histogram_min": 5,
+        "histogram_max": 255,
+        "histogram_spread": 250,
+        "glare_pct_before": 0.03311295704567118,
+        "glare_pct_after": 0.3831642172427665
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\IMG_6535_frame_676_original.png",
+        "preprocessed": "output\\preprocess_test\\IMG_6535_frame_676_preprocessed.png",
+        "stages": "output\\preprocess_test\\IMG_6535_frame_676_stages.png",
+        "comparison": "output\\preprocess_test\\IMG_6535_frame_676_comparison.png"
+      }
+    },
+    {
+      "frame_id": "IMG_1276_frame_0",
+      "video": "IMG_1276.MOV",
+      "resolution": "1920x1080",
+      "metrics": {
+        "edge_clarity": 355.4977111223453,
+        "contrast_before": 42.26301655725716,
+        "contrast_after": 62.61612365078541,
+        "histogram_min": 13,
+        "histogram_max": 255,
+        "histogram_spread": 242,
+        "glare_pct_before": 0.4226829495576046,
+        "glare_pct_after": 1.9313432907145947
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\IMG_1276_frame_0_original.png",
+        "preprocessed": "output\\preprocess_test\\IMG_1276_frame_0_preprocessed.png",
+        "stages": "output\\preprocess_test\\IMG_1276_frame_0_stages.png",
+        "comparison": "output\\preprocess_test\\IMG_1276_frame_0_comparison.png"
+      }
+    },
+    {
+      "frame_id": "IMG_1276_frame_100",
+      "video": "IMG_1276.MOV",
+      "resolution": "1920x1080",
+      "metrics": {
+        "edge_clarity": 365.91922315395107,
+        "contrast_before": 43.682740815640194,
+        "contrast_after": 63.71837465071497,
+        "histogram_min": 13,
+        "histogram_max": 255,
+        "histogram_spread": 242,
+        "glare_pct_before": 0.5270992576167755,
+        "glare_pct_after": 2.2302558796894747
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\IMG_1276_frame_100_original.png",
+        "preprocessed": "output\\preprocess_test\\IMG_1276_frame_100_preprocessed.png",
+        "stages": "output\\preprocess_test\\IMG_1276_frame_100_stages.png",
+        "comparison": "output\\preprocess_test\\IMG_1276_frame_100_comparison.png"
+      }
+    },
+    {
+      "frame_id": "IMG_1276_frame_1844",
+      "video": "IMG_1276.MOV",
+      "resolution": "1920x1080",
+      "metrics": {
+        "edge_clarity": 332.30133672606485,
+        "contrast_before": 41.964683719845,
+        "contrast_after": 63.35107217542973,
+        "histogram_min": 12,
+        "histogram_max": 255,
+        "histogram_spread": 243,
+        "glare_pct_before": 0.3185055804184776,
+        "glare_pct_after": 2.0080426840486765
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\IMG_1276_frame_1844_original.png",
+        "preprocessed": "output\\preprocess_test\\IMG_1276_frame_1844_preprocessed.png",
+        "stages": "output\\preprocess_test\\IMG_1276_frame_1844_stages.png",
+        "comparison": "output\\preprocess_test\\IMG_1276_frame_1844_comparison.png"
+      }
+    },
+    {
+      "frame_id": "IMG_1276_frame_3689",
+      "video": "IMG_1276.MOV",
+      "resolution": "1920x1080",
+      "metrics": {
+        "edge_clarity": 296.1452482771478,
+        "contrast_before": 41.53731069095545,
+        "contrast_after": 66.59641330463195,
+        "histogram_min": 5,
+        "histogram_max": 255,
+        "histogram_spread": 250,
+        "glare_pct_before": 0.22866454648198278,
+        "glare_pct_after": 2.376964376596411
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\IMG_1276_frame_3689_original.png",
+        "preprocessed": "output\\preprocess_test\\IMG_1276_frame_3689_preprocessed.png",
+        "stages": "output\\preprocess_test\\IMG_1276_frame_3689_stages.png",
+        "comparison": "output\\preprocess_test\\IMG_1276_frame_3689_comparison.png"
+      }
+    },
+    {
+      "frame_id": "IMG_1276_frame_5534",
+      "video": "IMG_1276.MOV",
+      "resolution": "1920x1080",
+      "metrics": {
+        "edge_clarity": 265.84111795811975,
+        "contrast_before": 42.165293198988344,
+        "contrast_after": 66.58212236433944,
+        "histogram_min": 7,
+        "histogram_max": 255,
+        "histogram_spread": 248,
+        "glare_pct_before": 0.2327265081227286,
+        "glare_pct_after": 2.460592998611765
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\IMG_1276_frame_5534_original.png",
+        "preprocessed": "output\\preprocess_test\\IMG_1276_frame_5534_preprocessed.png",
+        "stages": "output\\preprocess_test\\IMG_1276_frame_5534_stages.png",
+        "comparison": "output\\preprocess_test\\IMG_1276_frame_5534_comparison.png"
+      }
+    },
+    {
+      "frame_id": "IMG_1276_frame_7369",
+      "video": "IMG_1276.MOV",
+      "resolution": "1920x1080",
+      "metrics": {
+        "edge_clarity": 324.53645235161963,
+        "contrast_before": 42.457106045173965,
+        "contrast_after": 63.09796327678987,
+        "histogram_min": 12,
+        "histogram_max": 255,
+        "histogram_spread": 243,
+        "glare_pct_before": 0.3720278985083043,
+        "glare_pct_after": 1.9621664114002537
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\IMG_1276_frame_7369_original.png",
+        "preprocessed": "output\\preprocess_test\\IMG_1276_frame_7369_preprocessed.png",
+        "stages": "output\\preprocess_test\\IMG_1276_frame_7369_stages.png",
+        "comparison": "output\\preprocess_test\\IMG_1276_frame_7369_comparison.png"
+      }
+    },
+    {
+      "frame_id": "DSC_3310_frame_0",
+      "video": "DSC_3310.MOV",
+      "resolution": "1920x1080",
+      "metrics": {
+        "edge_clarity": 85.90859122622723,
+        "contrast_before": 29.10466056291348,
+        "contrast_after": 50.801006975530356,
+        "histogram_min": 3,
+        "histogram_max": 255,
+        "histogram_spread": 252,
+        "glare_pct_before": 0.01720887563934855,
+        "glare_pct_after": 0.8031239931837325
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\DSC_3310_frame_0_original.png",
+        "preprocessed": "output\\preprocess_test\\DSC_3310_frame_0_preprocessed.png",
+        "stages": "output\\preprocess_test\\DSC_3310_frame_0_stages.png",
+        "comparison": "output\\preprocess_test\\DSC_3310_frame_0_comparison.png"
+      }
+    },
+    {
+      "frame_id": "DSC_3310_frame_100",
+      "video": "DSC_3310.MOV",
+      "resolution": "1920x1080",
+      "metrics": {
+        "edge_clarity": 63.96882373781663,
+        "contrast_before": 30.983010452101688,
+        "contrast_after": 53.577041478785205,
+        "histogram_min": 6,
+        "histogram_max": 255,
+        "histogram_spread": 249,
+        "glare_pct_before": 0.01669131546974408,
+        "glare_pct_after": 0.9062478569774226
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\DSC_3310_frame_100_original.png",
+        "preprocessed": "output\\preprocess_test\\DSC_3310_frame_100_preprocessed.png",
+        "stages": "output\\preprocess_test\\DSC_3310_frame_100_stages.png",
+        "comparison": "output\\preprocess_test\\DSC_3310_frame_100_comparison.png"
+      }
+    },
+    {
+      "frame_id": "DSC_3310_frame_944",
+      "video": "DSC_3310.MOV",
+      "resolution": "1920x1080",
+      "metrics": {
+        "edge_clarity": 70.34856264816834,
+        "contrast_before": 30.404043330544418,
+        "contrast_after": 54.64684734063744,
+        "histogram_min": 3,
+        "histogram_max": 255,
+        "histogram_spread": 252,
+        "glare_pct_before": 0.022255087292992106,
+        "glare_pct_after": 0.882051919048414
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\DSC_3310_frame_944_original.png",
+        "preprocessed": "output\\preprocess_test\\DSC_3310_frame_944_preprocessed.png",
+        "stages": "output\\preprocess_test\\DSC_3310_frame_944_stages.png",
+        "comparison": "output\\preprocess_test\\DSC_3310_frame_944_comparison.png"
+      }
+    },
+    {
+      "frame_id": "DSC_3310_frame_1888",
+      "video": "DSC_3310.MOV",
+      "resolution": "1920x1080",
+      "metrics": {
+        "edge_clarity": 51.7661512922609,
+        "contrast_before": 30.287825517360353,
+        "contrast_after": 55.89916525279526,
+        "histogram_min": 3,
+        "histogram_max": 255,
+        "histogram_spread": 252,
+        "glare_pct_before": 0.010221813349688235,
+        "glare_pct_after": 0.9136230893942865
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\DSC_3310_frame_1888_original.png",
+        "preprocessed": "output\\preprocess_test\\DSC_3310_frame_1888_preprocessed.png",
+        "stages": "output\\preprocess_test\\DSC_3310_frame_1888_stages.png",
+        "comparison": "output\\preprocess_test\\DSC_3310_frame_1888_comparison.png"
+      }
+    },
+    {
+      "frame_id": "DSC_3310_frame_2832",
+      "video": "DSC_3310.MOV",
+      "resolution": "1920x1080",
+      "metrics": {
+        "edge_clarity": 54.6802404182407,
+        "contrast_before": 28.753096595037878,
+        "contrast_after": 55.271174758038185,
+        "histogram_min": 2,
+        "histogram_max": 255,
+        "histogram_spread": 253,
+        "glare_pct_before": 0.009445473095281534,
+        "glare_pct_after": 0.7974308313180835
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\DSC_3310_frame_2832_original.png",
+        "preprocessed": "output\\preprocess_test\\DSC_3310_frame_2832_preprocessed.png",
+        "stages": "output\\preprocess_test\\DSC_3310_frame_2832_stages.png",
+        "comparison": "output\\preprocess_test\\DSC_3310_frame_2832_comparison.png"
+      }
+    },
+    {
+      "frame_id": "DSC_3310_frame_3767",
+      "video": "DSC_3310.MOV",
+      "resolution": "1920x1080",
+      "metrics": {
+        "edge_clarity": 62.26465246949817,
+        "contrast_before": 32.584826727976704,
+        "contrast_after": 52.63026497530693,
+        "histogram_min": 3,
+        "histogram_max": 255,
+        "histogram_spread": 252,
+        "glare_pct_before": 0.02083179682657982,
+        "glare_pct_after": 1.0083366004319039
+      },
+      "outputs": {
+        "original": "output\\preprocess_test\\DSC_3310_frame_3767_original.png",
+        "preprocessed": "output\\preprocess_test\\DSC_3310_frame_3767_preprocessed.png",
+        "stages": "output\\preprocess_test\\DSC_3310_frame_3767_stages.png",
+        "comparison": "output\\preprocess_test\\DSC_3310_frame_3767_comparison.png"
+      }
+    }
+  ],
+  "outputs": {
+    "comparison_grid": "output\\preprocess_test\\comparison_grid.png"
+  }
+}

@@ -1,0 +1,460 @@
+{
+  "timestamp": "2025-12-12T11:25:12.548810",
+  "config": {
+    "drum_diameter_mm": 200.0,
+    "size_bins": {
+      "4mm": [
+        2.0,
+        5.0
+      ],
+      "6mm": [
+        5.0,
+        7.0
+      ],
+      "8mm": [
+        7.0,
+        9.0
+      ],
+      "10mm": [
+        9.0,
+        13.0
+      ]
+    }
+  },
+  "calibrations": {
+    "IMG_6535": 8.72,
+    "IMG_1276": 3.65,
+    "DSC_3310": 4.96
+  },
+  "total_count": 1830,
+  "total_by_class": {
+    "4mm": 327,
+    "6mm": 851,
+    "8mm": 396,
+    "10mm": 219,
+    "unknown": 37
+  },
+  "percentages": {
+    "4mm": 17.9,
+    "6mm": 46.5,
+    "8mm": 21.6,
+    "10mm": 12.0,
+    "unknown": 2.0
+  },
+  "per_frame_results": [
+    {
+      "video": "IMG_6535",
+      "frame_idx": 0,
+      "px_per_mm": 8.72,
+      "stats": {
+        "total_count": 71,
+        "by_class": {
+          "4mm": 7,
+          "6mm": 25,
+          "8mm": 21,
+          "10mm": 15,
+          "unknown": 3
+        },
+        "percentages": {
+          "4mm": 9.9,
+          "6mm": 35.2,
+          "8mm": 29.6,
+          "10mm": 21.1,
+          "unknown": 4.2
+        },
+        "px_per_mm_used": 8.72
+      }
+    },
+    {
+      "video": "IMG_6535",
+      "frame_idx": 100,
+      "px_per_mm": 8.72,
+      "stats": {
+        "total_count": 83,
+        "by_class": {
+          "4mm": 4,
+          "6mm": 40,
+          "8mm": 20,
+          "10mm": 16,
+          "unknown": 3
+        },
+        "percentages": {
+          "4mm": 4.8,
+          "6mm": 48.2,
+          "8mm": 24.1,
+          "10mm": 19.3,
+          "unknown": 3.6
+        },
+        "px_per_mm_used": 8.72
+      }
+    },
+    {
+      "video": "IMG_6535",
+      "frame_idx": 171,
+      "px_per_mm": 8.72,
+      "stats": {
+        "total_count": 83,
+        "by_class": {
+          "4mm": 6,
+          "6mm": 46,
+          "8mm": 15,
+          "10mm": 14,
+          "unknown": 2
+        },
+        "percentages": {
+          "4mm": 7.2,
+          "6mm": 55.4,
+          "8mm": 18.1,
+          "10mm": 16.9,
+          "unknown": 2.4
+        },
+        "px_per_mm_used": 8.72
+      }
+    },
+    {
+      "video": "IMG_6535",
+      "frame_idx": 343,
+      "px_per_mm": 8.72,
+      "stats": {
+        "total_count": 53,
+        "by_class": {
+          "4mm": 4,
+          "6mm": 31,
+          "8mm": 9,
+          "10mm": 7,
+          "unknown": 2
+        },
+        "percentages": {
+          "4mm": 7.5,
+          "6mm": 58.5,
+          "8mm": 17.0,
+          "10mm": 13.2,
+          "unknown": 3.8
+        },
+        "px_per_mm_used": 8.72
+      }
+    },
+    {
+      "video": "IMG_6535",
+      "frame_idx": 514,
+      "px_per_mm": 8.72,
+      "stats": {
+        "total_count": 82,
+        "by_class": {
+          "4mm": 15,
+          "6mm": 35,
+          "8mm": 19,
+          "10mm": 9,
+          "unknown": 4
+        },
+        "percentages": {
+          "4mm": 18.3,
+          "6mm": 42.7,
+          "8mm": 23.2,
+          "10mm": 11.0,
+          "unknown": 4.9
+        },
+        "px_per_mm_used": 8.72
+      }
+    },
+    {
+      "video": "IMG_6535",
+      "frame_idx": 676,
+      "px_per_mm": 8.72,
+      "stats": {
+        "total_count": 61,
+        "by_class": {
+          "4mm": 6,
+          "6mm": 26,
+          "8mm": 13,
+          "10mm": 14,
+          "unknown": 2
+        },
+        "percentages": {
+          "4mm": 9.8,
+          "6mm": 42.6,
+          "8mm": 21.3,
+          "10mm": 23.0,
+          "unknown": 3.3
+        },
+        "px_per_mm_used": 8.72
+      }
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 0,
+      "px_per_mm": 3.65,
+      "stats": {
+        "total_count": 126,
+        "by_class": {
+          "4mm": 29,
+          "6mm": 55,
+          "8mm": 23,
+          "10mm": 17,
+          "unknown": 2
+        },
+        "percentages": {
+          "4mm": 23.0,
+          "6mm": 43.7,
+          "8mm": 18.3,
+          "10mm": 13.5,
+          "unknown": 1.6
+        },
+        "px_per_mm_used": 3.65
+      }
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 100,
+      "px_per_mm": 3.65,
+      "stats": {
+        "total_count": 129,
+        "by_class": {
+          "4mm": 25,
+          "6mm": 73,
+          "8mm": 25,
+          "10mm": 6,
+          "unknown": 0
+        },
+        "percentages": {
+          "4mm": 19.4,
+          "6mm": 56.6,
+          "8mm": 19.4,
+          "10mm": 4.7,
+          "unknown": 0.0
+        },
+        "px_per_mm_used": 3.65
+      }
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 1844,
+      "px_per_mm": 3.65,
+      "stats": {
+        "total_count": 113,
+        "by_class": {
+          "4mm": 22,
+          "6mm": 52,
+          "8mm": 20,
+          "10mm": 16,
+          "unknown": 3
+        },
+        "percentages": {
+          "4mm": 19.5,
+          "6mm": 46.0,
+          "8mm": 17.7,
+          "10mm": 14.2,
+          "unknown": 2.7
+        },
+        "px_per_mm_used": 3.65
+      }
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 3689,
+      "px_per_mm": 3.65,
+      "stats": {
+        "total_count": 96,
+        "by_class": {
+          "4mm": 8,
+          "6mm": 35,
+          "8mm": 24,
+          "10mm": 24,
+          "unknown": 5
+        },
+        "percentages": {
+          "4mm": 8.3,
+          "6mm": 36.5,
+          "8mm": 25.0,
+          "10mm": 25.0,
+          "unknown": 5.2
+        },
+        "px_per_mm_used": 3.65
+      }
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 5534,
+      "px_per_mm": 3.65,
+      "stats": {
+        "total_count": 104,
+        "by_class": {
+          "4mm": 9,
+          "6mm": 35,
+          "8mm": 35,
+          "10mm": 20,
+          "unknown": 5
+        },
+        "percentages": {
+          "4mm": 8.7,
+          "6mm": 33.7,
+          "8mm": 33.7,
+          "10mm": 19.2,
+          "unknown": 4.8
+        },
+        "px_per_mm_used": 3.65
+      }
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 7369,
+      "px_per_mm": 3.65,
+      "stats": {
+        "total_count": 119,
+        "by_class": {
+          "4mm": 28,
+          "6mm": 43,
+          "8mm": 30,
+          "10mm": 16,
+          "unknown": 2
+        },
+        "percentages": {
+          "4mm": 23.5,
+          "6mm": 36.1,
+          "8mm": 25.2,
+          "10mm": 13.4,
+          "unknown": 1.7
+        },
+        "px_per_mm_used": 3.65
+      }
+    },
+    {
+      "video": "DSC_3310",
+      "frame_idx": 0,
+      "px_per_mm": 4.96,
+      "stats": {
+        "total_count": 149,
+        "by_class": {
+          "4mm": 34,
+          "6mm": 82,
+          "8mm": 23,
+          "10mm": 9,
+          "unknown": 1
+        },
+        "percentages": {
+          "4mm": 22.8,
+          "6mm": 55.0,
+          "8mm": 15.4,
+          "10mm": 6.0,
+          "unknown": 0.7
+        },
+        "px_per_mm_used": 4.96
+      }
+    },
+    {
+      "video": "DSC_3310",
+      "frame_idx": 100,
+      "px_per_mm": 4.96,
+      "stats": {
+        "total_count": 131,
+        "by_class": {
+          "4mm": 30,
+          "6mm": 71,
+          "8mm": 25,
+          "10mm": 4,
+          "unknown": 1
+        },
+        "percentages": {
+          "4mm": 22.9,
+          "6mm": 54.2,
+          "8mm": 19.1,
+          "10mm": 3.1,
+          "unknown": 0.8
+        },
+        "px_per_mm_used": 4.96
+      }
+    },
+    {
+      "video": "DSC_3310",
+      "frame_idx": 944,
+      "px_per_mm": 4.96,
+      "stats": {
+        "total_count": 100,
+        "by_class": {
+          "4mm": 22,
+          "6mm": 42,
+          "8mm": 25,
+          "10mm": 11,
+          "unknown": 0
+        },
+        "percentages": {
+          "4mm": 22.0,
+          "6mm": 42.0,
+          "8mm": 25.0,
+          "10mm": 11.0,
+          "unknown": 0.0
+        },
+        "px_per_mm_used": 4.96
+      }
+    },
+    {
+      "video": "DSC_3310",
+      "frame_idx": 1888,
+      "px_per_mm": 4.96,
+      "stats": {
+        "total_count": 115,
+        "by_class": {
+          "4mm": 19,
+          "6mm": 69,
+          "8mm": 22,
+          "10mm": 4,
+          "unknown": 1
+        },
+        "percentages": {
+          "4mm": 16.5,
+          "6mm": 60.0,
+          "8mm": 19.1,
+          "10mm": 3.5,
+          "unknown": 0.9
+        },
+        "px_per_mm_used": 4.96
+      }
+    },
+    {
+      "video": "DSC_3310",
+      "frame_idx": 2832,
+      "px_per_mm": 4.96,
+      "stats": {
+        "total_count": 97,
+        "by_class": {
+          "4mm": 21,
+          "6mm": 43,
+          "8mm": 27,
+          "10mm": 6,
+          "unknown": 0
+        },
+        "percentages": {
+          "4mm": 21.6,
+          "6mm": 44.3,
+          "8mm": 27.8,
+          "10mm": 6.2,
+          "unknown": 0.0
+        },
+        "px_per_mm_used": 4.96
+      }
+    },
+    {
+      "video": "DSC_3310",
+      "frame_idx": 3767,
+      "px_per_mm": 4.96,
+      "stats": {
+        "total_count": 118,
+        "by_class": {
+          "4mm": 38,
+          "6mm": 48,
+          "8mm": 20,
+          "10mm": 11,
+          "unknown": 1
+        },
+        "percentages": {
+          "4mm": 32.2,
+          "6mm": 40.7,
+          "8mm": 16.9,
+          "10mm": 9.3,
+          "unknown": 0.8
+        },
+        "px_per_mm_used": 4.96
+      }
+    }
+  ]
+}

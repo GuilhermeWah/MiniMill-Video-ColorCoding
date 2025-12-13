@@ -1,0 +1,223 @@
+{
+  "step": "STEP_06",
+  "description": "Filtering and cleanup results",
+  "timestamp": "2025-12-12T10:16:05.595955",
+  "config": {
+    "rim_margin_ratio": 0.12,
+    "min_confidence": 0.5,
+    "nms_overlap_threshold": 0.5,
+    "filter_order": [
+      "rim",
+      "confidence",
+      "nms"
+    ]
+  },
+  "global_stats": {
+    "input_total": 14234,
+    "after_rim": 13524,
+    "after_confidence": 5133,
+    "after_nms": 1830,
+    "overall_reduction": 0.8714,
+    "retention_rate": 0.1286
+  },
+  "frames": [
+    {
+      "video": "IMG_6535",
+      "frame_idx": 0,
+      "input": 965,
+      "after_rim": 950,
+      "after_conf": 176,
+      "after_nms": 71,
+      "retention_rate": 0.074,
+      "overlay_path": "output\\filter_test\\IMG_6535_frame_0_filtered.png",
+      "json_path": "output\\filter_test\\IMG_6535_frame_0_filtered.json"
+    },
+    {
+      "video": "IMG_6535",
+      "frame_idx": 100,
+      "input": 1350,
+      "after_rim": 1341,
+      "after_conf": 251,
+      "after_nms": 83,
+      "retention_rate": 0.061,
+      "overlay_path": "output\\filter_test\\IMG_6535_frame_100_filtered.png",
+      "json_path": "output\\filter_test\\IMG_6535_frame_100_filtered.json"
+    },
+    {
+      "video": "IMG_6535",
+      "frame_idx": 171,
+      "input": 1338,
+      "after_rim": 1338,
+      "after_conf": 247,
+      "after_nms": 83,
+      "retention_rate": 0.062,
+      "overlay_path": "output\\filter_test\\IMG_6535_frame_171_filtered.png",
+      "json_path": "output\\filter_test\\IMG_6535_frame_171_filtered.json"
+    },
+    {
+      "video": "IMG_6535",
+      "frame_idx": 343,
+      "input": 765,
+      "after_rim": 765,
+      "after_conf": 134,
+      "after_nms": 53,
+      "retention_rate": 0.069,
+      "overlay_path": "output\\filter_test\\IMG_6535_frame_343_filtered.png",
+      "json_path": "output\\filter_test\\IMG_6535_frame_343_filtered.json"
+    },
+    {
+      "video": "IMG_6535",
+      "frame_idx": 514,
+      "input": 1074,
+      "after_rim": 1074,
+      "after_conf": 225,
+      "after_nms": 82,
+      "retention_rate": 0.076,
+      "overlay_path": "output\\filter_test\\IMG_6535_frame_514_filtered.png",
+      "json_path": "output\\filter_test\\IMG_6535_frame_514_filtered.json"
+    },
+    {
+      "video": "IMG_6535",
+      "frame_idx": 676,
+      "input": 998,
+      "after_rim": 996,
+      "after_conf": 211,
+      "after_nms": 61,
+      "retention_rate": 0.061,
+      "overlay_path": "output\\filter_test\\IMG_6535_frame_676_filtered.png",
+      "json_path": "output\\filter_test\\IMG_6535_frame_676_filtered.json"
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 0,
+      "input": 337,
+      "after_rim": 336,
+      "after_conf": 336,
+      "after_nms": 126,
+      "retention_rate": 0.374,
+      "overlay_path": "output\\filter_test\\IMG_1276_frame_0_filtered.png",
+      "json_path": "output\\filter_test\\IMG_1276_frame_0_filtered.json"
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 100,
+      "input": 306,
+      "after_rim": 306,
+      "after_conf": 305,
+      "after_nms": 129,
+      "retention_rate": 0.422,
+      "overlay_path": "output\\filter_test\\IMG_1276_frame_100_filtered.png",
+      "json_path": "output\\filter_test\\IMG_1276_frame_100_filtered.json"
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 1844,
+      "input": 241,
+      "after_rim": 241,
+      "after_conf": 241,
+      "after_nms": 113,
+      "retention_rate": 0.469,
+      "overlay_path": "output\\filter_test\\IMG_1276_frame_1844_filtered.png",
+      "json_path": "output\\filter_test\\IMG_1276_frame_1844_filtered.json"
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 3689,
+      "input": 203,
+      "after_rim": 203,
+      "after_conf": 196,
+      "after_nms": 96,
+      "retention_rate": 0.473,
+      "overlay_path": "output\\filter_test\\IMG_1276_frame_3689_filtered.png",
+      "json_path": "output\\filter_test\\IMG_1276_frame_3689_filtered.json"
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 5534,
+      "input": 228,
+      "after_rim": 228,
+      "after_conf": 219,
+      "after_nms": 104,
+      "retention_rate": 0.456,
+      "overlay_path": "output\\filter_test\\IMG_1276_frame_5534_filtered.png",
+      "json_path": "output\\filter_test\\IMG_1276_frame_5534_filtered.json"
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 7369,
+      "input": 276,
+      "after_rim": 276,
+      "after_conf": 274,
+      "after_nms": 119,
+      "retention_rate": 0.431,
+      "overlay_path": "output\\filter_test\\IMG_1276_frame_7369_filtered.png",
+      "json_path": "output\\filter_test\\IMG_1276_frame_7369_filtered.json"
+    },
+    {
+      "video": "DSC_3310",
+      "frame_idx": 0,
+      "input": 3351,
+      "after_rim": 2867,
+      "after_conf": 609,
+      "after_nms": 149,
+      "retention_rate": 0.044,
+      "overlay_path": "output\\filter_test\\DSC_3310_frame_0_filtered.png",
+      "json_path": "output\\filter_test\\DSC_3310_frame_0_filtered.json"
+    },
+    {
+      "video": "DSC_3310",
+      "frame_idx": 100,
+      "input": 644,
+      "after_rim": 574,
+      "after_conf": 447,
+      "after_nms": 131,
+      "retention_rate": 0.203,
+      "overlay_path": "output\\filter_test\\DSC_3310_frame_100_filtered.png",
+      "json_path": "output\\filter_test\\DSC_3310_frame_100_filtered.json"
+    },
+    {
+      "video": "DSC_3310",
+      "frame_idx": 944,
+      "input": 517,
+      "after_rim": 484,
+      "after_conf": 323,
+      "after_nms": 100,
+      "retention_rate": 0.193,
+      "overlay_path": "output\\filter_test\\DSC_3310_frame_944_filtered.png",
+      "json_path": "output\\filter_test\\DSC_3310_frame_944_filtered.json"
+    },
+    {
+      "video": "DSC_3310",
+      "frame_idx": 1888,
+      "input": 553,
+      "after_rim": 521,
+      "after_conf": 292,
+      "after_nms": 115,
+      "retention_rate": 0.208,
+      "overlay_path": "output\\filter_test\\DSC_3310_frame_1888_filtered.png",
+      "json_path": "output\\filter_test\\DSC_3310_frame_1888_filtered.json"
+    },
+    {
+      "video": "DSC_3310",
+      "frame_idx": 2832,
+      "input": 550,
+      "after_rim": 522,
+      "after_conf": 253,
+      "after_nms": 97,
+      "retention_rate": 0.176,
+      "overlay_path": "output\\filter_test\\DSC_3310_frame_2832_filtered.png",
+      "json_path": "output\\filter_test\\DSC_3310_frame_2832_filtered.json"
+    },
+    {
+      "video": "DSC_3310",
+      "frame_idx": 3767,
+      "input": 538,
+      "after_rim": 502,
+      "after_conf": 394,
+      "after_nms": 118,
+      "retention_rate": 0.219,
+      "overlay_path": "output\\filter_test\\DSC_3310_frame_3767_filtered.png",
+      "json_path": "output\\filter_test\\DSC_3310_frame_3767_filtered.json"
+    }
+  ]
+}

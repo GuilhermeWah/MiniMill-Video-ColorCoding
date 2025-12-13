@@ -1,0 +1,367 @@
+{
+  "step": "STEP_04",
+  "title": "Candidate Generation (Circle Detection)",
+  "timestamp": "2025-12-12T09:12:11.304872",
+  "config": {
+    "drum_diameter_mm": 200,
+    "min_bead_diameter_mm": 3.0,
+    "max_bead_diameter_mm": 12.0,
+    "dp": 1,
+    "min_dist_ratio": 0.5,
+    "param1": 50,
+    "param2": 25,
+    "radius_margin_low": 0.7,
+    "radius_margin_high": 1.5
+  },
+  "frames_processed": 18,
+  "statistics": {
+    "total_candidates": 14234,
+    "avg_per_frame": 790.7777777777778,
+    "min_per_frame": 203,
+    "max_per_frame": 3351
+  },
+  "results": [
+    {
+      "frame_id": "IMG_6535_frame_0",
+      "video": "IMG_6535.MOV",
+      "resolution": "3840x2160",
+      "candidate_count": 965,
+      "params": {
+        "dp": 1,
+        "minDist": 4,
+        "param1": 50,
+        "param2": 35,
+        "minRadius": 9,
+        "maxRadius": 78,
+        "drum_radius_px": 872
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\IMG_6535_frame_0_candidates.png",
+        "json": "output\\detection_test\\IMG_6535_frame_0_candidates.json"
+      }
+    },
+    {
+      "frame_id": "IMG_6535_frame_100",
+      "video": "IMG_6535.MOV",
+      "resolution": "3840x2160",
+      "candidate_count": 1350,
+      "params": {
+        "dp": 1,
+        "minDist": 4,
+        "param1": 50,
+        "param2": 35,
+        "minRadius": 9,
+        "maxRadius": 78,
+        "drum_radius_px": 872
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\IMG_6535_frame_100_candidates.png",
+        "json": "output\\detection_test\\IMG_6535_frame_100_candidates.json"
+      }
+    },
+    {
+      "frame_id": "IMG_6535_frame_171",
+      "video": "IMG_6535.MOV",
+      "resolution": "3840x2160",
+      "candidate_count": 1338,
+      "params": {
+        "dp": 1,
+        "minDist": 4,
+        "param1": 50,
+        "param2": 35,
+        "minRadius": 9,
+        "maxRadius": 78,
+        "drum_radius_px": 872
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\IMG_6535_frame_171_candidates.png",
+        "json": "output\\detection_test\\IMG_6535_frame_171_candidates.json"
+      }
+    },
+    {
+      "frame_id": "IMG_6535_frame_343",
+      "video": "IMG_6535.MOV",
+      "resolution": "3840x2160",
+      "candidate_count": 765,
+      "params": {
+        "dp": 1,
+        "minDist": 4,
+        "param1": 50,
+        "param2": 35,
+        "minRadius": 9,
+        "maxRadius": 78,
+        "drum_radius_px": 872
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\IMG_6535_frame_343_candidates.png",
+        "json": "output\\detection_test\\IMG_6535_frame_343_candidates.json"
+      }
+    },
+    {
+      "frame_id": "IMG_6535_frame_514",
+      "video": "IMG_6535.MOV",
+      "resolution": "3840x2160",
+      "candidate_count": 1074,
+      "params": {
+        "dp": 1,
+        "minDist": 4,
+        "param1": 50,
+        "param2": 35,
+        "minRadius": 9,
+        "maxRadius": 78,
+        "drum_radius_px": 872
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\IMG_6535_frame_514_candidates.png",
+        "json": "output\\detection_test\\IMG_6535_frame_514_candidates.json"
+      }
+    },
+    {
+      "frame_id": "IMG_6535_frame_676",
+      "video": "IMG_6535.MOV",
+      "resolution": "3840x2160",
+      "candidate_count": 998,
+      "params": {
+        "dp": 1,
+        "minDist": 4,
+        "param1": 50,
+        "param2": 35,
+        "minRadius": 9,
+        "maxRadius": 78,
+        "drum_radius_px": 872
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\IMG_6535_frame_676_candidates.png",
+        "json": "output\\detection_test\\IMG_6535_frame_676_candidates.json"
+      }
+    },
+    {
+      "frame_id": "IMG_1276_frame_0",
+      "video": "IMG_1276.MOV",
+      "resolution": "1920x1080",
+      "candidate_count": 337,
+      "params": {
+        "dp": 1,
+        "minDist": 1,
+        "param1": 50,
+        "param2": 25,
+        "minRadius": 3,
+        "maxRadius": 32,
+        "drum_radius_px": 365
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\IMG_1276_frame_0_candidates.png",
+        "json": "output\\detection_test\\IMG_1276_frame_0_candidates.json"
+      }
+    },
+    {
+      "frame_id": "IMG_1276_frame_100",
+      "video": "IMG_1276.MOV",
+      "resolution": "1920x1080",
+      "candidate_count": 306,
+      "params": {
+        "dp": 1,
+        "minDist": 1,
+        "param1": 50,
+        "param2": 25,
+        "minRadius": 3,
+        "maxRadius": 32,
+        "drum_radius_px": 365
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\IMG_1276_frame_100_candidates.png",
+        "json": "output\\detection_test\\IMG_1276_frame_100_candidates.json"
+      }
+    },
+    {
+      "frame_id": "IMG_1276_frame_1844",
+      "video": "IMG_1276.MOV",
+      "resolution": "1920x1080",
+      "candidate_count": 241,
+      "params": {
+        "dp": 1,
+        "minDist": 1,
+        "param1": 50,
+        "param2": 25,
+        "minRadius": 3,
+        "maxRadius": 32,
+        "drum_radius_px": 365
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\IMG_1276_frame_1844_candidates.png",
+        "json": "output\\detection_test\\IMG_1276_frame_1844_candidates.json"
+      }
+    },
+    {
+      "frame_id": "IMG_1276_frame_3689",
+      "video": "IMG_1276.MOV",
+      "resolution": "1920x1080",
+      "candidate_count": 203,
+      "params": {
+        "dp": 1,
+        "minDist": 1,
+        "param1": 50,
+        "param2": 25,
+        "minRadius": 3,
+        "maxRadius": 32,
+        "drum_radius_px": 365
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\IMG_1276_frame_3689_candidates.png",
+        "json": "output\\detection_test\\IMG_1276_frame_3689_candidates.json"
+      }
+    },
+    {
+      "frame_id": "IMG_1276_frame_5534",
+      "video": "IMG_1276.MOV",
+      "resolution": "1920x1080",
+      "candidate_count": 228,
+      "params": {
+        "dp": 1,
+        "minDist": 1,
+        "param1": 50,
+        "param2": 25,
+        "minRadius": 3,
+        "maxRadius": 32,
+        "drum_radius_px": 365
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\IMG_1276_frame_5534_candidates.png",
+        "json": "output\\detection_test\\IMG_1276_frame_5534_candidates.json"
+      }
+    },
+    {
+      "frame_id": "IMG_1276_frame_7369",
+      "video": "IMG_1276.MOV",
+      "resolution": "1920x1080",
+      "candidate_count": 276,
+      "params": {
+        "dp": 1,
+        "minDist": 1,
+        "param1": 50,
+        "param2": 25,
+        "minRadius": 3,
+        "maxRadius": 32,
+        "drum_radius_px": 365
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\IMG_1276_frame_7369_candidates.png",
+        "json": "output\\detection_test\\IMG_1276_frame_7369_candidates.json"
+      }
+    },
+    {
+      "frame_id": "DSC_3310_frame_0",
+      "video": "DSC_3310.MOV",
+      "resolution": "1920x1080",
+      "candidate_count": 3351,
+      "params": {
+        "dp": 1,
+        "minDist": 2,
+        "param1": 50,
+        "param2": 25,
+        "minRadius": 5,
+        "maxRadius": 44,
+        "drum_radius_px": 496
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\DSC_3310_frame_0_candidates.png",
+        "json": "output\\detection_test\\DSC_3310_frame_0_candidates.json"
+      }
+    },
+    {
+      "frame_id": "DSC_3310_frame_100",
+      "video": "DSC_3310.MOV",
+      "resolution": "1920x1080",
+      "candidate_count": 644,
+      "params": {
+        "dp": 1,
+        "minDist": 2,
+        "param1": 50,
+        "param2": 25,
+        "minRadius": 5,
+        "maxRadius": 44,
+        "drum_radius_px": 496
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\DSC_3310_frame_100_candidates.png",
+        "json": "output\\detection_test\\DSC_3310_frame_100_candidates.json"
+      }
+    },
+    {
+      "frame_id": "DSC_3310_frame_944",
+      "video": "DSC_3310.MOV",
+      "resolution": "1920x1080",
+      "candidate_count": 517,
+      "params": {
+        "dp": 1,
+        "minDist": 2,
+        "param1": 50,
+        "param2": 25,
+        "minRadius": 5,
+        "maxRadius": 44,
+        "drum_radius_px": 496
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\DSC_3310_frame_944_candidates.png",
+        "json": "output\\detection_test\\DSC_3310_frame_944_candidates.json"
+      }
+    },
+    {
+      "frame_id": "DSC_3310_frame_1888",
+      "video": "DSC_3310.MOV",
+      "resolution": "1920x1080",
+      "candidate_count": 553,
+      "params": {
+        "dp": 1,
+        "minDist": 2,
+        "param1": 50,
+        "param2": 25,
+        "minRadius": 5,
+        "maxRadius": 44,
+        "drum_radius_px": 496
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\DSC_3310_frame_1888_candidates.png",
+        "json": "output\\detection_test\\DSC_3310_frame_1888_candidates.json"
+      }
+    },
+    {
+      "frame_id": "DSC_3310_frame_2832",
+      "video": "DSC_3310.MOV",
+      "resolution": "1920x1080",
+      "candidate_count": 550,
+      "params": {
+        "dp": 1,
+        "minDist": 2,
+        "param1": 50,
+        "param2": 25,
+        "minRadius": 5,
+        "maxRadius": 44,
+        "drum_radius_px": 496
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\DSC_3310_frame_2832_candidates.png",
+        "json": "output\\detection_test\\DSC_3310_frame_2832_candidates.json"
+      }
+    },
+    {
+      "frame_id": "DSC_3310_frame_3767",
+      "video": "DSC_3310.MOV",
+      "resolution": "1920x1080",
+      "candidate_count": 538,
+      "params": {
+        "dp": 1,
+        "minDist": 2,
+        "param1": 50,
+        "param2": 25,
+        "minRadius": 5,
+        "maxRadius": 44,
+        "drum_radius_px": 496
+      },
+      "outputs": {
+        "overlay": "output\\detection_test\\DSC_3310_frame_3767_candidates.png",
+        "json": "output\\detection_test\\DSC_3310_frame_3767_candidates.json"
+      }
+    }
+  ]
+}

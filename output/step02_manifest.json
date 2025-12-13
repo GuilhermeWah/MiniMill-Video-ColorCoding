@@ -1,0 +1,23 @@
+{
+  "step_id": "STEP_02",
+  "title": "Golden Frames Lock",
+  "timestamp": "2025-12-12T06:40:15.312805",
+  "duration_sec": 23.467882,
+  "input": {
+    "videos": [
+      "IMG_6535.MOV",
+      "IMG_1276.MOV",
+      "DSC_3310.MOV"
+    ],
+    "frame_selection": "strategic"
+  },
+  "output": {
+    "golden_frames_dir": "C:\\Users\\guilh\\OneDrive\\\u00c1rea de Trabalho\\Capstone\\MillPresenter - Copy\\data/golden_frames",
+    "manifest": "C:\\Users\\guilh\\OneDrive\\\u00c1rea de Trabalho\\Capstone\\MillPresenter - Copy\\data/golden_frames\\manifest.json",
+    "frame_count": 18
+  },
+  "validation": {
+    "determinism": "SHA256 hashes computed for all frames",
+    "immutability": "Re-run should produce identical hashes"
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "summary": {
+    "video": "IMG_1276",
+    "n_frames": 6,
+    "total_detections": 687,
+    "throughput_fps": 0
+  },
+  "count_stability": {
+    "n_frames": 6,
+    "mean_count": 114.5,
+    "std_count": 12.79,
+    "cv": 0.112,
+    "min_count": 96,
+    "max_count": 129,
+    "range": 33,
+    "stability_rating": "Good"
+  },
+  "size_distribution": {
+    "mean_proportions": {
+      "4mm": 17.1,
+      "6mm": 42.1,
+      "8mm": 23.2,
+      "10mm": 15.0,
+      "unknown": 2.7
+    },
+    "std_proportions": {
+      "4mm": 6.9,
+      "6mm": 8.6,
+      "8mm": 6.1,
+      "10mm": 6.8,
+      "unknown": 2.0
+    },
+    "stability_by_class": {
+      "4mm": {
+        "cv": 0.402,
+        "rating": "Variable"
+      },
+      "6mm": {
+        "cv": 0.203,
+        "rating": "Moderate"
+      },
+      "8mm": {
+        "cv": 0.263,
+        "rating": "Moderate"
+      },
+      "10mm": {
+        "cv": 0.453,
+        "rating": "Variable"
+      },
+      "unknown": {
+        "cv": 0.758,
+        "rating": "Variable"
+      }
+    }
+  },
+  "confidence": {
+    "n_detections": 687,
+    "mean": 0.8,
+    "median": 0.825,
+    "std": 0.087,
+    "min": 0.502,
+    "max": 0.938,
+    "range": 0.436,
+    "histogram": {
+      "0.5-0.6": 40,
+      "0.6-0.7": 50,
+      "0.7-0.8": 151,
+      "0.8-0.9": 424,
+      "0.9-1.0": 22
+    },
+    "distribution_rating": "Normal"
+  },
+  "per_frame": [
+    {
+      "video": "IMG_1276",
+      "frame_idx": 0,
+      "total_count": 126,
+      "counts_by_class": {
+        "4mm": 29,
+        "6mm": 55,
+        "8mm": 23,
+        "10mm": 17,
+        "unknown": 2
+      },
+      "confidence_stats": {
+        "min": 0.552,
+        "max": 0.913,
+        "mean": 0.825,
+        "median": 0.836,
+        "stdev": 0.065
+      },
+      "processing_time_ms": 0
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 100,
+      "total_count": 129,
+      "counts_by_class": {
+        "4mm": 25,
+        "6mm": 73,
+        "8mm": 25,
+        "10mm": 6,
+        "unknown": 0
+      },
+      "confidence_stats": {
+        "min": 0.649,
+        "max": 0.938,
+        "mean": 0.84,
+        "median": 0.843,
+        "stdev": 0.044
+      },
+      "processing_time_ms": 0
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 1844,
+      "total_count": 113,
+      "counts_by_class": {
+        "4mm": 22,
+        "6mm": 52,
+        "8mm": 20,
+        "10mm": 16,
+        "unknown": 3
+      },
+      "confidence_stats": {
+        "min": 0.524,
+        "max": 0.918,
+        "mean": 0.807,
+        "median": 0.83,
+        "stdev": 0.075
+      },
+      "processing_time_ms": 0
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 3689,
+      "total_count": 96,
+      "counts_by_class": {
+        "4mm": 8,
+        "6mm": 35,
+        "8mm": 24,
+        "10mm": 24,
+        "unknown": 5
+      },
+      "confidence_stats": {
+        "min": 0.502,
+        "max": 0.906,
+        "mean": 0.734,
+        "median": 0.762,
+        "stdev": 0.115
+      },
+      "processing_time_ms": 0
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 5534,
+      "total_count": 104,
+      "counts_by_class": {
+        "4mm": 9,
+        "6mm": 35,
+        "8mm": 35,
+        "10mm": 20,
+        "unknown": 5
+      },
+      "confidence_stats": {
+        "min": 0.504,
+        "max": 0.893,
+        "mean": 0.741,
+        "median": 0.757,
+        "stdev": 0.098
+      },
+      "processing_time_ms": 0
+    },
+    {
+      "video": "IMG_1276",
+      "frame_idx": 7369,
+      "total_count": 119,
+      "counts_by_class": {
+        "4mm": 28,
+        "6mm": 43,
+        "8mm": 30,
+        "10mm": 16,
+        "unknown": 2
+      },
+      "confidence_stats": {
+        "min": 0.539,
+        "max": 0.93,
+        "mean": 0.825,
+        "median": 0.835,
+        "stdev": 0.06
+      },
+      "processing_time_ms": 0
+    }
+  ]
+}

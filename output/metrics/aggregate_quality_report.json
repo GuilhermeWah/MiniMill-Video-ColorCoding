@@ -1,0 +1,92 @@
+{
+  "aggregate_summary": {
+    "total_videos": 3,
+    "total_frames": 18,
+    "total_detections": 1830,
+    "overall_count_cv": 0.255,
+    "count_stability_rating": "Acceptable"
+  },
+  "size_distribution": {
+    "mean_proportions": {
+      "4mm": 16.6,
+      "6mm": 46.2,
+      "8mm": 22.0,
+      "10mm": 13.0,
+      "unknown": 2.3
+    },
+    "std_proportions": {
+      "4mm": 7.7,
+      "6mm": 8.5,
+      "8mm": 5.0,
+      "10mm": 6.8,
+      "unknown": 1.8
+    },
+    "stability_by_class": {
+      "4mm": {
+        "cv": 0.467,
+        "rating": "Variable"
+      },
+      "6mm": {
+        "cv": 0.185,
+        "rating": "Moderate"
+      },
+      "8mm": {
+        "cv": 0.228,
+        "rating": "Moderate"
+      },
+      "10mm": {
+        "cv": 0.522,
+        "rating": "Variable"
+      },
+      "unknown": {
+        "cv": 0.792,
+        "rating": "Variable"
+      }
+    }
+  },
+  "confidence": {
+    "n_detections": 1830,
+    "mean": 0.676,
+    "median": 0.653,
+    "std": 0.127,
+    "min": 0.5,
+    "max": 0.938,
+    "range": 0.438,
+    "histogram": {
+      "0.5-0.6": 703,
+      "0.6-0.7": 355,
+      "0.7-0.8": 311,
+      "0.8-0.9": 439,
+      "0.9-1.0": 22
+    },
+    "distribution_rating": "Normal"
+  },
+  "per_video": [
+    {
+      "video": "IMG_6535",
+      "n_frames": 6,
+      "total_detections": 433,
+      "throughput_fps": 0
+    },
+    {
+      "video": "IMG_1276",
+      "n_frames": 6,
+      "total_detections": 687,
+      "throughput_fps": 0
+    },
+    {
+      "video": "DSC_3310",
+      "n_frames": 6,
+      "total_detections": 710,
+      "throughput_fps": 0
+    }
+  ],
+  "acceptance_check": {
+    "count_stability_pass": true,
+    "confidence_range_pass": true,
+    "unknown_class_pass": true,
+    "all_classes_present": true,
+    "overall_pass": true
+  },
+  "timestamp": "2025-12-12T11:17:23.627649"
+}

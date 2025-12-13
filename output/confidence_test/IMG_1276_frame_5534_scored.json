@@ -1,0 +1,2759 @@
+{
+  "video": "IMG_1276",
+  "frame_idx": 5534,
+  "total_candidates": 228,
+  "high_confidence": 144,
+  "medium_confidence": 80,
+  "low_confidence": 4,
+  "mean_confidence": 0.7204,
+  "std_confidence": 0.1098,
+  "config_used": {
+    "weight_edge_strength": 0.35,
+    "weight_circularity": 0.25,
+    "weight_interior": 0.2,
+    "weight_radius_fit": 0.2,
+    "edge_sample_points": 36,
+    "edge_gradient_sigma": 1.0,
+    "interior_sample_ratio": 0.7,
+    "radius_fit_optimal_min": 0.2,
+    "radius_fit_optimal_max": 0.8
+  },
+  "detections": [
+    {
+      "x": 482,
+      "y": 518,
+      "r_px": 31.4,
+      "conf": 0.305,
+      "features": {
+        "edge_strength": 0.367,
+        "circularity": 0.0,
+        "interior": 0.779,
+        "radius_fit": 0.103
+      }
+    },
+    {
+      "x": 354,
+      "y": 554,
+      "r_px": 28.0,
+      "conf": 0.632,
+      "features": {
+        "edge_strength": 0.817,
+        "circularity": 0.197,
+        "interior": 0.796,
+        "radius_fit": 0.69
+      }
+    },
+    {
+      "x": 802,
+      "y": 566,
+      "r_px": 31.4,
+      "conf": 0.57,
+      "features": {
+        "edge_strength": 0.792,
+        "circularity": 0.361,
+        "interior": 0.909,
+        "radius_fit": 0.103
+      }
+    },
+    {
+      "x": 474,
+      "y": 198,
+      "r_px": 25.8,
+      "conf": 0.576,
+      "features": {
+        "edge_strength": 0.592,
+        "circularity": 0.0,
+        "interior": 0.842,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 700,
+      "y": 592,
+      "r_px": 31.4,
+      "conf": 0.484,
+      "features": {
+        "edge_strength": 0.708,
+        "circularity": 0.25,
+        "interior": 0.765,
+        "radius_fit": 0.103
+      }
+    },
+    {
+      "x": 812,
+      "y": 544,
+      "r_px": 31.4,
+      "conf": 0.585,
+      "features": {
+        "edge_strength": 0.982,
+        "circularity": 0.15,
+        "interior": 0.919,
+        "radius_fit": 0.103
+      }
+    },
+    {
+      "x": 876,
+      "y": 284,
+      "r_px": 28.0,
+      "conf": 0.485,
+      "features": {
+        "edge_strength": 0.466,
+        "circularity": 0.0,
+        "interior": 0.918,
+        "radius_fit": 0.69
+      }
+    },
+    {
+      "x": 292,
+      "y": 432,
+      "r_px": 31.4,
+      "conf": 0.327,
+      "features": {
+        "edge_strength": 0.483,
+        "circularity": 0.0,
+        "interior": 0.685,
+        "radius_fit": 0.103
+      }
+    },
+    {
+      "x": 732,
+      "y": 592,
+      "r_px": 31.4,
+      "conf": 0.547,
+      "features": {
+        "edge_strength": 0.826,
+        "circularity": 0.196,
+        "interior": 0.944,
+        "radius_fit": 0.103
+      }
+    },
+    {
+      "x": 622,
+      "y": 642,
+      "r_px": 25.8,
+      "conf": 0.772,
+      "features": {
+        "edge_strength": 0.912,
+        "circularity": 0.337,
+        "interior": 0.844,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 784,
+      "y": 262,
+      "r_px": 29.2,
+      "conf": 0.571,
+      "features": {
+        "edge_strength": 0.712,
+        "circularity": 0.27,
+        "interior": 0.789,
+        "radius_fit": 0.483
+      }
+    },
+    {
+      "x": 764,
+      "y": 574,
+      "r_px": 25.8,
+      "conf": 0.76,
+      "features": {
+        "edge_strength": 0.905,
+        "circularity": 0.287,
+        "interior": 0.858,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 864,
+      "y": 490,
+      "r_px": 25.8,
+      "conf": 0.756,
+      "features": {
+        "edge_strength": 0.872,
+        "circularity": 0.241,
+        "interior": 0.953,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 640,
+      "y": 178,
+      "r_px": 19.9,
+      "conf": 0.716,
+      "features": {
+        "edge_strength": 0.717,
+        "circularity": 0.281,
+        "interior": 0.973,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 470,
+      "y": 300,
+      "r_px": 31.4,
+      "conf": 0.375,
+      "features": {
+        "edge_strength": 0.602,
+        "circularity": 0.0,
+        "interior": 0.716,
+        "radius_fit": 0.103
+      }
+    },
+    {
+      "x": 774,
+      "y": 304,
+      "r_px": 25.8,
+      "conf": 0.581,
+      "features": {
+        "edge_strength": 0.507,
+        "circularity": 0.154,
+        "interior": 0.824,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 392,
+      "y": 550,
+      "r_px": 22.4,
+      "conf": 0.61,
+      "features": {
+        "edge_strength": 0.385,
+        "circularity": 0.45,
+        "interior": 0.813,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 606,
+      "y": 632,
+      "r_px": 29.2,
+      "conf": 0.484,
+      "features": {
+        "edge_strength": 0.58,
+        "circularity": 0.0,
+        "interior": 0.925,
+        "radius_fit": 0.483
+      }
+    },
+    {
+      "x": 610,
+      "y": 640,
+      "r_px": 25.8,
+      "conf": 0.677,
+      "features": {
+        "edge_strength": 0.753,
+        "circularity": 0.101,
+        "interior": 0.939,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 618,
+      "y": 642,
+      "r_px": 20.2,
+      "conf": 0.807,
+      "features": {
+        "edge_strength": 0.962,
+        "circularity": 0.367,
+        "interior": 0.89,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 878,
+      "y": 434,
+      "r_px": 25.8,
+      "conf": 0.705,
+      "features": {
+        "edge_strength": 0.756,
+        "circularity": 0.225,
+        "interior": 0.923,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 612,
+      "y": 634,
+      "r_px": 22.4,
+      "conf": 0.741,
+      "features": {
+        "edge_strength": 0.916,
+        "circularity": 0.118,
+        "interior": 0.956,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 740,
+      "y": 256,
+      "r_px": 22.4,
+      "conf": 0.658,
+      "features": {
+        "edge_strength": 0.475,
+        "circularity": 0.366,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 852,
+      "y": 564,
+      "r_px": 22.4,
+      "conf": 0.634,
+      "features": {
+        "edge_strength": 0.719,
+        "circularity": 0.0,
+        "interior": 0.91,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 754,
+      "y": 490,
+      "r_px": 20.2,
+      "conf": 0.657,
+      "features": {
+        "edge_strength": 0.657,
+        "circularity": 0.216,
+        "interior": 0.867,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 690,
+      "y": 280,
+      "r_px": 23.5,
+      "conf": 0.589,
+      "features": {
+        "edge_strength": 0.656,
+        "circularity": 0.141,
+        "interior": 0.622,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 766,
+      "y": 500,
+      "r_px": 22.4,
+      "conf": 0.715,
+      "features": {
+        "edge_strength": 0.936,
+        "circularity": 0.0,
+        "interior": 0.938,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 850,
+      "y": 560,
+      "r_px": 22.4,
+      "conf": 0.658,
+      "features": {
+        "edge_strength": 0.741,
+        "circularity": 0.067,
+        "interior": 0.91,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 612,
+      "y": 634,
+      "r_px": 21.3,
+      "conf": 0.78,
+      "features": {
+        "edge_strength": 0.997,
+        "circularity": 0.169,
+        "interior": 0.947,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 846,
+      "y": 226,
+      "r_px": 20.2,
+      "conf": 0.752,
+      "features": {
+        "edge_strength": 0.91,
+        "circularity": 0.259,
+        "interior": 0.842,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 614,
+      "y": 224,
+      "r_px": 19.1,
+      "conf": 0.694,
+      "features": {
+        "edge_strength": 0.658,
+        "circularity": 0.255,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 822,
+      "y": 294,
+      "r_px": 25.8,
+      "conf": 0.716,
+      "features": {
+        "edge_strength": 0.818,
+        "circularity": 0.263,
+        "interior": 0.82,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 488,
+      "y": 522,
+      "r_px": 25.7,
+      "conf": 0.508,
+      "features": {
+        "edge_strength": 0.258,
+        "circularity": 0.183,
+        "interior": 0.863,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 826,
+      "y": 562,
+      "r_px": 21.3,
+      "conf": 0.795,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.195,
+        "interior": 0.983,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 616,
+      "y": 642,
+      "r_px": 20.2,
+      "conf": 0.755,
+      "features": {
+        "edge_strength": 0.762,
+        "circularity": 0.407,
+        "interior": 0.931,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 774,
+      "y": 474,
+      "r_px": 19.1,
+      "conf": 0.723,
+      "features": {
+        "edge_strength": 0.872,
+        "circularity": 0.337,
+        "interior": 0.666,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 706,
+      "y": 536,
+      "r_px": 18.0,
+      "conf": 0.825,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.298,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 782,
+      "y": 526,
+      "r_px": 15.8,
+      "conf": 0.57,
+      "features": {
+        "edge_strength": 0.624,
+        "circularity": 0.0,
+        "interior": 0.759,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 700,
+      "y": 598,
+      "r_px": 23.5,
+      "conf": 0.675,
+      "features": {
+        "edge_strength": 0.715,
+        "circularity": 0.285,
+        "interior": 0.768,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 326,
+      "y": 232,
+      "r_px": 18.0,
+      "conf": 0.58,
+      "features": {
+        "edge_strength": 0.385,
+        "circularity": 0.265,
+        "interior": 0.894,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 778,
+      "y": 306,
+      "r_px": 12.5,
+      "conf": 0.827,
+      "features": {
+        "edge_strength": 0.877,
+        "circularity": 0.481,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 788,
+      "y": 308,
+      "r_px": 22.4,
+      "conf": 0.604,
+      "features": {
+        "edge_strength": 0.65,
+        "circularity": 0.05,
+        "interior": 0.821,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 500,
+      "y": 636,
+      "r_px": 21.3,
+      "conf": 0.744,
+      "features": {
+        "edge_strength": 0.898,
+        "circularity": 0.292,
+        "interior": 0.783,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 764,
+      "y": 494,
+      "r_px": 18.0,
+      "conf": 0.738,
+      "features": {
+        "edge_strength": 0.861,
+        "circularity": 0.164,
+        "interior": 0.981,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 764,
+      "y": 496,
+      "r_px": 18.0,
+      "conf": 0.799,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.196,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 704,
+      "y": 538,
+      "r_px": 22.4,
+      "conf": 0.721,
+      "features": {
+        "edge_strength": 0.741,
+        "circularity": 0.246,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 426,
+      "y": 632,
+      "r_px": 21.3,
+      "conf": 0.677,
+      "features": {
+        "edge_strength": 0.711,
+        "circularity": 0.263,
+        "interior": 0.812,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 560,
+      "y": 292,
+      "r_px": 21.2,
+      "conf": 0.531,
+      "features": {
+        "edge_strength": 0.183,
+        "circularity": 0.348,
+        "interior": 0.899,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 802,
+      "y": 174,
+      "r_px": 20.2,
+      "conf": 0.773,
+      "features": {
+        "edge_strength": 0.839,
+        "circularity": 0.361,
+        "interior": 0.948,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 850,
+      "y": 564,
+      "r_px": 20.2,
+      "conf": 0.78,
+      "features": {
+        "edge_strength": 0.867,
+        "circularity": 0.363,
+        "interior": 0.926,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 784,
+      "y": 304,
+      "r_px": 18.0,
+      "conf": 0.802,
+      "features": {
+        "edge_strength": 0.877,
+        "circularity": 0.458,
+        "interior": 0.904,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 688,
+      "y": 630,
+      "r_px": 15.8,
+      "conf": 0.681,
+      "features": {
+        "edge_strength": 0.629,
+        "circularity": 0.249,
+        "interior": 0.992,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 670,
+      "y": 208,
+      "r_px": 22.4,
+      "conf": 0.572,
+      "features": {
+        "edge_strength": 0.329,
+        "circularity": 0.271,
+        "interior": 0.947,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 768,
+      "y": 510,
+      "r_px": 21.3,
+      "conf": 0.719,
+      "features": {
+        "edge_strength": 0.92,
+        "circularity": 0.132,
+        "interior": 0.821,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 706,
+      "y": 536,
+      "r_px": 19.1,
+      "conf": 0.832,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.327,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 854,
+      "y": 318,
+      "r_px": 18.0,
+      "conf": 0.704,
+      "features": {
+        "edge_strength": 0.679,
+        "circularity": 0.266,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 818,
+      "y": 456,
+      "r_px": 17.9,
+      "conf": 0.763,
+      "features": {
+        "edge_strength": 0.868,
+        "circularity": 0.273,
+        "interior": 0.955,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 572,
+      "y": 100,
+      "r_px": 14.5,
+      "conf": 0.645,
+      "features": {
+        "edge_strength": 0.681,
+        "circularity": 0.15,
+        "interior": 0.846,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 704,
+      "y": 534,
+      "r_px": 16.9,
+      "conf": 0.829,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.344,
+        "interior": 0.967,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 688,
+      "y": 662,
+      "r_px": 16.8,
+      "conf": 0.818,
+      "features": {
+        "edge_strength": 0.939,
+        "circularity": 0.508,
+        "interior": 0.813,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 776,
+      "y": 478,
+      "r_px": 15.8,
+      "conf": 0.646,
+      "features": {
+        "edge_strength": 0.819,
+        "circularity": 0.081,
+        "interior": 0.693,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 822,
+      "y": 452,
+      "r_px": 15.8,
+      "conf": 0.634,
+      "features": {
+        "edge_strength": 0.63,
+        "circularity": 0.138,
+        "interior": 0.895,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 770,
+      "y": 620,
+      "r_px": 14.7,
+      "conf": 0.855,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.421,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 740,
+      "y": 260,
+      "r_px": 13.6,
+      "conf": 0.877,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.507,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 640,
+      "y": 380,
+      "r_px": 25.8,
+      "conf": 0.562,
+      "features": {
+        "edge_strength": 0.564,
+        "circularity": 0.0,
+        "interior": 0.826,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 618,
+      "y": 644,
+      "r_px": 19.1,
+      "conf": 0.822,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.389,
+        "interior": 0.871,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 366,
+      "y": 530,
+      "r_px": 18.0,
+      "conf": 0.652,
+      "features": {
+        "edge_strength": 0.639,
+        "circularity": 0.359,
+        "interior": 0.693,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 770,
+      "y": 622,
+      "r_px": 16.6,
+      "conf": 0.867,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.49,
+        "interior": 0.971,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 704,
+      "y": 532,
+      "r_px": 15.8,
+      "conf": 0.805,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.248,
+        "interior": 0.963,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 766,
+      "y": 496,
+      "r_px": 15.8,
+      "conf": 0.798,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.199,
+        "interior": 0.991,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 780,
+      "y": 306,
+      "r_px": 13.4,
+      "conf": 0.782,
+      "features": {
+        "edge_strength": 0.904,
+        "circularity": 0.3,
+        "interior": 0.951,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 358,
+      "y": 534,
+      "r_px": 20.2,
+      "conf": 0.567,
+      "features": {
+        "edge_strength": 0.483,
+        "circularity": 0.208,
+        "interior": 0.73,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 612,
+      "y": 640,
+      "r_px": 18.0,
+      "conf": 0.8,
+      "features": {
+        "edge_strength": 0.748,
+        "circularity": 0.593,
+        "interior": 0.951,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 708,
+      "y": 534,
+      "r_px": 17.8,
+      "conf": 0.827,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.308,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 366,
+      "y": 402,
+      "r_px": 15.8,
+      "conf": 0.525,
+      "features": {
+        "edge_strength": 0.337,
+        "circularity": 0.258,
+        "interior": 0.713,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 800,
+      "y": 490,
+      "r_px": 12.2,
+      "conf": 0.806,
+      "features": {
+        "edge_strength": 0.997,
+        "circularity": 0.226,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 814,
+      "y": 544,
+      "r_px": 19.1,
+      "conf": 0.734,
+      "features": {
+        "edge_strength": 0.844,
+        "circularity": 0.154,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 782,
+      "y": 156,
+      "r_px": 15.4,
+      "conf": 0.692,
+      "features": {
+        "edge_strength": 0.786,
+        "circularity": 0.215,
+        "interior": 0.814,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 818,
+      "y": 390,
+      "r_px": 14.7,
+      "conf": 0.812,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.25,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 842,
+      "y": 358,
+      "r_px": 12.2,
+      "conf": 0.806,
+      "features": {
+        "edge_strength": 0.892,
+        "circularity": 0.373,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 508,
+      "y": 162,
+      "r_px": 11.8,
+      "conf": 0.73,
+      "features": {
+        "edge_strength": 0.716,
+        "circularity": 0.423,
+        "interior": 0.868,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 666,
+      "y": 212,
+      "r_px": 22.4,
+      "conf": 0.571,
+      "features": {
+        "edge_strength": 0.342,
+        "circularity": 0.25,
+        "interior": 0.944,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 490,
+      "y": 522,
+      "r_px": 19.1,
+      "conf": 0.662,
+      "features": {
+        "edge_strength": 0.447,
+        "circularity": 0.483,
+        "interior": 0.926,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 638,
+      "y": 176,
+      "r_px": 16.9,
+      "conf": 0.771,
+      "features": {
+        "edge_strength": 0.815,
+        "circularity": 0.343,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 822,
+      "y": 392,
+      "r_px": 16.9,
+      "conf": 0.807,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.228,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 766,
+      "y": 612,
+      "r_px": 16.8,
+      "conf": 0.759,
+      "features": {
+        "edge_strength": 0.799,
+        "circularity": 0.318,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 858,
+      "y": 556,
+      "r_px": 15.6,
+      "conf": 0.687,
+      "features": {
+        "edge_strength": 0.726,
+        "circularity": 0.198,
+        "interior": 0.914,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 690,
+      "y": 598,
+      "r_px": 13.2,
+      "conf": 0.693,
+      "features": {
+        "edge_strength": 0.842,
+        "circularity": 0.179,
+        "interior": 0.769,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 776,
+      "y": 306,
+      "r_px": 9.6,
+      "conf": 0.827,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.32,
+        "interior": 0.985,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 674,
+      "y": 564,
+      "r_px": 18.0,
+      "conf": 0.69,
+      "features": {
+        "edge_strength": 0.741,
+        "circularity": 0.191,
+        "interior": 0.914,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 854,
+      "y": 564,
+      "r_px": 16.9,
+      "conf": 0.699,
+      "features": {
+        "edge_strength": 0.678,
+        "circularity": 0.304,
+        "interior": 0.929,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 742,
+      "y": 260,
+      "r_px": 15.8,
+      "conf": 0.792,
+      "features": {
+        "edge_strength": 0.801,
+        "circularity": 0.445,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 780,
+      "y": 532,
+      "r_px": 15.8,
+      "conf": 0.578,
+      "features": {
+        "edge_strength": 0.444,
+        "circularity": 0.278,
+        "interior": 0.766,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 788,
+      "y": 292,
+      "r_px": 15.8,
+      "conf": 0.795,
+      "features": {
+        "edge_strength": 0.882,
+        "circularity": 0.399,
+        "interior": 0.933,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 538,
+      "y": 142,
+      "r_px": 14.5,
+      "conf": 0.732,
+      "features": {
+        "edge_strength": 0.642,
+        "circularity": 0.428,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 856,
+      "y": 560,
+      "r_px": 11.1,
+      "conf": 0.871,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.569,
+        "interior": 0.894,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 772,
+      "y": 222,
+      "r_px": 18.0,
+      "conf": 0.585,
+      "features": {
+        "edge_strength": 0.7,
+        "circularity": 0.0,
+        "interior": 0.7,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 694,
+      "y": 310,
+      "r_px": 15.8,
+      "conf": 0.628,
+      "features": {
+        "edge_strength": 0.443,
+        "circularity": 0.381,
+        "interior": 0.888,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 744,
+      "y": 260,
+      "r_px": 15.8,
+      "conf": 0.807,
+      "features": {
+        "edge_strength": 0.942,
+        "circularity": 0.311,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 690,
+      "y": 596,
+      "r_px": 14.7,
+      "conf": 0.657,
+      "features": {
+        "edge_strength": 0.68,
+        "circularity": 0.246,
+        "interior": 0.79,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 756,
+      "y": 496,
+      "r_px": 14.7,
+      "conf": 0.775,
+      "features": {
+        "edge_strength": 0.841,
+        "circularity": 0.345,
+        "interior": 0.971,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 716,
+      "y": 664,
+      "r_px": 14.5,
+      "conf": 0.753,
+      "features": {
+        "edge_strength": 0.721,
+        "circularity": 0.416,
+        "interior": 0.984,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 834,
+      "y": 282,
+      "r_px": 14.5,
+      "conf": 0.684,
+      "features": {
+        "edge_strength": 0.661,
+        "circularity": 0.274,
+        "interior": 0.92,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 760,
+      "y": 500,
+      "r_px": 13.6,
+      "conf": 0.827,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.31,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 796,
+      "y": 538,
+      "r_px": 12.5,
+      "conf": 0.764,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.134,
+        "interior": 0.9,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 716,
+      "y": 566,
+      "r_px": 11.1,
+      "conf": 0.881,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.523,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 894,
+      "y": 364,
+      "r_px": 15.8,
+      "conf": 0.777,
+      "features": {
+        "edge_strength": 0.912,
+        "circularity": 0.233,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 852,
+      "y": 560,
+      "r_px": 15.6,
+      "conf": 0.818,
+      "features": {
+        "edge_strength": 0.94,
+        "circularity": 0.394,
+        "interior": 0.952,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 668,
+      "y": 210,
+      "r_px": 14.4,
+      "conf": 0.757,
+      "features": {
+        "edge_strength": 0.706,
+        "circularity": 0.438,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 652,
+      "y": 654,
+      "r_px": 13.4,
+      "conf": 0.805,
+      "features": {
+        "edge_strength": 0.945,
+        "circularity": 0.31,
+        "interior": 0.987,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 720,
+      "y": 628,
+      "r_px": 13.4,
+      "conf": 0.719,
+      "features": {
+        "edge_strength": 0.773,
+        "circularity": 0.194,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 810,
+      "y": 460,
+      "r_px": 13.2,
+      "conf": 0.849,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.395,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 794,
+      "y": 540,
+      "r_px": 12.5,
+      "conf": 0.745,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.106,
+        "interior": 0.844,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 652,
+      "y": 652,
+      "r_px": 11.1,
+      "conf": 0.893,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.585,
+        "interior": 0.985,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 676,
+      "y": 564,
+      "r_px": 18.0,
+      "conf": 0.727,
+      "features": {
+        "edge_strength": 0.971,
+        "circularity": 0.049,
+        "interior": 0.872,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 812,
+      "y": 546,
+      "r_px": 16.9,
+      "conf": 0.749,
+      "features": {
+        "edge_strength": 0.932,
+        "circularity": 0.093,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 714,
+      "y": 658,
+      "r_px": 16.8,
+      "conf": 0.692,
+      "features": {
+        "edge_strength": 0.553,
+        "circularity": 0.394,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 512,
+      "y": 204,
+      "r_px": 16.6,
+      "conf": 0.594,
+      "features": {
+        "edge_strength": 0.379,
+        "circularity": 0.428,
+        "interior": 0.772,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 384,
+      "y": 628,
+      "r_px": 15.8,
+      "conf": 0.694,
+      "features": {
+        "edge_strength": 0.751,
+        "circularity": 0.308,
+        "interior": 0.77,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 710,
+      "y": 534,
+      "r_px": 15.6,
+      "conf": 0.815,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.258,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 874,
+      "y": 434,
+      "r_px": 15.6,
+      "conf": 0.84,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.365,
+        "interior": 0.994,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 560,
+      "y": 398,
+      "r_px": 15.5,
+      "conf": 0.753,
+      "features": {
+        "edge_strength": 0.664,
+        "circularity": 0.484,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 796,
+      "y": 490,
+      "r_px": 14.7,
+      "conf": 0.846,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.385,
+        "interior": 0.997,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 828,
+      "y": 504,
+      "r_px": 13.4,
+      "conf": 0.77,
+      "features": {
+        "edge_strength": 0.723,
+        "circularity": 0.474,
+        "interior": 0.99,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 786,
+      "y": 428,
+      "r_px": 12.5,
+      "conf": 0.847,
+      "features": {
+        "edge_strength": 0.974,
+        "circularity": 0.423,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 812,
+      "y": 550,
+      "r_px": 12.2,
+      "conf": 0.736,
+      "features": {
+        "edge_strength": 0.732,
+        "circularity": 0.319,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 692,
+      "y": 308,
+      "r_px": 11.8,
+      "conf": 0.838,
+      "features": {
+        "edge_strength": 0.943,
+        "circularity": 0.5,
+        "interior": 0.916,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 500,
+      "y": 634,
+      "r_px": 11.0,
+      "conf": 0.667,
+      "features": {
+        "edge_strength": 0.737,
+        "circularity": 0.357,
+        "interior": 0.601,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 746,
+      "y": 532,
+      "r_px": 10.3,
+      "conf": 0.878,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.511,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 648,
+      "y": 578,
+      "r_px": 9.6,
+      "conf": 0.688,
+      "features": {
+        "edge_strength": 0.76,
+        "circularity": 0.404,
+        "interior": 0.603,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 748,
+      "y": 220,
+      "r_px": 9.6,
+      "conf": 0.734,
+      "features": {
+        "edge_strength": 0.751,
+        "circularity": 0.319,
+        "interior": 0.959,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 822,
+      "y": 378,
+      "r_px": 9.6,
+      "conf": 0.789,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.308,
+        "interior": 0.811,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 468,
+      "y": 304,
+      "r_px": 18.0,
+      "conf": 0.467,
+      "features": {
+        "edge_strength": 0.35,
+        "circularity": 0.0,
+        "interior": 0.722,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 608,
+      "y": 630,
+      "r_px": 16.9,
+      "conf": 0.825,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.319,
+        "interior": 0.974,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 870,
+      "y": 356,
+      "r_px": 15.8,
+      "conf": 0.786,
+      "features": {
+        "edge_strength": 0.841,
+        "circularity": 0.372,
+        "interior": 0.995,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 822,
+      "y": 396,
+      "r_px": 15.6,
+      "conf": 0.829,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.369,
+        "interior": 0.935,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 816,
+      "y": 548,
+      "r_px": 13.6,
+      "conf": 0.839,
+      "features": {
+        "edge_strength": 0.931,
+        "circularity": 0.452,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 408,
+      "y": 474,
+      "r_px": 13.4,
+      "conf": 0.712,
+      "features": {
+        "edge_strength": 0.691,
+        "circularity": 0.355,
+        "interior": 0.905,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 388,
+      "y": 556,
+      "r_px": 13.2,
+      "conf": 0.752,
+      "features": {
+        "edge_strength": 0.736,
+        "circularity": 0.426,
+        "interior": 0.938,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 310,
+      "y": 452,
+      "r_px": 12.2,
+      "conf": 0.633,
+      "features": {
+        "edge_strength": 0.6,
+        "circularity": 0.231,
+        "interior": 0.828,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 800,
+      "y": 498,
+      "r_px": 12.2,
+      "conf": 0.759,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.105,
+        "interior": 0.917,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 326,
+      "y": 450,
+      "r_px": 9.1,
+      "conf": 0.73,
+      "features": {
+        "edge_strength": 0.717,
+        "circularity": 0.396,
+        "interior": 0.9,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 570,
+      "y": 650,
+      "r_px": 15.8,
+      "conf": 0.731,
+      "features": {
+        "edge_strength": 0.816,
+        "circularity": 0.193,
+        "interior": 0.987,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 378,
+      "y": 532,
+      "r_px": 14.7,
+      "conf": 0.576,
+      "features": {
+        "edge_strength": 0.537,
+        "circularity": 0.245,
+        "interior": 0.636,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 500,
+      "y": 386,
+      "r_px": 14.7,
+      "conf": 0.662,
+      "features": {
+        "edge_strength": 0.734,
+        "circularity": 0.152,
+        "interior": 0.835,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 750,
+      "y": 564,
+      "r_px": 14.4,
+      "conf": 0.667,
+      "features": {
+        "edge_strength": 0.528,
+        "circularity": 0.39,
+        "interior": 0.923,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 510,
+      "y": 316,
+      "r_px": 13.6,
+      "conf": 0.793,
+      "features": {
+        "edge_strength": 0.839,
+        "circularity": 0.396,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 760,
+      "y": 494,
+      "r_px": 13.6,
+      "conf": 0.846,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.395,
+        "interior": 0.986,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 756,
+      "y": 492,
+      "r_px": 13.4,
+      "conf": 0.767,
+      "features": {
+        "edge_strength": 0.882,
+        "circularity": 0.257,
+        "interior": 0.97,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 764,
+      "y": 332,
+      "r_px": 13.4,
+      "conf": 0.504,
+      "features": {
+        "edge_strength": 0.394,
+        "circularity": 0.021,
+        "interior": 0.803,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 690,
+      "y": 598,
+      "r_px": 13.2,
+      "conf": 0.693,
+      "features": {
+        "edge_strength": 0.842,
+        "circularity": 0.179,
+        "interior": 0.769,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 818,
+      "y": 222,
+      "r_px": 13.2,
+      "conf": 0.74,
+      "features": {
+        "edge_strength": 0.839,
+        "circularity": 0.34,
+        "interior": 0.806,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 368,
+      "y": 556,
+      "r_px": 12.5,
+      "conf": 0.577,
+      "features": {
+        "edge_strength": 0.534,
+        "circularity": 0.259,
+        "interior": 0.627,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 688,
+      "y": 592,
+      "r_px": 12.2,
+      "conf": 0.698,
+      "features": {
+        "edge_strength": 0.671,
+        "circularity": 0.361,
+        "interior": 0.862,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 764,
+      "y": 500,
+      "r_px": 12.2,
+      "conf": 0.827,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.306,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 736,
+      "y": 220,
+      "r_px": 9.6,
+      "conf": 0.855,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.421,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 640,
+      "y": 396,
+      "r_px": 17.9,
+      "conf": 0.582,
+      "features": {
+        "edge_strength": 0.501,
+        "circularity": 0.025,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 638,
+      "y": 394,
+      "r_px": 15.5,
+      "conf": 0.703,
+      "features": {
+        "edge_strength": 0.683,
+        "circularity": 0.257,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 674,
+      "y": 344,
+      "r_px": 14.7,
+      "conf": 0.603,
+      "features": {
+        "edge_strength": 0.718,
+        "circularity": 0.0,
+        "interior": 0.758,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 560,
+      "y": 396,
+      "r_px": 14.5,
+      "conf": 0.789,
+      "features": {
+        "edge_strength": 0.777,
+        "circularity": 0.468,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 666,
+      "y": 624,
+      "r_px": 14.4,
+      "conf": 0.8,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.266,
+        "interior": 0.919,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 534,
+      "y": 134,
+      "r_px": 14.1,
+      "conf": 0.599,
+      "features": {
+        "edge_strength": 0.58,
+        "circularity": 0.001,
+        "interior": 0.979,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 608,
+      "y": 644,
+      "r_px": 14.1,
+      "conf": 0.79,
+      "features": {
+        "edge_strength": 0.795,
+        "circularity": 0.448,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 610,
+      "y": 642,
+      "r_px": 13.6,
+      "conf": 0.858,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.441,
+        "interior": 0.988,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 782,
+      "y": 432,
+      "r_px": 13.6,
+      "conf": 0.818,
+      "features": {
+        "edge_strength": 0.891,
+        "circularity": 0.427,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 822,
+      "y": 450,
+      "r_px": 12.2,
+      "conf": 0.636,
+      "features": {
+        "edge_strength": 0.697,
+        "circularity": 0.035,
+        "interior": 0.915,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 706,
+      "y": 262,
+      "r_px": 11.1,
+      "conf": 0.846,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.382,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 866,
+      "y": 360,
+      "r_px": 11.1,
+      "conf": 0.664,
+      "features": {
+        "edge_strength": 0.639,
+        "circularity": 0.186,
+        "interior": 0.968,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 694,
+      "y": 308,
+      "r_px": 11.0,
+      "conf": 0.756,
+      "features": {
+        "edge_strength": 0.736,
+        "circularity": 0.489,
+        "interior": 0.879,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 508,
+      "y": 314,
+      "r_px": 18.8,
+      "conf": 0.542,
+      "features": {
+        "edge_strength": 0.258,
+        "circularity": 0.218,
+        "interior": 0.988,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 724,
+      "y": 160,
+      "r_px": 15.6,
+      "conf": 0.79,
+      "features": {
+        "edge_strength": 0.862,
+        "circularity": 0.352,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 622,
+      "y": 644,
+      "r_px": 14.7,
+      "conf": 0.792,
+      "features": {
+        "edge_strength": 0.968,
+        "circularity": 0.321,
+        "interior": 0.865,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 702,
+      "y": 532,
+      "r_px": 14.7,
+      "conf": 0.814,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.308,
+        "interior": 0.935,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 666,
+      "y": 618,
+      "r_px": 14.5,
+      "conf": 0.811,
+      "features": {
+        "edge_strength": 0.883,
+        "circularity": 0.408,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 892,
+      "y": 420,
+      "r_px": 14.5,
+      "conf": 0.737,
+      "features": {
+        "edge_strength": 0.724,
+        "circularity": 0.346,
+        "interior": 0.986,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 368,
+      "y": 554,
+      "r_px": 13.6,
+      "conf": 0.651,
+      "features": {
+        "edge_strength": 0.571,
+        "circularity": 0.507,
+        "interior": 0.624,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 610,
+      "y": 642,
+      "r_px": 13.6,
+      "conf": 0.858,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.441,
+        "interior": 0.988,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 692,
+      "y": 596,
+      "r_px": 13.2,
+      "conf": 0.685,
+      "features": {
+        "edge_strength": 0.737,
+        "circularity": 0.291,
+        "interior": 0.769,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 344,
+      "y": 562,
+      "r_px": 12.2,
+      "conf": 0.774,
+      "features": {
+        "edge_strength": 0.925,
+        "circularity": 0.328,
+        "interior": 0.84,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 814,
+      "y": 546,
+      "r_px": 12.2,
+      "conf": 0.831,
+      "features": {
+        "edge_strength": 0.905,
+        "circularity": 0.458,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 828,
+      "y": 502,
+      "r_px": 12.2,
+      "conf": 0.784,
+      "features": {
+        "edge_strength": 0.827,
+        "circularity": 0.402,
+        "interior": 0.973,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 840,
+      "y": 272,
+      "r_px": 12.2,
+      "conf": 0.807,
+      "features": {
+        "edge_strength": 0.932,
+        "circularity": 0.324,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 746,
+      "y": 530,
+      "r_px": 11.1,
+      "conf": 0.852,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.41,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 564,
+      "y": 158,
+      "r_px": 11.0,
+      "conf": 0.75,
+      "features": {
+        "edge_strength": 0.694,
+        "circularity": 0.43,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 726,
+      "y": 632,
+      "r_px": 11.0,
+      "conf": 0.754,
+      "features": {
+        "edge_strength": 0.776,
+        "circularity": 0.457,
+        "interior": 0.84,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 886,
+      "y": 482,
+      "r_px": 11.0,
+      "conf": 0.725,
+      "features": {
+        "edge_strength": 0.774,
+        "circularity": 0.294,
+        "interior": 0.902,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 374,
+      "y": 160,
+      "r_px": 10.6,
+      "conf": 0.639,
+      "features": {
+        "edge_strength": 0.742,
+        "circularity": 0.041,
+        "interior": 0.845,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 342,
+      "y": 542,
+      "r_px": 10.0,
+      "conf": 0.835,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.34,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 368,
+      "y": 234,
+      "r_px": 9.6,
+      "conf": 0.589,
+      "features": {
+        "edge_strength": 0.477,
+        "circularity": 0.185,
+        "interior": 0.877,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 724,
+      "y": 454,
+      "r_px": 9.6,
+      "conf": 0.805,
+      "features": {
+        "edge_strength": 0.964,
+        "circularity": 0.301,
+        "interior": 0.96,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 564,
+      "y": 160,
+      "r_px": 9.4,
+      "conf": 0.817,
+      "features": {
+        "edge_strength": 0.744,
+        "circularity": 0.624,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 632,
+      "y": 172,
+      "r_px": 14.3,
+      "conf": 0.641,
+      "features": {
+        "edge_strength": 0.476,
+        "circularity": 0.299,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 868,
+      "y": 492,
+      "r_px": 13.6,
+      "conf": 0.796,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.222,
+        "interior": 0.952,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 724,
+      "y": 630,
+      "r_px": 13.1,
+      "conf": 0.757,
+      "features": {
+        "edge_strength": 0.808,
+        "circularity": 0.347,
+        "interior": 0.94,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 382,
+      "y": 298,
+      "r_px": 12.2,
+      "conf": 0.389,
+      "features": {
+        "edge_strength": 0.212,
+        "circularity": 0.226,
+        "interior": 0.294,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 418,
+      "y": 510,
+      "r_px": 12.2,
+      "conf": 0.478,
+      "features": {
+        "edge_strength": 0.19,
+        "circularity": 0.232,
+        "interior": 0.767,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 628,
+      "y": 568,
+      "r_px": 12.2,
+      "conf": 0.583,
+      "features": {
+        "edge_strength": 0.585,
+        "circularity": 0.165,
+        "interior": 0.686,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 668,
+      "y": 270,
+      "r_px": 12.2,
+      "conf": 0.641,
+      "features": {
+        "edge_strength": 0.386,
+        "circularity": 0.498,
+        "interior": 0.909,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 818,
+      "y": 554,
+      "r_px": 12.2,
+      "conf": 0.795,
+      "features": {
+        "edge_strength": 0.87,
+        "circularity": 0.423,
+        "interior": 0.923,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 742,
+      "y": 222,
+      "r_px": 11.8,
+      "conf": 0.859,
+      "features": {
+        "edge_strength": 0.999,
+        "circularity": 0.436,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 528,
+      "y": 644,
+      "r_px": 11.1,
+      "conf": 0.73,
+      "features": {
+        "edge_strength": 0.834,
+        "circularity": 0.351,
+        "interior": 0.751,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 564,
+      "y": 396,
+      "r_px": 11.1,
+      "conf": 0.794,
+      "features": {
+        "edge_strength": 0.848,
+        "circularity": 0.391,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 634,
+      "y": 568,
+      "r_px": 11.1,
+      "conf": 0.542,
+      "features": {
+        "edge_strength": 0.485,
+        "circularity": 0.068,
+        "interior": 0.779,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 796,
+      "y": 604,
+      "r_px": 11.0,
+      "conf": 0.744,
+      "features": {
+        "edge_strength": 0.736,
+        "circularity": 0.447,
+        "interior": 0.872,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 424,
+      "y": 476,
+      "r_px": 9.6,
+      "conf": 0.666,
+      "features": {
+        "edge_strength": 0.512,
+        "circularity": 0.559,
+        "interior": 0.735,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 462,
+      "y": 162,
+      "r_px": 8.8,
+      "conf": 0.727,
+      "features": {
+        "edge_strength": 0.738,
+        "circularity": 0.3,
+        "interior": 0.967,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 638,
+      "y": 594,
+      "r_px": 8.8,
+      "conf": 0.883,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.533,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 290,
+      "y": 430,
+      "r_px": 8.2,
+      "conf": 0.828,
+      "features": {
+        "edge_strength": 0.983,
+        "circularity": 0.468,
+        "interior": 0.936,
+        "radius_fit": 0.897
+      }
+    },
+    {
+      "x": 386,
+      "y": 588,
+      "r_px": 8.0,
+      "conf": 0.808,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.343,
+        "interior": 1.0,
+        "radius_fit": 0.862
+      }
+    },
+    {
+      "x": 642,
+      "y": 398,
+      "r_px": 15.6,
+      "conf": 0.773,
+      "features": {
+        "edge_strength": 0.982,
+        "circularity": 0.136,
+        "interior": 0.977,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 476,
+      "y": 406,
+      "r_px": 14.5,
+      "conf": 0.652,
+      "features": {
+        "edge_strength": 0.467,
+        "circularity": 0.354,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 864,
+      "y": 514,
+      "r_px": 13.6,
+      "conf": 0.71,
+      "features": {
+        "edge_strength": 0.593,
+        "circularity": 0.539,
+        "interior": 0.836,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 866,
+      "y": 512,
+      "r_px": 13.4,
+      "conf": 0.692,
+      "features": {
+        "edge_strength": 0.682,
+        "circularity": 0.337,
+        "interior": 0.847,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 714,
+      "y": 662,
+      "r_px": 12.5,
+      "conf": 0.836,
+      "features": {
+        "edge_strength": 0.864,
+        "circularity": 0.534,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 368,
+      "y": 484,
+      "r_px": 12.2,
+      "conf": 0.519,
+      "features": {
+        "edge_strength": 0.378,
+        "circularity": 0.042,
+        "interior": 0.88,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 384,
+      "y": 632,
+      "r_px": 12.2,
+      "conf": 0.745,
+      "features": {
+        "edge_strength": 0.903,
+        "circularity": 0.249,
+        "interior": 0.832,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 670,
+      "y": 208,
+      "r_px": 12.2,
+      "conf": 0.734,
+      "features": {
+        "edge_strength": 0.753,
+        "circularity": 0.331,
+        "interior": 0.938,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 794,
+      "y": 620,
+      "r_px": 12.2,
+      "conf": 0.836,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.371,
+        "interior": 0.968,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 808,
+      "y": 488,
+      "r_px": 12.2,
+      "conf": 0.746,
+      "features": {
+        "edge_strength": 0.75,
+        "circularity": 0.335,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 768,
+      "y": 198,
+      "r_px": 11.1,
+      "conf": 0.818,
+      "features": {
+        "edge_strength": 0.854,
+        "circularity": 0.478,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 814,
+      "y": 394,
+      "r_px": 11.1,
+      "conf": 0.748,
+      "features": {
+        "edge_strength": 0.795,
+        "circularity": 0.279,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 748,
+      "y": 532,
+      "r_px": 10.2,
+      "conf": 0.872,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.488,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 814,
+      "y": 222,
+      "r_px": 9.6,
+      "conf": 0.674,
+      "features": {
+        "edge_strength": 0.682,
+        "circularity": 0.268,
+        "interior": 0.841,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 886,
+      "y": 484,
+      "r_px": 9.6,
+      "conf": 0.767,
+      "features": {
+        "edge_strength": 0.874,
+        "circularity": 0.263,
+        "interior": 0.979,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 498,
+      "y": 700,
+      "r_px": 8.8,
+      "conf": 0.767,
+      "features": {
+        "edge_strength": 0.923,
+        "circularity": 0.304,
+        "interior": 0.837,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 800,
+      "y": 546,
+      "r_px": 8.8,
+      "conf": 0.817,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.292,
+        "interior": 0.972,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 808,
+      "y": 276,
+      "r_px": 8.8,
+      "conf": 0.888,
+      "features": {
+        "edge_strength": 1.0,
+        "circularity": 0.551,
+        "interior": 1.0,
+        "radius_fit": 1.0
+      }
+    },
+    {
+      "x": 800,
+      "y": 604,
+      "r_px": 7.4,
+      "conf": 0.816,
+      "features": {
+        "edge_strength": 0.933,
+        "circularity": 0.551,
+        "interior": 1.0,
+        "radius_fit": 0.759
+      }
+    }
+  ]
+}

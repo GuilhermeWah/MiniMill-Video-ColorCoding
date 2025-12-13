@@ -1,0 +1,12 @@
+{
+  "_README": "Manual geometry overrides. Add video filename as key to override auto-detection.",
+  "_EXAMPLE": {
+    "example_video.mp4": {
+      "drum_center_x_px": 960,
+      "drum_center_y_px": 540,
+      "drum_radius_px": 400,
+      "rim_margin_px": 16
+    }
+  },
+  "_PRIORITY": "Manual overrides ALWAYS win over auto-detection and cache."
+}
