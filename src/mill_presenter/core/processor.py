@@ -19,9 +19,9 @@ class VisionProcessor:
             
         # Vision Parameters
         self.hough_p1 = config.get('vision', {}).get('hough_param1', 50)
-        self.hough_p2 = config.get('vision', {}).get('hough_param2', 30)
+        self.hough_p2 = config.get('vision', {}).get('hough_param2', 20) # Lowered from 30 to catch more balls
         self.min_dist = config.get('vision', {}).get('min_dist_px', 15)
-        self.contour_min_circularity = config.get('vision', {}).get('min_circularity', 0.75)
+        self.contour_min_circularity = config.get('vision', {}).get('min_circularity', 0.65) # Lowered from 0.75 for glare tolerance
         
         # Bin definitions
         self.bins = config.get('bins_mm', [])
@@ -34,6 +34,34 @@ class VisionProcessor:
         3. Filter (ROI + Annulus Logic)
         4. Classify (px -> mm)
         """
+        x_offset = 0
+        y_offset = 0
+
+        if roi_mask is not None:
+            # Ensure ROI mask matches frame size.
+            if roi_mask.shape[:2] != frame_bgr.shape[:2]:
+                roi_mask = cv2.resize(
+                    roi_mask,
+                    (frame_bgr.shape[1], frame_bgr.shape[0]),
+                    interpolation=cv2.INTER_NEAREST,
+                )
+
+            ys, xs = np.where(roi_mask > 0)
+            if ys.size > 0 and xs.size > 0:
+                # Crop to ROI bounding box (+ small padding for safety)
+                pad = 40
+                y1 = max(int(ys.min()) - pad, 0)
+                y2 = min(int(ys.max()) + pad + 1, frame_bgr.shape[0])
+                x1 = max(int(xs.min()) - pad, 0)
+                x2 = min(int(xs.max()) + pad + 1, frame_bgr.shape[1])
+
+                frame_bgr = frame_bgr[y1:y2, x1:x2]
+                roi_mask = roi_mask[y1:y2, x1:x2]
+                x_offset = x1
+                y_offset = y1
+            else:
+                roi_mask = None
+
         # 1. Preprocessing
         gray = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
         
@@ -55,8 +83,8 @@ class VisionProcessor:
             minDist=self.min_dist,
             param1=self.hough_p1,
             param2=self.hough_p2,
-            minRadius=10, # TODO: Derive from smallest bin (4mm)
-            maxRadius=100 # TODO: Derive from largest bin (10mm)
+            minRadius=4, # Lowered to catch small beads (4mm ~ 11px dia -> 5.5px rad)
+            maxRadius=30 # Lowered to avoid detecting drum features (10mm ~ 29px dia -> 14.5px rad)
         )
         
         candidates = []
@@ -116,6 +144,24 @@ class VisionProcessor:
                 if roi_mask[y, x] == 0:
                     continue
 
+            # Brightness Filter (Reject Dark Holes)
+            # Check the brightness of the center pixel in the original grayscale image
+            # Beads are shiny/bright. Holes are dark/shadowy.
+            # We check a small 3x3 area at the center to be robust against noise
+            if 0 <= y < gray.shape[0] and 0 <= x < gray.shape[1]:
+                # Get a small patch
+                y1, y2 = max(0, y-2), min(gray.shape[0], y+3)
+                x1, x2 = max(0, x-2), min(gray.shape[1], x+3)
+                center_patch = gray[y1:y2, x1:x2]
+                avg_brightness = np.mean(center_patch)
+                
+                # Threshold: If center is very dark, it's likely a hole or background
+                # Adjust this threshold based on your lighting. 
+                # 50 is a conservative guess for "dark shadow".
+                if avg_brightness < 50: 
+                    # logger.debug(f"Rejected dark candidate at {x},{y} brightness={avg_brightness}")
+                    continue
+
             # Annulus Logic: Check if this circle is a hole inside a previously accepted larger circle
             is_hole = False
             for (fx, fy, fr, fconf) in final_candidates:
@@ -123,6 +169,7 @@ class VisionProcessor:
                 dist = np.sqrt((x - fx)**2 + (y - fy)**2)
                 
                 # If center is inside the other circle AND radius is significantly smaller
+                # We are iterating sorted by radius (descending), so 'fr' is always >= 'r'
                 if dist < (fr * 0.5) and r < (fr * 0.8):
                     is_hole = True
                     break
@@ -150,9 +197,16 @@ class VisionProcessor:
             cls = self._classify_diameter(diameter_mm)
             
             if cls is not None:
-                valid_balls.append(Ball(x, y, r, diameter_mm, cls, conf))
+                valid_balls.append(Ball(x + x_offset, y + y_offset, r, diameter_mm, cls, conf))
             else:
-                print(f"DEBUG: Ball at ({x},{y}) r={r} d_mm={diameter_mm:.2f} not in any bin. Bins: {self.bins}")
+                logger.debug(
+                    "Ball at (%s,%s) r=%s d_mm=%.2f not in any bin. Bins: %s",
+                    x + x_offset,
+                    y + y_offset,
+                    r,
+                    diameter_mm,
+                    self.bins,
+                )
                 
         return valid_balls
 

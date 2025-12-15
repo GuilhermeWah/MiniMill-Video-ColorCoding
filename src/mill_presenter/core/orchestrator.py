@@ -36,15 +36,18 @@ class ProcessorOrchestrator:
         self._cancel_requested = True
         logger.info("Cancellation requested.")
 
-    def run(self, progress_callback: Optional[Callable[[float], None]] = None):
+    def run(self, progress_callback: Optional[Callable[[float], None]] = None, limit: Optional[int] = None):
         """
         Runs the detection pipeline on the entire video.
         
         Args:
             progress_callback: Function taking a float (0.0 - 100.0) to report progress.
+            limit: Optional maximum number of frames to process.
         """
         self._cancel_requested = False
         total_frames = self.loader.total_frames
+        if limit is not None and limit < total_frames:
+            total_frames = limit
         
         logger.info(f"Starting processing for {total_frames} frames...")
         
@@ -52,6 +55,11 @@ class ProcessorOrchestrator:
             # Check cancellation
             if self._cancel_requested:
                 logger.info("Processing cancelled by user.")
+                break
+            
+            # Check limit
+            if limit is not None and frame_idx >= limit:
+                logger.info(f"Reached limit of {limit} frames.")
                 break
                 
             # 1. Process

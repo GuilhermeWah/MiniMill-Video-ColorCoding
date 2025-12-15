@@ -7,5 +7,19 @@ dist/
 exports/
 configs/site_*/
 *.mp4
+*.MP4
 *.mov
+*.MOV
+*.avi
+*.AVI
 data/
+
+# Demo assets: keep media ignored globally, but allow the committed sample clip.
+!testing_data/DSC_3310.MOV
+
+# Keep project context docs local-only.
+projectContext/
+
+# Keep only the demo clip tracked in testing_data/
+testing_data/*
+!testing_data/DSC_3310.MOV

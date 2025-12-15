@@ -1,4 +1,4 @@
-# MGrinding Millr Quick Note 
+# MGrinding Millr – Quick Note
 
 Guys, quick overview before you move on. This repo is the repo we discussed earlier. I tried my best for documenting it in the clearest way possible. I’m following the component diagram I shared (FrameLoader ➜ ProcessorOrchestrator ➜ ResultsCache ➜ OverlayRenderer ➜ UI/Exporter) as closely as possible so everything is cleanly separated. Detection happens once, offline, so the live player just paints cached circles with no interrruption.
 
@@ -13,8 +13,8 @@ scripts\setup.ps1
 # run the full TDD gate
 pytest
 
-# sample CLI run on the Nikon(sample he gave us) clip that lives in content/
-python scripts/run_detection.py --input content/DSC_3310.MOV `
+# sample CLI run on the bundled demo clip (committed in testing_data/)
+python scripts/run_detection.py --input testing_data/DSC_3310.MOV `
     --output exports/detections.jsonl --config configs/sample.config.yaml
 ```
 
@@ -24,7 +24,7 @@ Once you have both the video file and the cached detections (JSONL), launch the 
 
 ```powershell
 python -m mill_presenter.app `
-    --video content/DSC_3310.MOV `
+    --video testing_data/DSC_3310.MOV `
     --detections exports/detections.jsonl `
     --config configs/sample.config.yaml
 ```
@@ -34,7 +34,7 @@ python -m mill_presenter.app `
 Why those scripts exist:
 - `scripts/setup.ps1` – rebuilds `.venv` exactly like my machine. 
 - `scripts/run.ps1` – placeholder launcher for the PyQt shell when we wire it up. (We'll implement Daniel's UI later. PyQT for now just to make it simpler to debug)
-- `scripts/debug_vision.py` – opens `content/DSC_3310.MOV` with the ROI mask so you can spot check detections.
+- `scripts/debug_vision.py` – opens the bundled demo clip in `testing_data/` (ROI mask optional) so you can spot check detections.
 - `scripts/repro_synthetic.py` – reproduces the tiny synthetic clip the CLI test generates (useful when PyAV or OpenCV behave differently on CI). -- explanation later, why PyAV and not OpenCV
 
 ---
@@ -48,7 +48,7 @@ Why those scripts exist:
 | `docs/technical_primer.md` | Made this kind of  walkthrough of the CV pipeline and each module. |
 | `docs/testing_criteria.md` | Test driven development (tdd) checklist; every time I add/modify tests I describe the goal, risk, and how to verify. (thanks claude)|
 | `docs/faq.md` | Every “why?”/“how?” I've/we been asking  is/will be recorded here so we don’t lose context. |
-| `projectContext/mill_presenter_context.txt` | Rolling session log so you know what happened last time. |
+| `projectContext/` | Local-only context/docs (ignored in git). |
 | `.github/copilot-instructions.md` | The hard rules I’m forcing on myself (docs-first, FAQ logging, ROI safety, etc.). |
 
 If you have a new question, drop it in `docs/faq.md`. If you finish/expand work, update `PLAN.md` the same moment. Try to keep same structure
@@ -60,7 +60,8 @@ If you have a new question, drop it in `docs/faq.md`. If you finish/expand work,
 - `src/mill_presenter/core` – the diagram come to life: `playback.py` (PyAV + rotation + seeking fixes), `processor.py` (bilateral ➜ CLAHE ➜ Hough + contours + annulus + classification), `cache.py` (JSONL writer + RAM ring buffer), `orchestrator.py` (offline pass controller).
 - `src/mill_presenter/ui` – PyQt shell that will use `OverlayRenderer` once Phase 3 kicks in.
 - `configs/` – tuning knobs (`sample.config.yaml` now includes `vision.min_circularity`).
-- `content/` – the real clip (`DSC_3310.MOV`) + ROI mask we share inside the team.
+- `testing_data/` – the bundled demo clip (`DSC_3310.MOV`) used for reproducible runs.
+- `content/` – optional ROI masks and local-only assets.
 - `scripts/` – helpers for setup, ROI authoring, debugging, CLI runs.
 - `tests/` – pytest suites for every core module plus the CLI integration.
 - `exports/` – target folder for `detections.jsonl` and any exported frames.

@@ -13,4 +13,4 @@ if (Test-Path "$ProjectRoot\.venv\Scripts\Activate.ps1") {
 $env:PYTHONPATH = "$ProjectRoot\src"
 
 # Run the app
-python -m mill_presenter.app
+python -m mill_presenter.app $args
