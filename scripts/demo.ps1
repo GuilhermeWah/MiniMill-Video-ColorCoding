@@ -3,9 +3,9 @@ $ScriptDir = Split-Path $MyInvocation.MyCommand.Path
 $ProjectRoot = Split-Path $ScriptDir -Parent
 
 # Paths
-$VideoPath = "$ProjectRoot\content\DSC_3310.MOV"
+$VideoPath = "$ProjectRoot\testing_data\DSC_3310.MOV"
 $ConfigPath = "$ProjectRoot\configs\sample.config.yaml"
-$DetectionsPath = "$ProjectRoot\detections.jsonl"
+$DetectionsPath = "$ProjectRoot\exports\DSC_3310.detections.jsonl"
 $RoiMaskPath = "$ProjectRoot\content\roi_mask.png"
 
 # Activate venv
@@ -18,7 +18,12 @@ $env:PYTHONPATH = "$ProjectRoot\src"
 
 # 1. Run Detection
 Write-Host "Step 1: Running Detection..." -ForegroundColor Cyan
-python "$ScriptDir\run_detection.py" --input "$VideoPath" --output "$DetectionsPath" --config "$ConfigPath" --roi "$RoiMaskPath"
+$RoiArgs = @()
+if (Test-Path $RoiMaskPath) {
+    $RoiArgs = @("--roi", $RoiMaskPath)
+}
+
+python "$ScriptDir\run_detection.py" --input "$VideoPath" --output "$DetectionsPath" --config "$ConfigPath" @RoiArgs
 
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Detection failed!"

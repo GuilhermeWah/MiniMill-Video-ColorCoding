@@ -10,6 +10,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../src'))
 from mill_presenter.core.playback import FrameLoader
 from mill_presenter.core.processor import VisionProcessor
 from mill_presenter.utils.logging import setup_logging
+from _demo_paths import resolve_demo_video, resolve_roi_mask
 
 def main():
     setup_logging()
@@ -25,9 +26,10 @@ def main():
         config['calibration']['px_per_mm'] = 10.0
 
     # 2. Load Video
-    video_path = os.path.join(os.path.dirname(__file__), '../content/DSC_3310.MOV')
-    if not os.path.exists(video_path):
-        print(f"❌ Video not found at: {video_path}")
+    try:
+        video_path = str(resolve_demo_video())
+    except FileNotFoundError as e:
+        print(f"❌ {e}")
         return
 
     print(f"Loading video: {video_path}")
@@ -37,18 +39,18 @@ def main():
     processor = VisionProcessor(config)
     
     # 3b. Load ROI Mask
-    roi_mask_path = os.path.join(os.path.dirname(__file__), '../content/roi_mask.png')
+    roi_mask_path = resolve_roi_mask()
     roi_mask = None
-    if os.path.exists(roi_mask_path):
+    if roi_mask_path is not None and os.path.exists(roi_mask_path):
         try:
-            with open(roi_mask_path, 'rb') as f:
+            with open(str(roi_mask_path), 'rb') as f:
                 file_bytes = np.frombuffer(f.read(), dtype=np.uint8)
                 roi_mask = cv2.imdecode(file_bytes, cv2.IMREAD_GRAYSCALE)
             print(f"✅ Loaded ROI mask: {roi_mask.shape}")
         except Exception as e:
             print(f"⚠️  Failed to load ROI mask: {e}")
     else:
-        print(f"⚠️  No ROI mask found at {roi_mask_path}")
+        print("⚠️  No ROI mask found. Proceeding without it.")
     
     # 4. Process a specific frame (e.g., frame 100 where beads are settled)
     target_frame = 100

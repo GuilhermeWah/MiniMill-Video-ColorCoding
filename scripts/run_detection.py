@@ -43,6 +43,13 @@ def main():
         processor = VisionProcessor(config)
         
         logger.info(f"Initializing ResultsCache: {args.output}")
+        if os.path.exists(args.output):
+            logger.info(f"Output already exists; overwriting: {args.output}")
+            try:
+                os.remove(args.output)
+            except OSError:
+                # Fall back to truncating if remove fails (e.g., permissions/lock)
+                open(args.output, 'w').close()
         cache = ResultsCache(args.output)
         
         orchestrator = ProcessorOrchestrator(loader, processor, cache)

@@ -34,6 +34,34 @@ class VisionProcessor:
         3. Filter (ROI + Annulus Logic)
         4. Classify (px -> mm)
         """
+        x_offset = 0
+        y_offset = 0
+
+        if roi_mask is not None:
+            # Ensure ROI mask matches frame size.
+            if roi_mask.shape[:2] != frame_bgr.shape[:2]:
+                roi_mask = cv2.resize(
+                    roi_mask,
+                    (frame_bgr.shape[1], frame_bgr.shape[0]),
+                    interpolation=cv2.INTER_NEAREST,
+                )
+
+            ys, xs = np.where(roi_mask > 0)
+            if ys.size > 0 and xs.size > 0:
+                # Crop to ROI bounding box (+ small padding for safety)
+                pad = 40
+                y1 = max(int(ys.min()) - pad, 0)
+                y2 = min(int(ys.max()) + pad + 1, frame_bgr.shape[0])
+                x1 = max(int(xs.min()) - pad, 0)
+                x2 = min(int(xs.max()) + pad + 1, frame_bgr.shape[1])
+
+                frame_bgr = frame_bgr[y1:y2, x1:x2]
+                roi_mask = roi_mask[y1:y2, x1:x2]
+                x_offset = x1
+                y_offset = y1
+            else:
+                roi_mask = None
+
         # 1. Preprocessing
         gray = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
         
@@ -169,9 +197,16 @@ class VisionProcessor:
             cls = self._classify_diameter(diameter_mm)
             
             if cls is not None:
-                valid_balls.append(Ball(x, y, r, diameter_mm, cls, conf))
+                valid_balls.append(Ball(x + x_offset, y + y_offset, r, diameter_mm, cls, conf))
             else:
-                print(f"DEBUG: Ball at ({x},{y}) r={r} d_mm={diameter_mm:.2f} not in any bin. Bins: {self.bins}")
+                logger.debug(
+                    "Ball at (%s,%s) r=%s d_mm=%.2f not in any bin. Bins: %s",
+                    x + x_offset,
+                    y + y_offset,
+                    r,
+                    diameter_mm,
+                    self.bins,
+                )
                 
         return valid_balls
 

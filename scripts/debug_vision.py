@@ -8,6 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src'
 
 from mill_presenter.core.playback import FrameLoader
 from mill_presenter.core.processor import VisionProcessor
+from _demo_paths import resolve_demo_video, resolve_roi_mask
 
 def create_test_video(path):
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -19,22 +20,24 @@ def create_test_video(path):
     out.release()
 
 def main():
-    # Use relative paths to avoid encoding issues with "Área de Trabalho"
-    video_path = "content/DSC_3310.MOV"
-    roi_path = "content/roi_mask.png"
-    
-    if not os.path.exists(video_path):
-        print(f"Error: Video not found at {video_path}")
+    # Use repo-relative paths to avoid encoding issues with "Área de Trabalho"
+    try:
+        video_path = str(resolve_demo_video())
+    except FileNotFoundError as e:
+        print(f"Error: {e}")
         return
+
+    roi_mask_path = resolve_roi_mask()
 
     loader = FrameLoader(video_path)
     print(f"Loader: {loader.width}x{loader.height}, {loader.total_frames} frames, {loader.fps} fps")
     
     # Load ROI if available
     roi_mask = None
-    if os.path.exists(roi_path):
-        roi_mask = cv2.imread(roi_path, cv2.IMREAD_GRAYSCALE)
-        print(f"Loaded ROI mask: {roi_mask.shape}")
+    if roi_mask_path is not None and os.path.exists(roi_mask_path):
+        roi_mask = cv2.imread(str(roi_mask_path), cv2.IMREAD_GRAYSCALE)
+        if roi_mask is not None:
+            print(f"Loaded ROI mask: {roi_mask.shape}")
     
     config = {
         'calibration': {'px_per_mm': 10.0}, # Placeholder calibration

@@ -14,7 +14,7 @@ bins_mm:
 calibration:
   drum_diameter_mm: 200.0
   method: ring
-  px_per_mm: 3.831016051083482
+  px_per_mm: 5.19
 overlay:
   colors:
     4: '#FF0000'
