@@ -1,0 +1,5 @@
+Video: DSC_3310
+Center: (969, 553)
+Radius: 517 px
+px_per_mm: 5.1700
+Drum diameter: 200.0 mm

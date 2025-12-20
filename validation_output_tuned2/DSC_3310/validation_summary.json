@@ -1,0 +1,47 @@
+{
+  "video": "DSC_3310",
+  "frames_processed": [
+    {
+      "frame": 0,
+      "raw_candidates": 706,
+      "avg_confidence": 0.721,
+      "after_filtering": 108,
+      "class_counts": {
+        "6": 49,
+        "8": 29,
+        "10": 15,
+        "4": 9,
+        "0": 6
+      }
+    },
+    {
+      "frame": 100,
+      "raw_candidates": 586,
+      "avg_confidence": 0.72,
+      "after_filtering": 109,
+      "class_counts": {
+        "6": 48,
+        "8": 26,
+        "4": 19,
+        "10": 10,
+        "0": 6
+      }
+    },
+    {
+      "frame": 200,
+      "raw_candidates": 780,
+      "avg_confidence": 0.718,
+      "after_filtering": 104,
+      "class_counts": {
+        "6": 36,
+        "8": 37,
+        "10": 14,
+        "4": 12,
+        "0": 5
+      }
+    }
+  ],
+  "calibration": {
+    "px_per_mm": 5.17
+  }
+}
