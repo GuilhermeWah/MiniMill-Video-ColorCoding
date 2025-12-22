@@ -1,4 +1,4 @@
-# MGrinding Millr – Quick Note
+# Grinding Mill - Quick Note
 
 Guys, quick overview before you move on. This repo is the repo we discussed earlier. I tried my best for documenting it in the clearest way possible. I’m following the component diagram I shared (FrameLoader ➜ ProcessorOrchestrator ➜ ResultsCache ➜ OverlayRenderer ➜ UI/Exporter) as closely as possible so everything is cleanly separated. Detection happens once, offline, so the live player just paints cached circles with no interrruption.
 
@@ -43,15 +43,11 @@ Why those scripts exist:
 
 | File | Why you should read it |
 | --- | --- |
-| `PLAN.md` | Phase roadmap + every finished task points to the test that proves it. If scope grows, I log it here immediately. |
-| `docs/design_decisions.md` | The “why” behind architecture choices (NVDEC, JSONL cache, contour knobs, annulus logic). |
-| `docs/technical_primer.md` | Made this kind of  walkthrough of the CV pipeline and each module. |
-| `docs/testing_criteria.md` | Test driven development (tdd) checklist; every time I add/modify tests I describe the goal, risk, and how to verify. (thanks claude)|
-| `docs/faq.md` | Every “why?”/“how?” I've/we been asking  is/will be recorded here so we don’t lose context. |
-| `projectContext/` | Local-only context/docs (ignored in git). |
-| `.github/copilot-instructions.md` | The hard rules I’m forcing on myself (docs-first, FAQ logging, ROI safety, etc.). |
-
-If you have a new question, drop it in `docs/faq.md`. If you finish/expand work, update `PLAN.md` the same moment. Try to keep same structure
+| `docs/architecture_guide.md` | Architecture guide + detection pipeline explanation (this is the main doc). |
+| `docs/technical_primer.md` | Walkthrough of the CV pipeline and the key modules. |
+| `docs/tuning_log.md` | Running log of experiments / tuning knobs / outcomes. |
+ 
+If you have a new question, drop it in the Q&A section inside `docs/architecture_guide.md` (or keep local notes in `docs/internal/`).
 
 ---
 
@@ -70,7 +66,6 @@ If you have a new question, drop it in `docs/faq.md`. If you finish/expand work,
 
 ## Workflow I’m Following (TDD + FAQ discipline)
 
-I stay in a strict red/green/refactor loop:
 1. Describe the task in `PLAN.md`.
 2. Write the failing test under `tests/` (models, playback, processor, cache, orchestrator, or CLI).
 3. Implement just enough under `src/mill_presenter/` to make it pass.
@@ -87,7 +82,16 @@ That FAQ rule exists because we kept asking “why dummy videos?” / “why JSO
 - Synthetic CLI test expects `px_per_mm = 15.0` and `vision.min_circularity = 0.65`; otherwise the perfect white circle won’t land in the 4 mm bin.
 - Real footage: keep ROI masks in `content/`, and always review overlays via the cached `exports/detections.jsonl`—the UI must never trigger detection during playback.
 
+---
+
+## Git Notes (local-only stuff)
+
+These folders are intentionally ignored (they're for local notes/outputs, not the shared repo):
+- `docs/internal/`
+- `docs/test_reports/`
+- `quantitative_analysis/`
+
 txt on the WPP group  if anything feels off, but this README plus the docs above should be enough to get us rolling. 
 
 
-==== IT'S NOT FINISHED YET,  The PLAN.MD  is updated, it shows where I'm/we're at.
+==== IT'S NOT FINISHED YET, but the docs above show where I'm/we're at.
