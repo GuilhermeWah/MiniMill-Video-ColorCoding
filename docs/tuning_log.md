@@ -4,7 +4,7 @@ Record of vision parameter experiments. Update after each tuning session.
 
 ---
 
-## 2025-12-03 - Baseline (Current Config)
+## 2025-12-03 - Baseline ( our Current Config)
 
 **Config:** `configs/sample.config.yaml`
 
@@ -30,7 +30,7 @@ Record of vision parameter experiments. Update after each tuning session.
 
 | Parameter | Old | New | Result |
 |-----------|-----|-----|--------|
-| param_name | X | Y | ✅/❌ Description |
+ 
 
-**Conclusion:** [Keep/revert? Why?]
+**Conclusion:** [Should we Keep/revert? Why?]
 ```

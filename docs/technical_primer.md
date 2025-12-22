@@ -9,7 +9,7 @@ This is not just a video player, and it is not just a research script. It is a *
 *   **The Solution:** We do not detect beads while the video plays. We detect them **once** (offline), save them to a file, and then just "draw" them during playback.
 
 ## 2. Computer Vision Concepts (The "How")
-We use classic Computer Vision (OpenCV), not Deep Learning (AI), because it is faster to tune for our specific geometry and requires no training data. Here are the key algorithms we use:
+We use classic Computer Vision (OpenCV), not deep learning, because it is faster to tune for our specific geometry and requires no training data. Here are the key algorithms we use:
 
 ### A. Bilateral Filter (Preprocessing)
 *   **What is it?** A smart blur. Unlike a standard blur that makes everything fuzzy, a Bilateral Filter smooths out "flat" areas but **stops** when it hits a sharp edge.
@@ -114,7 +114,6 @@ The codebase is split into two distinct worlds that barely talk to each other:
 
 ## 4. Key Files to Read
 *   `docs/design_decisions.md`: The "Why" behind our architecture.
-*   `.github/copilot-instructions.md`: The strict rules for AI agents (and humans) working on this code.
 *   `configs/sample.config.yaml`: Where we tune the sensitivity of the algorithms (Hough/Contour thresholds, bins) and store calibration.
 *   `scripts/run_detection.py`: Headless entry point that glues FrameLoader, Processor, Orchestrator, and ResultsCache together; used by automated tests and CLI workflows.
 *   `scripts/test_vision.py`: Developer-only playground for inspecting detections on a single frame and dumping a debug JPEG.

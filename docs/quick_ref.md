@@ -4,7 +4,7 @@
 
 ### Run Detection (Offline)
 ```powershell
-python scripts/run_detection.py --input content/DSC_1276.MOV --output exports/detections.jsonl --config configs/sample.config.yaml
+python scripts/run_detection.py --input content/DSC_1276.MOV --output exports/detections.jsonl --config configs/sample.config.yaml #most of the tests am using the DSC3310
 ```
 
 ### Run UI Player

@@ -14,12 +14,20 @@ configs/site_*/
 *.AVI
 data/
 
-# Demo assets: keep media ignored globally, but allow the committed sample clip.
+#  keep media ignored globally, but allow the committed sample clip.
 !testing_data/DSC_3310.MOV
 
 # Keep project context docs local-only.
 projectContext/
 
+# Keep internal docs + test reports local-only.
+docs/internal/
+docs/test_reports/
+
+# Keep quantitative analysis local-only.
+quantitative_analysis/
+
 # Keep only the demo clip tracked in testing_data/
 testing_data/*
 !testing_data/DSC_3310.MOV
+

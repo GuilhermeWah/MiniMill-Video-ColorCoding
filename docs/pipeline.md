@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the complete data flow from video frame to rendered overlay. Understanding this pipeline is critical for debugging sizing issues.
+This document describes our complete data flow from video frame to rendered overlay. Understanding this pipeline is critical for debugging sizing issues.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -104,7 +104,7 @@ This document describes the complete data flow from video frame to rendered over
 
 #### 2.1 Preprocessing
 ```python
-# Lines 42-55
+ 
 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 blurred = cv2.bilateralFilter(gray, d=9, sigmaColor=75, sigmaSpace=75)
 clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
@@ -113,7 +113,7 @@ detection_img = clahe.apply(blurred)
 
 #### 2.2 HoughCircles Detection
 ```python
-# Lines 66-73
+ 
 min_r = max(4, int((self.bins[0]['min'] * self.px_per_mm) / 2) - 1)
 max_r = min(100, int((self.bins[-1]['max'] * self.px_per_mm) / 2) + 2)
 
@@ -128,7 +128,6 @@ circles = cv2.HoughCircles(
 
 #### 2.3 Contour Detection (Backup Path)
 ```python
-# Lines 100-137
 edges = cv2.Canny(detection_img, low_thresh, high_thresh)
 contours, _ = cv2.findContours(edges, ...)
 
@@ -143,7 +142,7 @@ for cnt in contours:
 
 #### 2.4 Filtering Pipeline
 ```python
-# Lines 140-200
+ 
 # 1. ROI Mask Check - reject if center on black pixel
 # 2. Brightness Filter - reject if center brightness < 25 (holes/shadows)
 # 3. Annulus Logic - reject small circles inside larger ones (holes in beads)
@@ -171,8 +170,7 @@ real_diameters_mm = {
     10: 9.90   # Actual 10mm bead diameter
 }
 
-# Lines 58-60
-real_diameter = self.real_diameters_mm.get(ball.cls, ball.diameter_mm)
+ real_diameter = self.real_diameters_mm.get(ball.cls, ball.diameter_mm)
 r = (real_diameter / 2) * self.px_per_mm * scale
 # Draw circle at (ball.x, ball.y) with radius r
 ```

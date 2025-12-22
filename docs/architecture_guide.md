@@ -1,31 +1,29 @@
-# 🎯 Bead Detection System – Presentation Guide
+# Bead Detection System – Architecture Guide
 
-This document will help you deeply understand and present the slides about your bead detection system. Each section explains the concepts in simple terms with references to the actual code.
+This document explains the system architecture and detection pipeline, with references to the code in this repository.
 
 ---
 
-## 📋 Quick Navigation
+## Quick Navigation
 
 | Section | Topic |
 |---------|-------|
-| [Foundational Concepts](#-foundational-concepts-glossary) | Terms you need to know |
-| [File Responsibilities](#-file-responsibilities) | What each code file does |
-| [The Problem We're Solving](#-the-problem-were-solving) | Why we built this system |
-| [How The Algorithm Works](#-how-the-algorithm-works-step-by-step) | Deep dive into detection |
-| [Problems We Faced & Solutions](#-problems-we-faced--how-we-solved-them) | Technical challenges |
-| [Slide-by-Slide Guide](#️-slide-by-slide-guide) | Key points for each slide |
-| [Speech Script](#-speech-script) | What to say during presentation |
-| [Q&A Section](#-qa-possible-questions-and-answers) | Possible questions and answers |
+| [Foundational Concepts](#foundational-concepts-glossary) | Core terms |
+| [File Responsibilities](#file-responsibilities) | What each code file does |
+| [The Problem We're Solving](#the-problem-were-solving) | Why we built this system |
+| [How The Algorithm Works](#how-the-algorithm-works-step-by-step) | Detection pipeline |
+| [Problems We Faced & Solutions](#problems-we-faced--how-we-solved-them) | Technical challenges |
+| [Q&A Section](#qa-possible-questions-and-answers) | Common questions and answers |
 
 ---
 
-# 📚 Foundational Concepts (Glossary)
+# Foundational Concepts (Glossary)
 
 Before diving into the algorithm, let's understand the key terms you'll use in your presentation.
 
 ---
 
-## 🔵 Radius vs Radii
+## Radius vs Radii
 
 **Radius** (singular): The distance from the center of a circle to its edge.
 
@@ -55,7 +53,7 @@ for ball in balls:
 
 ---
 
-## 🎬 What is PyAV?
+## What is PyAV?
 
 **PyAV** is a Python library that wraps **FFmpeg** (the most powerful video processing tool).
 
@@ -63,7 +61,7 @@ for ball in balls:
 
 | Feature | OpenCV (`cv2.VideoCapture`) | PyAV |
 |---------|----------------------------|------|
-| Seeking accuracy | ❌ Imprecise (lands on keyframes) | ✅ Frame-perfect (uses PTS) |
+| Seeking accuracy | Imprecise (lands on keyframes) | Frame-perfect (uses PTS) |
 | Codec support | Limited | All FFmpeg codecs |
 | Metadata access | Basic | Full (rotation, timestamps) |
 | Performance | Good | Excellent (multi-threaded) |
@@ -87,7 +85,7 @@ for frame in container.decode(stream):
 
 ---
 
-## 🔄 What is Multi-Threading?
+## What is Multi-Threading?
 
 **Threading** = Running multiple tasks at the same time.
 
@@ -126,7 +124,7 @@ This means:
 
 ---
 
-## 📄 JSON vs JSONL (JSON Lines)
+## JSON vs JSONL (JSON Lines)
 
 ### JSON (JavaScript Object Notation):
 A format to store structured data. **One big object/array per file**.
@@ -178,7 +176,7 @@ No need to read or rewrite the existing content!
 
 ---
 
-## ⏱️ FPS and Milliseconds Explained
+## FPS and Milliseconds Explained
 
 ### What is FPS (Frames Per Second)?
 
@@ -239,12 +237,12 @@ Playback breakdown:
 ├── Decode frame:     ~5ms
 ├── Read from cache:  ~1ms
 ├── Draw overlays:    ~2ms
-└── Total:            ~8ms ✅ (under 16.6ms budget)
+└── Total:            ~8ms (under 16.6ms budget)
 ```
 
 ---
 
-## 🎯 Why Lower `hough_param2` = More Circles?
+## Why Lower `hough_param2` = More Circles?
 
 ### What is `hough_param2`?
 
@@ -292,13 +290,13 @@ We use **20** (relatively low) because:
 
 ---
 
-# 📁 File Responsibilities
+# File Responsibilities
 
 Each file in our codebase has a specific job. Here's what each one does:
 
 ## Core Files
 
-### [orchestrator.py](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/orchestrator.py) – **The Coordinator**
+### [orchestrator.py](../src/mill_presenter/core/orchestrator.py) – **The Coordinator**
 
 **Job**: Connects all the pieces and runs the detection pipeline.
 
@@ -326,7 +324,7 @@ Each file in our codebase has a specific job. Here's what each one does:
 
 ---
 
-### [processor.py](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/processor.py) – **The Brain**
+### [processor.py](../src/mill_presenter/core/processor.py) – **The Brain**
 
 **Job**: The actual computer vision logic. Takes an image, returns detected beads.
 
@@ -350,7 +348,7 @@ Output: List of Ball objects with (x, y, radius, size_class)
 
 ---
 
-### [overlay.py](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/overlay.py) – **The Artist**
+### [overlay.py](../src/mill_presenter/core/overlay.py) – **The Artist**
 
 **Job**: Draw colored circles on video frames.
 
@@ -374,7 +372,7 @@ Output: Circles drawn on the QPainter
 
 ---
 
-### [playback.py](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/playback.py) – **The Video Reader**
+### [playback.py](../src/mill_presenter/core/playback.py) – **The Video Reader**
 
 **Job**: Open video files and extract frames with PyAV.
 
@@ -385,7 +383,7 @@ Output: Circles drawn on the QPainter
 
 ---
 
-### [cache.py](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/cache.py) – **The Memory**
+### [cache.py](../src/mill_presenter/core/cache.py) – **The Memory**
 
 **Job**: Save and load detection results.
 
@@ -408,7 +406,7 @@ Output: Circles drawn on the QPainter
 
 ---
 
-# 🎯 The Problem We're Solving
+# The Problem We're Solving
 
 ## The Real-World Scenario
 
@@ -433,7 +431,7 @@ Imagine a **small ball mill** – a rotating drum filled with metallic beads of 
 
 ---
 
-# 🧠 How The Algorithm Works (Step-by-Step)
+# How The Algorithm Works (Step-by-Step)
 
 This is the heart of the system. Let's walk through exactly what happens when we process a video frame.
 
@@ -578,9 +576,9 @@ Neither method alone is perfect:
 
 | Scenario | Hough Circles | Contour Analysis |
 |----------|---------------|------------------|
-| Beads piled together, overlapping | ✅ Great | ❌ Edges broken |
-| Single bead flying in air | ❌ Too noisy | ✅ Perfect |
-| Partial bead at edge of frame | ❌ Needs full circle | ✅ Can detect partial |
+| Beads piled together, overlapping | Good | Poor (edges broken) |
+| Single bead flying in air | Poor (too noisy) | Good |
+| Partial bead at edge of frame | Poor (needs full circle) | Good (can detect partial) |
 
 **We use BOTH and merge the results!**
 
@@ -805,7 +803,7 @@ for bin_def in self.bins:
 
 ---
 
-# 🔧 Problems We Faced & How We Solved Them
+# Problems We Faced & How We Solved Them
 
 ## Problem 1: Real-Time Processing is Too Slow
 
@@ -841,7 +839,7 @@ Phase 2 (Playback):
 └─────────────────────────────────────────────┘
 ```
 
-**Code**: [cache.py](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/cache.py) – JSONL storage + RAM dictionary
+**Code**: [cache.py](../src/mill_presenter/core/cache.py) – JSONL storage + RAM dictionary
 
 ---
 
@@ -869,7 +867,7 @@ filtered = cv2.bilateralFilter(gray, 9, 75, 75)
 
 This smooths out the glare spots while keeping the actual bead edge sharp.
 
-**Code**: [processor.py line 46](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/processor.py#L46)
+**Code**: [processor.py line 46](../src/mill_presenter/core/processor.py#L46)
 
 ---
 
@@ -888,7 +886,7 @@ enhanced = clahe.apply(filtered)
 
 This boosts contrast locally in 8×8 tile regions, bringing out detail in shadows.
 
-**Code**: [processor.py lines 49-50](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/processor.py#L49-L50)
+**Code**: [processor.py lines 49-50](../src/mill_presenter/core/processor.py#L49-L50)
 
 ---
 
@@ -916,7 +914,7 @@ if dist < (fr * 0.3) and r < (fr * 0.5):
     is_hole = True
 ```
 
-**Code**: [processor.py lines 172-186](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/processor.py#L172-L186)
+**Code**: [processor.py lines 172-186](../src/mill_presenter/core/processor.py#L172-L186)
 
 ---
 
@@ -945,7 +943,7 @@ if avg_brightness < 25:  # Very dark = hole
 
 Real beads are metallic = reflective = bright. Holes are dark shadows.
 
-**Code**: [processor.py lines 154-170](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/processor.py#L154-L170)
+**Code**: [processor.py lines 154-170](../src/mill_presenter/core/processor.py#L154-L170)
 
 ---
 
@@ -974,7 +972,7 @@ for frame in self.container.decode(self.stream):
     yield current_idx, img_array  # Got exact frame!
 ```
 
-**Code**: [playback.py lines 109-147](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/playback.py#L109-L147)
+**Code**: [playback.py lines 109-147](../src/mill_presenter/core/playback.py#L109-L147)
 
 ---
 
@@ -990,380 +988,36 @@ for frame in self.container.decode(self.stream):
 - **Contour** works well for isolated, clear beads
 - We run BOTH and merge results!
 
-**Code**: [processor.py lines 78-136](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/processor.py#L78-L136)
+**Code**: [processor.py lines 78-136](../src/mill_presenter/core/processor.py#L78-L136)
 
 ---
 
-# 📊 Summary: Problems and Solutions
+# Summary: Problems and Solutions
 
 | # | Problem | Root Cause | Solution | Code Location |
 |---|---------|------------|----------|---------------|
-| 1 | Too slow for real-time | Detection is 50-100ms/frame | Two-phase architecture | [cache.py](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/cache.py) |
-| 2 | Glare confuses detection | Metallic reflections | Bilateral filter | [processor.py#L46](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/processor.py#L46) |
-| 3 | Shadows hide beads | Low contrast | CLAHE | [processor.py#L49-50](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/processor.py#L49-L50) |
-| 4 | Hollow beads = 2 detections | Inner holes detected | Annulus logic | [processor.py#L172-186](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/processor.py#L172-L186) |
-| 5 | Background holes = false beads | Circular shapes | Brightness filter | [processor.py#L154-170](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/processor.py#L154-L170) |
-| 6 | Imprecise seeking | OpenCV limitation | PyAV + PTS math | [playback.py#L109-147](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/playback.py#L109-L147) |
-| 7 | Broken edges in piles | Occlusion | Dual-path detection | [processor.py#L78-136](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/processor.py#L78-L136) |
+| 1 | Too slow for real-time | Detection is 50-100ms/frame | Two-phase architecture | [cache.py](../src/mill_presenter/core/cache.py) |
+| 2 | Glare confuses detection | Metallic reflections | Bilateral filter | [processor.py#L46](../src/mill_presenter/core/processor.py#L46) |
+| 3 | Shadows hide beads | Low contrast | CLAHE | [processor.py#L49-50](../src/mill_presenter/core/processor.py#L49-L50) |
+| 4 | Hollow beads = 2 detections | Inner holes detected | Annulus logic | [processor.py#L172-186](../src/mill_presenter/core/processor.py#L172-L186) |
+| 5 | Background holes = false beads | Circular shapes | Brightness filter | [processor.py#L154-170](../src/mill_presenter/core/processor.py#L154-L170) |
+| 6 | Imprecise seeking | OpenCV limitation | PyAV + PTS math | [playback.py#L109-147](../src/mill_presenter/core/playback.py#L109-L147) |
+| 7 | Broken edges in piles | Occlusion | Dual-path detection | [processor.py#L78-136](../src/mill_presenter/core/processor.py#L78-L136) |
 
 ---
 
-# 📽️ Slide-by-Slide Guide
-
-## Slide 1: System Architecture: Two-Phase Design
-
-![Slide 1 - System Architecture](C:/Users/guilh/.gemini/antigravity/brain/f38a4e36-0ebc-45e0-a1b4-c9f92648a2f7/uploaded_image_0_1764913896208.png)
-
-### Key Points to Explain
-
-1. **Phase 1 (Offline Detection)**:
-   - `FrameLoader` reads video with PyAV
-   - `VisionProcessor` detects beads in each frame
-   - `ResultsCache` saves to JSONL file
-
-2. **Phase 2 (Real-Time Playback)**:
-   - `VideoWidget` displays frames
-   - `OverlayRenderer` draws circles (reads from cache)
-   - Achieves **60 FPS** because detection is pre-computed
-
-3. **Why this design?**
-   - Detection is slow (~100ms/frame)
-   - Playback must be fast (60 FPS = 16.6ms/frame)
-   - Solution: Do slow work once, replay is instant
 
 ---
 
-## Slide 2: Vision Pipeline: Dual-Path Detection
-
-![Slide 2 - Dual-Path Detection](C:/Users/guilh/.gemini/antigravity/brain/f38a4e36-0ebc-45e0-a1b4-c9f92648a2f7/uploaded_image_1_1764913896208.png)
-
-### Key Points to Explain
-
-1. **Path A: Hough Circles**
-   - Voting algorithm – tolerates partial edges
-   - Best for piled/overlapping beads
-   - Uses `cv2.HoughCircles()`
-
-2. **Path B: Contour Analysis**
-   - Finds closed edge loops
-   - Checks circularity (4πA/P² > 0.65)
-   - Best for isolated "flyer" beads
-
-3. **Annulus Logic**
-   - Hollow beads have inner holes
-   - Small circle inside big circle = hole
-   - Reject the small one!
-
 ---
 
-## Slide 3: Vision Pipeline: Preprocessing Steps
+# Reference Slides
 
-![Slide 3 - Preprocessing Steps](C:/Users/guilh/.gemini/antigravity/brain/f38a4e36-0ebc-45e0-a1b4-c9f92648a2f7/uploaded_image_2_1764913896208.png)
+Slides are not embedded in this repository. See [docs/slides.md](slides.md) for the maintained slide content.
 
-### Key Points to Explain
-
-1. **Bilateral Filter**: Removes glare while keeping edges sharp
-2. **CLAHE**: Boosts contrast in shadows (works locally, not globally)
-3. **Detection**: Uses dual-path from Slide 2
-4. **Classification**: Converts pixels → mm using calibration, then bins by size
-
-### Calibration
-
-- Auto-detect drum (196mm diameter)
-- Calculate `px_per_mm = measured_radius_px / 98`
-- Without calibration, 6mm beads might be classified as 4mm or 8mm!
-
----
-
-## Slide 4: Technical Challenges Solved
-
-![Slide 4 - Technical Challenges](C:/Users/guilh/.gemini/antigravity/brain/f38a4e36-0ebc-45e0-a1b4-c9f92648a2f7/uploaded_image_3_1764913896208.png)
-
-### Key Points to Explain
-
-Each challenge with its solution:
-
-1. **Hollow Bead Detection** → Annulus logic (reject small circles inside big ones)
-2. **Moving Background Holes** → Brightness filter (dark = hole, bright = bead)  
-3. **Glare & Highlights** → Bilateral filter + CLAHE
-4. **Frame-Perfect Scrubbing** → PyAV instead of OpenCV (uses PTS)
-
----
-
-## 🎤 Presentation Tips
-
-### Opening Hook
-> "How do you count thousands of tiny metallic beads bouncing around a drum at 30 frames per second?"
-
-### Key Messages
-1. **Pre-compute, then replay** – Offline processing enables smooth playback
-2. **Multiple methods > one method** – Hough + Contour together catch more beads
-3. **Preprocessing is essential** – Metallic surfaces need special handling
-4. **Details matter** – PyAV vs OpenCV, brightness thresholds, etc.
-
----
-
-# 🖼️ Reference Slides
-
-Here are all the presentation slides for quick reference:
-
-````carousel
-![Slide 1: System Architecture - Two-Phase Design](C:/Users/guilh/.gemini/antigravity/brain/f38a4e36-0ebc-45e0-a1b4-c9f92648a2f7/uploaded_image_0_1764913896208.png)
-<!-- slide -->
-![Slide 2: Vision Pipeline - Dual-Path Detection](C:/Users/guilh/.gemini/antigravity/brain/f38a4e36-0ebc-45e0-a1b4-c9f92648a2f7/uploaded_image_1_1764913896208.png)
-<!-- slide -->
-![Slide 3: Vision Pipeline - Preprocessing Steps](C:/Users/guilh/.gemini/antigravity/brain/f38a4e36-0ebc-45e0-a1b4-c9f92648a2f7/uploaded_image_2_1764913896208.png)
-<!-- slide -->
-![Slide 4: Technical Challenges Solved](C:/Users/guilh/.gemini/antigravity/brain/f38a4e36-0ebc-45e0-a1b4-c9f92648a2f7/uploaded_image_3_1764913896208.png)
-````
-
----
-
-# 🎙️ Speech Script
-
-Use this script as a guide for what to say during your presentation. Estimated time: **10-12 minutes**.
-
----
-
-## Opening (~30 seconds)
-
-> **[Before showing slides]**
->
-> "Good morning/afternoon everyone. Today I'm going to present our **Bead Detection System** – a computer vision application that automatically detects and classifies metallic beads in ball mill videos.
->
-> The challenge we faced was: **How do you count thousands of tiny metallic beads bouncing around a drum at 30 frames per second?**
->
-> Let me show you how we solved it."
-
----
-
-![Slide 1](C:/Users/guilh/.gemini/antigravity/brain/f38a4e36-0ebc-45e0-a1b4-c9f92648a2f7/uploaded_image_0_1764913896208.png)
-
-## Slide 1: System Architecture (~2.5 minutes)
-
-> **[Show Slide 1]**
->
-> "Let's start with the big picture – our **Two-Phase Architecture**.
->
-> **The core problem** we faced is that computer vision is slow. Detecting circles in an image takes about 50 to 100 milliseconds per frame. But a video runs at 30 frames per second – that means we only have 33 milliseconds per frame. We're 3 times too slow!
->
-> **Our solution** was to separate the work into two phases:
->
-> ---
->
-> **Phase 1 is Offline Detection.**
->
-> *[Point to left side of slide]*
->
-> Before the user watches the video, we process the entire thing in advance. 
->
-> We have three components:
-> - The **FrameLoader** reads video frames using a library called PyAV – which is a Python wrapper around FFmpeg. This gives us frame-accurate seeking, unlike OpenCV which often lands on the wrong frame.
-> - The **VisionProcessor** is the brain – it looks at each frame and finds all the beads.
-> - The **ResultsCache** saves the results to a file called detections.jsonl – that's JSON Lines format, where each line is one frame's data.
->
-> This phase can take 10-15 minutes for a 5-minute video, but it only runs once.
->
-> ---
->
-> **Phase 2 is Real-Time Playback.**
->
-> *[Point to right side of slide]*
->
-> After detection is done, playback is instant.
->
-> - The **VideoWidget** displays the video
-> - The **OverlayRenderer** draws colored circles on top
-> - We achieve **60 FPS** because we're just reading pre-computed data from memory – no heavy processing needed.
->
-> *[Transition]*
->
-> Now let's look at HOW we actually detect the beads..."
-
----
-
-![Slide 2](C:/Users/guilh/.gemini/antigravity/brain/f38a4e36-0ebc-45e0-a1b4-c9f92648a2f7/uploaded_image_1_1764913896208.png)
-
-## Slide 2: Vision Pipeline – Dual-Path Detection (~2.5 minutes)
-
-> **[Show Slide 2]**
->
-> "This slide shows our **Dual-Path Detection** approach. We use TWO different circle detection methods and combine their results.
->
-> **Why two methods?** Because each one is good at different things.
->
-> ---
->
-> **Path A is Hough Circles.**
->
-> *[Point to left box]*
->
-> The Hough Transform is a voting algorithm. For every edge pixel in the image, it 'votes' for possible circle centers. Where lots of pixels vote for the same center, that's where a circle is.
->
-> The key advantage is that it's **robust to occlusion**. Even if beads are piled on top of each other and you can only see 60% of a bead's edge, Hough can still detect it. This makes it perfect for the 'pile' scenario inside the drum.
->
-> ---
->
-> **Path B is Contour Analysis.**
->
-> *[Point to right box]*
->
-> This method finds closed edge loops in the image, then checks if each one is circular using a formula called **circularity**. A perfect circle has circularity of 1.0.
->
-> Contour analysis gives us **high precision** for isolated beads that are flying through the air – what we call 'flyers'.
->
-> ---
->
-> *[Point to special feature note at bottom]*
->
-> There's one important detail: our beads are **hollow rings**, like donuts. Both the outer edge AND the inner hole are circles.
->
-> Without special handling, detectors would count each bead twice!
->
-> So we implemented **Annulus Logic**: if we detect a small circle whose center is inside a larger circle, the small one is probably the inner hole – and we reject it.
->
-> *[Transition]*
->
-> Before we can detect circles, though, we need to prepare the image..."
-
----
-
-![Slide 3](C:/Users/guilh/.gemini/antigravity/brain/f38a4e36-0ebc-45e0-a1b4-c9f92648a2f7/uploaded_image_2_1764913896208.png)
-
-## Slide 3: Vision Pipeline – Preprocessing Steps (~2 minutes)
-
-> **[Show Slide 3]**
->
-> "This slide shows our **Preprocessing Pipeline** – the steps we take before detection.
->
-> *[Point to pipeline flow]*
->
-> There are four stages:
->
-> ---
->
-> **First, Bilateral Filter.**
->
-> Metallic beads create bright glare spots when lights reflect off them. Normal blur would remove the glare but also blur the edges we need to detect.
->
-> The Bilateral Filter is smarter – it smooths out flat areas but **preserves edges**. It does this by only averaging pixels that are similar in brightness.
->
-> ---
->
-> **Second, CLAHE.**
->
-> That stands for Contrast Limited Adaptive Histogram Equalization. 
->
-> Some beads are in shadows and have very low contrast. CLAHE divides the image into tiles and enhances contrast **locally** in each one. Think of it like HDR photography – it brings out detail in both dark and bright areas.
->
-> ---
->
-> *[Point to calibration note]*
->
-> **An important note about calibration**: To classify beads by size, we need to know the relationship between pixels and millimeters. We auto-detect the drum's outer edge, which is a known 196mm diameter, and calculate the conversion factor.
->
-> If calibration is wrong, a 6mm bead might be classified as a 4mm or 8mm – so this step is critical!
->
-> *[Transition]*
->
-> Now let's talk about some specific technical challenges we faced..."
-
----
-
-![Slide 4](C:/Users/guilh/.gemini/antigravity/brain/f38a4e36-0ebc-45e0-a1b4-c9f92648a2f7/uploaded_image_3_1764913896208.png)
-
-## Slide 4: Technical Challenges Solved (~2.5 minutes)
-
-> **[Show Slide 4]**
->
-> "This slide shows four major **technical challenges** we overcame.
->
-> ---
->
-> **Challenge 1: Hollow Bead Detection**
->
-> *[Point to top-left box]*
->
-> As I mentioned, our beads are rings. Detectors would find the outer rim as one circle and the inner hole as another – double counting!
->
-> Our solution is **Annulus Logic**: we check if a small circle's center falls inside a larger circle. If so, and the small one is less than half the size, we assume it's an inner hole and reject it.
->
-> ---
->
-> **Challenge 2: Moving Background Holes**
->
-> *[Point to bottom-left box]*
->
-> The drum's back plate has dark circular holes in it. Our detectors were picking them up as beads!
->
-> The fix was a **Brightness Filter**. Real beads are metallic and shiny – their centers are bright. Background holes are dark shadows. By checking if the center pixel is darker than a threshold of 25, we filter out the holes.
->
-> ---
->
-> **Challenge 3: Glare and Highlights**
->
-> *[Point to top-right box]*
->
-> Specular highlights from lights create edge-like patterns that confuse detectors.
->
-> We solved this with the **Bilateral Filter** to smooth glare, and **CLAHE** to boost contrast in shadowed areas so they're not drowned out by bright spots.
->
-> ---
->
-> **Challenge 4: Frame-Perfect Scrubbing**
->
-> *[Point to bottom-right box]*
->
-> When users drag the slider to jump to a specific frame, OpenCV's seeking is imprecise – you might ask for frame 100 and get frame 98.
->
-> We solved this by using **PyAV** instead. It uses something called PTS – Presentation Time Stamps – to seek to the exact frame. This gives us frame-perfect scrubbing.
->
-> *[Transition to conclusion]*
->
-> And that's our system!"
-
----
-
-## Closing (~1 minute)
-
-> **[After all slides]**
->
-> "To summarize:
->
-> 1. We built a **two-phase architecture** – heavy processing offline, then smooth 60 FPS playback
->
-> 2. We use **dual-path detection** – Hough for piles, Contours for flyers
->
-> 3. **Preprocessing is essential** for metallic objects – bilateral filter and CLAHE
->
-> 4. We solved specific challenges like hollow beads, background holes, glare, and frame-accurate seeking
->
-> The result is a system that can detect and classify thousands of beads in a video, with smooth playback and instant scrubbing.
->
-> Thank you! I'm happy to take any questions."
-
----
-
-## Quick Tips for Delivery
-
-| Tip | Details |
-|-----|---------|
-| **Practice the timing** | Each slide should take 2-2.5 minutes |
-| **Point to the slide** | Gesture at specific boxes/components as you explain them |
-| **Pause between sections** | Give the audience time to absorb information |
-| **Slow down on numbers** | "50 to 100 milliseconds", "33 milliseconds" – say these clearly |
-| **Eye contact** | Look at audience, not just the screen |
-| **Have backup examples** | Know the code locations if someone asks for details |
-
----
-
-# ❓ Q&A: Possible Questions and Answers
-
-This section prepares you for questions you might receive during or after your presentation.
-
----
-
-## 🔬 Algorithm & Technical Questions
+--
+ 
+## Algorithm & Technical Questions
 
 ### Q1: Why did you choose Hough Circle Transform instead of other circle detection methods?
 
@@ -1371,21 +1025,6 @@ This section prepares you for questions you might receive during or after your p
 > "Hough Transform is ideal for our use case because it's **robust to partial occlusion**. In a ball mill, beads pile up and overlap constantly – you rarely see a complete circle edge. Hough works by **voting** for circle centers, so even if only 60% of the edge is visible, it can still detect the circle. 
 >
 > Alternatives like template matching would require complete circles, and blob detection works better for filled circles rather than hollow rings."
-
----
-
-### Q2: Why not use machine learning or deep learning (YOLO, CNN)?
-
-**Answer:**
-> "We considered ML, but classical computer vision was better for this specific problem:
->
-> 1. **No training data needed** – We don't have thousands of labeled bead images
-> 2. **Interpretable** – We can debug and tune parameters directly
-> 3. **Fast inference** – No GPU required, runs on any CPU
-> 4. **Simple shapes** – Circles are mathematically well-defined; no need to "learn" what a circle looks like
-> 5. **Deterministic** – Same input always gives same output
->
-> ML would be overkill here. If we needed to detect irregular objects or defects, then ML would make more sense."
 
 ---
 
@@ -1427,9 +1066,9 @@ This section prepares you for questions you might receive during or after your p
 >
 > | Scenario | Hough | Contours |
 > |----------|-------|----------|
-> | Piled/overlapping beads | ✅ Great | ❌ Broken edges |
-> | Isolated flying beads | ❌ Noisy | ✅ Perfect |
-> | Partial beads at frame edge | ❌ Needs center | ✅ Works |
+> | Piled/overlapping beads | Good | Poor (broken edges) |
+> | Isolated flying beads | Poor (noisy) | Good |
+> | Partial beads at frame edge | Poor (needs center) | Good |
 >
 > By merging results, we catch beads that either method alone would miss. We then use **Non-Maximum Suppression** to remove duplicates where both methods detected the same bead."
 
@@ -1536,7 +1175,7 @@ This section prepares you for questions you might receive during or after your p
 
 ---
 
-## 🛠️ Implementation Questions
+## Implementation Questions
 
 ### Q12: Why PyAV instead of OpenCV for video?
 
@@ -1656,7 +1295,7 @@ This section prepares you for questions you might receive during or after your p
 
 ---
 
-## 🎯 Application-Specific Questions
+## Application-Specific Questions
 
 ### Q19: Why these specific bead sizes (4mm, 6mm, 8mm, 10mm)?
 
@@ -1705,7 +1344,7 @@ This section prepares you for questions you might receive during or after your p
 
 ---
 
-## 🔧 Troubleshooting Questions
+## Troubleshooting Questions
 
 ### Q22: What if detection misses many beads?
 
@@ -1739,7 +1378,7 @@ This section prepares you for questions you might receive during or after your p
 
 ---
 
-## 📚 General/Conceptual Questions
+## General/Conceptual Questions
 
 ### Q24: What are the main limitations of this system?
 
@@ -1771,19 +1410,19 @@ This section prepares you for questions you might receive during or after your p
 
 ---
 
-# 📁 Code Reference
+# Code Reference
 
 | File | Purpose |
 |------|---------|
-| [playback.py](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/playback.py) | FrameLoader – PyAV video decoding |
-| [processor.py](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/processor.py) | VisionProcessor – Detection pipeline |
-| [cache.py](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/cache.py) | ResultsCache – JSONL storage |
-| [overlay.py](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/core/overlay.py) | OverlayRenderer – Drawing circles |
-| [main_window.py](file:///c:/Users/guilh/OneDrive/Área de Trabalho/ColorCodingTest/src/mill_presenter/ui/main_window.py) | MainWindow – PyQt6 UI |
+| [playback.py](../src/mill_presenter/core/playback.py) | FrameLoader – PyAV video decoding |
+| [processor.py](../src/mill_presenter/core/processor.py) | VisionProcessor – Detection pipeline |
+| [cache.py](../src/mill_presenter/core/cache.py) | ResultsCache – JSONL storage |
+| [overlay.py](../src/mill_presenter/core/overlay.py) | OverlayRenderer – Drawing circles |
+| [main_window.py](../src/mill_presenter/ui/main_window.py) | MainWindow – PyQt6 UI |
 
 ---
 
-# 🎤 Final Presentation Tips
+# Final Presentation Tips
 
 ### Before the Presentation
 - Run the app and have it ready to demo
@@ -1799,8 +1438,7 @@ This section prepares you for questions you might receive during or after your p
 ### Handling Tough Questions
 - If you don't know: "That's a great question. I'd need to investigate further."
 - If it's out of scope: "That would be an interesting extension for future work."
-- If it's about ML: Use the response from Q2 above
 
 ---
 
-*Good luck with your presentation! 🚀*
+*Good luck with your presentation.*
