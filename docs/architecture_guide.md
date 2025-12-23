@@ -1422,23 +1422,4 @@ Slides are not embedded in this repository. See [docs/slides.md](slides.md) for 
 
 ---
 
-# Final Presentation Tips
-
-### Before the Presentation
-- Run the app and have it ready to demo
-- Know the exact processing time for your sample video
-- Prepare the calibration step to show live
-
-### During the Presentation
-- Start with the **hook**: "How do you count thousands of beads at 30fps?"
-- **Demo first**, then explain the slides
-- Show the **two-phase architecture** as your key innovation
-- Highlight **specific problems solved** (hollow beads, glare, etc.)
-
-### Handling Tough Questions
-- If you don't know: "That's a great question. I'd need to investigate further."
-- If it's out of scope: "That would be an interesting extension for future work."
-
----
-
-*Good luck with your presentation.*
+ 
