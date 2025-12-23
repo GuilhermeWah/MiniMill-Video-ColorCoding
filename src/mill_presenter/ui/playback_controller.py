@@ -31,14 +31,40 @@ class PlaybackController(QObject):
         self.is_playing = False
         self.current_frame_index: int = 0
         self._next_frame_to_decode: int = 0
+        self._playback_speed: float = 1.0
+
+    @property
+    def playback_speed(self) -> float:
+        return self._playback_speed
+
+    def set_playback_speed(self, speed: float) -> None:
+        """Sets playback speed multiplier.
+
+        Speed is a multiplier applied to playback cadence (timer interval).
+        Values < 1.0 slow down playback; 1.0 is real-time.
+        """
+        speed = float(speed)
+        if speed <= 0:
+            raise ValueError("playback speed must be > 0")
+
+        self._playback_speed = speed
+        if self.is_playing:
+            interval = self._compute_interval_ms()
+            # QTimer supports setInterval; it updates the running timer cadence.
+            if hasattr(self._timer, "setInterval"):
+                self._timer.setInterval(interval)
+            else:
+                self._timer.start(interval)
 
     def play(self) -> None:
         # If we don't have an iterator, or if we just seeked (which resets it),
         # we need to create one starting from _next_frame_to_decode.
         # Note: seek() sets _frame_iter to None.
         # If we've reached the end, reset to frame 0 for replay.
-        frame_count = getattr(self._frame_loader, "frame_count", None)
-        if frame_count is not None and self._next_frame_to_decode >= frame_count:
+        total_frames = getattr(self._frame_loader, "total_frames", None)
+        if not isinstance(total_frames, int):
+            total_frames = None
+        if total_frames is not None and self._next_frame_to_decode >= total_frames:
             self._next_frame_to_decode = 0
         if self._frame_iter is None:
             self._frame_iter = self._frame_loader.iter_frames(start_frame=self._next_frame_to_decode)
@@ -99,9 +125,15 @@ class PlaybackController(QObject):
         self.frame_changed.emit(frame_index)
 
     def _compute_interval_ms(self) -> int:
-        fps = getattr(self._frame_loader, "fps", 0.0) or 30.0
-        interval = max(1, int(1000 / fps))
-        return interval
+        fps = float(getattr(self._frame_loader, "fps", 0.0) or 0.0)
+        if fps <= 0:
+            fps = 30.0
+        speed = float(self._playback_speed or 1.0)
+        if speed <= 0:
+            speed = 1.0
+
+        interval = max(1, round((1000.0 / fps) / speed))
+        return int(interval)
 
     def _numpy_to_qimage(self, frame_bgr: np.ndarray) -> QImage:
         """Converts a BGR numpy array (HxWx3) into a QImage copy."""

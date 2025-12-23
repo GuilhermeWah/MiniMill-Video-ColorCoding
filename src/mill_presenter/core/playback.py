@@ -110,6 +110,11 @@ class FrameLoader:
         """Seeks to a specific frame index."""
         if not self.stream:
             return
+        
+        if frame_index <= 0:
+            # Seek to the very beginning of the stream
+            self.container.seek(0, stream=self.stream, any_frame=False, backward=True)
+            return
             
         # Calculate target PTS based on FPS and TimeBase
         # Formula: PTS = (FrameIndex / FPS) / TimeBase
@@ -120,8 +125,9 @@ class FrameLoader:
 
     def iter_frames(self, start_frame: int = 0):
         """Generator that yields (frame_index, frame_bgr_image)."""
-        if start_frame > 0:
-            self.seek(start_frame)
+        # Always seek to ensure we start from the correct position
+        # This is critical for seeking back to frame 0 after playing forward
+        self.seek(start_frame)
             
         for frame in self.container.decode(self.stream):
             # Calculate exact frame index from PTS to handle imprecise seeking (pre-roll)

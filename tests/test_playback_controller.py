@@ -39,6 +39,63 @@ def test_playback_controller_play_starts_timer(monkeypatch, sample_frame, sample
     assert controller.is_playing is True
 
 
+@pytest.mark.parametrize(
+    "speed,expected_interval",
+    [
+        (0.15, 222),
+        (0.25, 133),
+        (0.5, 67),
+        (1.0, 33),
+    ],
+)
+def test_playback_controller_speed_scales_interval_rounding(monkeypatch, sample_frame, sample_detections, speed, expected_interval):
+    from mill_presenter.ui import playback_controller
+
+    mock_timer = MagicMock()
+    monkeypatch.setattr(playback_controller, "QTimer", lambda parent=None: mock_timer)
+
+    frame_loader = MagicMock()
+    frame_loader.fps = 30
+    frame_loader.iter_frames.return_value = iter([(0, sample_frame)])
+
+    cache = MagicMock()
+    cache.get_frame.return_value = sample_detections
+
+    video_widget = MagicMock()
+
+    controller = playback_controller.PlaybackController(frame_loader, cache, video_widget)
+    controller.set_playback_speed(speed)
+    controller.play()
+
+    mock_timer.start.assert_called_once_with(expected_interval)
+
+
+def test_playback_controller_changing_speed_while_playing_updates_timer_interval(monkeypatch, sample_frame, sample_detections):
+    from mill_presenter.ui import playback_controller
+
+    mock_timer = MagicMock()
+    monkeypatch.setattr(playback_controller, "QTimer", lambda parent=None: mock_timer)
+
+    frame_loader = MagicMock()
+    frame_loader.fps = 30
+    frame_loader.iter_frames.return_value = iter([(0, sample_frame), (1, sample_frame)])
+
+    cache = MagicMock()
+    cache.get_frame.return_value = sample_detections
+
+    video_widget = MagicMock()
+
+    controller = playback_controller.PlaybackController(frame_loader, cache, video_widget)
+    controller.play()
+    mock_timer.start.assert_called_once_with(33)
+
+    controller.set_playback_speed(0.5)
+
+    mock_timer.setInterval.assert_called_once_with(67)
+    # Ensure we did not restart playback (start called only once)
+    assert mock_timer.start.call_count == 1
+
+
 def test_playback_controller_process_frame_updates_widget(monkeypatch, sample_frame, sample_detections):
     from mill_presenter.ui import playback_controller
 

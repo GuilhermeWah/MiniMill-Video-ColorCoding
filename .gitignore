@@ -30,4 +30,3 @@ quantitative_analysis/
 # Keep only the demo clip tracked in testing_data/
 testing_data/*
 !testing_data/DSC_3310.MOV
-

@@ -1,11 +1,30 @@
 import json
 import os
+from pathlib import Path
 from collections import deque
 from typing import Optional, Dict
 from mill_presenter.core.models import FrameDetections
 from mill_presenter.utils.logging import get_logger
 
 logger = get_logger(__name__)
+
+
+def get_detection_path(video_path: str, exports_dir: str = "exports") -> str:
+    """
+    Returns the standard detection cache path for a video file.
+    
+    Args:
+        video_path: Path to the video file.
+        exports_dir: Directory to store detections (default: 'exports').
+    
+    Returns:
+        Path like 'exports/DSC_3310.detections.jsonl'
+    """
+    video_stem = Path(video_path).stem
+    exports_path = Path(exports_dir)
+    exports_path.mkdir(parents=True, exist_ok=True)
+    return str(exports_path / f"{video_stem}.detections.jsonl")
+
 
 class ResultsCache:
     """

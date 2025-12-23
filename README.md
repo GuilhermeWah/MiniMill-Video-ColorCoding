@@ -66,12 +66,13 @@ If you have a new question, drop it in the Q&A section inside `docs/architecture
 
 ## Workflow I’m Following (TDD + FAQ discipline)
 
-1. Write the failing test under `tests/` (models, playback, processor, cache, orchestrator, or CLI).
-2. Implement just enough under `src/mill_presenter/` to make it pass.
-3. Run `pytest`.
-4. If a knob mattered or behavior changed, I write it down in `docs/tuning_log.md`.
+1. Describe the task in `PLAN.md`.
+2. Write the failing test under `tests/` (models, playback, processor, cache, orchestrator, or CLI).
+3. Implement just enough under `src/mill_presenter/` to make it pass.
+4. Run `pytest` and log the criteria/outcome in `docs/testing_criteria.md`.
+5. Capture the reasoning (design trade-offs or tough Q&A) in `docs/faq.md` so nobody has to ping me later.
 
-That component diagram is still my North Star: detection never leaks into rendering, toggles never re-run the processor, and exporters reuse `overlay.py` so the look stays consistent. For Q&A, I’m keeping it inside `docs/architecture_guide.md`.
+That FAQ rule exists because we kept asking “why dummy videos?” / “why JSONL? / Why Hough? Why Canny? param1, param2 etc” in chat—now every answer is searchable. Also, that component diagram I drew is being my  North Star: detection never leaks into rendering, toggles never re-run the processor, and exporters reuse `overlay.py` so the look stays consistent.
 
 ---
 

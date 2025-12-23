@@ -44,6 +44,36 @@ def test_play_button_controls_controller(qapp, playback_controller_patch):
     controller_instance.pause.assert_called_once()
 
 
+@pytest.mark.parametrize(
+    "index,expected_speed",
+    [
+        (0, 0.15),
+        (1, 0.25),
+        (2, 0.5),
+        (3, 1.0),
+    ],
+)
+def test_speed_selector_calls_controller(qapp, playback_controller_patch, index, expected_speed):
+    from mill_presenter.ui.main_window import MainWindow
+
+    config = {'overlay': {'colors': {}}}
+    frame_loader = MagicMock()
+    frame_loader.total_frames = 100
+    results_cache = MagicMock()
+
+    _, controller_instance = playback_controller_patch
+
+    window = MainWindow(config, frame_loader=frame_loader, results_cache=results_cache)
+    controller_instance.set_playback_speed.reset_mock()
+
+    # If the target index is already selected (default is 1.0x), Qt won't emit a change.
+    window.speed_combo.setCurrentIndex((index + 1) % 4)
+    controller_instance.set_playback_speed.reset_mock()
+
+    window.speed_combo.setCurrentIndex(index)
+    controller_instance.set_playback_speed.assert_called_with(expected_speed)
+
+
 def test_size_toggle_updates_visible_classes(qapp, playback_controller_patch):
     try:
         from mill_presenter.ui.main_window import MainWindow

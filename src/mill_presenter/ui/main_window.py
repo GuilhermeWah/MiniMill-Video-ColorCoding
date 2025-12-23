@@ -1,12 +1,118 @@
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
-from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QPushButton, QSlider, QInputDialog, QMessageBox, QStatusBar, QFileDialog, QProgressDialog, QLabel
+from PyQt6.QtGui import QImage
+from PyQt6.QtWidgets import (
+    QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QPushButton, QSlider, 
+    QInputDialog, QMessageBox, QStatusBar, QFileDialog, QProgressDialog, 
+    QLabel, QComboBox, QDialog, QDialogButtonBox, QSpinBox, QFormLayout, QGroupBox
+)
 import yaml
+import os
+import cv2
+import numpy as np
 from mill_presenter.ui.widgets import VideoWidget
 from mill_presenter.ui.playback_controller import PlaybackController
 from mill_presenter.ui.calibration_controller import CalibrationController
 from mill_presenter.ui.drum_calibration_controller import DrumCalibrationController
 from mill_presenter.ui.roi_controller import ROIController
 from mill_presenter.core.exporter import VideoExporter
+from mill_presenter.core.orchestrator import DetectionThread
+from mill_presenter.core.cache import ResultsCache, get_detection_path
+
+
+class DetectionDialog(QDialog):
+    """Dialog for configuring detection parameters before running."""
+    
+    # Estimated processing speed (frames per second)
+    # Conservative estimate: ~5 fps (200ms per frame) - includes decode + CV processing
+    # Actual speed varies by hardware and video resolution
+    ESTIMATED_FPS = 5.0
+    
+    def __init__(self, total_frames: int, fps: float, parent=None):
+        super().__init__(parent)
+        self.total_frames = total_frames
+        self.fps = fps
+        self.setWindowTitle("Run Detection")
+        self.setMinimumWidth(400)
+        
+        layout = QVBoxLayout(self)
+        
+        # Info group
+        info_group = QGroupBox("Video Info")
+        info_layout = QFormLayout(info_group)
+        total_seconds = total_frames / fps if fps > 0 else 0
+        info_layout.addRow("Total Frames:", QLabel(str(total_frames)))
+        info_layout.addRow("Duration:", QLabel(f"{total_seconds:.1f} seconds"))
+        layout.addWidget(info_group)
+        
+        # Frame limit group
+        limit_group = QGroupBox("Detection Range")
+        limit_layout = QFormLayout(limit_group)
+        
+        # Percentage slider
+        self.percent_spin = QSpinBox()
+        self.percent_spin.setRange(1, 100)
+        self.percent_spin.setValue(100)
+        self.percent_spin.setSuffix("%")
+        self.percent_spin.valueChanged.connect(self._on_percent_changed)
+        limit_layout.addRow("Process:", self.percent_spin)
+        
+        # Calculated info labels
+        self.frames_label = QLabel(str(total_frames))
+        self.seconds_label = QLabel(f"{total_seconds:.1f} s")
+        self.estimate_label = QLabel("")
+        self.estimate_label.setStyleSheet("color: #888; font-style: italic;")
+        limit_layout.addRow("Frames:", self.frames_label)
+        limit_layout.addRow("Video Duration:", self.seconds_label)
+        limit_layout.addRow("Est. Processing:", self.estimate_label)
+        
+        # Note about ETA
+        note_label = QLabel("(Actual ETA shown during processing)")
+        note_label.setStyleSheet("color: #666; font-size: 10px;")
+        limit_layout.addRow("", note_label)
+        
+        layout.addWidget(limit_group)
+        
+        # Dialog buttons
+        button_box = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
+        button_box.accepted.connect(self.accept)
+        button_box.rejected.connect(self.reject)
+        layout.addWidget(button_box)
+        
+        self._on_percent_changed(100)
+    
+    def _on_percent_changed(self, percent: int):
+        """Update frame count, duration, and estimate labels based on percentage."""
+        frames = int(self.total_frames * percent / 100)
+        frames = max(1, frames)  # At least 1 frame
+        video_seconds = frames / self.fps if self.fps > 0 else 0
+        
+        # Estimated processing time
+        process_seconds = frames / self.ESTIMATED_FPS
+        
+        self.frames_label.setText(str(frames))
+        self.seconds_label.setText(f"{video_seconds:.1f} s")
+        self.estimate_label.setText(self._format_estimate(process_seconds))
+    
+    def _format_estimate(self, seconds: float) -> str:
+        """Format processing time estimate in human-readable form."""
+        if seconds < 60:
+            return f"~{seconds:.0f} seconds"
+        elif seconds < 3600:
+            minutes = seconds / 60
+            return f"~{minutes:.1f} minutes"
+        else:
+            hours = seconds / 3600
+            return f"~{hours:.1f} hours"
+    
+    def get_frame_limit(self) -> int:
+        """Returns the number of frames to process (0 = all)."""
+        percent = self.percent_spin.value()
+        if percent >= 100:
+            return 0  # 0 means all frames
+        return max(1, int(self.total_frames * percent / 100))
+
 
 class ExportThread(QThread):
     progress = pyqtSignal(int, int)
@@ -68,6 +174,14 @@ class MainWindow(QMainWindow):
         self.play_button.toggled.connect(self.toggle_playback)
         controls_layout.addWidget(self.play_button)
 
+        # Playback speed selector
+        self.speed_combo = QComboBox()
+        for label, speed in [("0.15x", 0.15), ("0.25x", 0.25), ("0.5x", 0.5), ("1.0x", 1.0)]:
+            self.speed_combo.addItem(label, speed)
+        self.speed_combo.setCurrentIndex(3)  # default 1.0x
+        self.speed_combo.currentIndexChanged.connect(self._on_speed_changed)
+        controls_layout.addWidget(self.speed_combo)
+
         # Slider
         self.slider = QSlider(Qt.Orientation.Horizontal)
         self.slider.setRange(0, 0)
@@ -95,6 +209,11 @@ class MainWindow(QMainWindow):
         self.roi_btn.setCheckable(True)
         self.roi_btn.toggled.connect(self.toggle_roi)
         controls_layout.addWidget(self.roi_btn)
+
+        # Run Detection Button
+        self.detect_btn = QPushButton("Run Detection")
+        self.detect_btn.clicked.connect(self.run_detection)
+        controls_layout.addWidget(self.detect_btn)
 
         # Export Button
         self.export_btn = QPushButton("Export MP4")
@@ -346,6 +465,13 @@ class MainWindow(QMainWindow):
             self.play_button.setText("Play")
             self.playback_controller.pause()
 
+    def _on_speed_changed(self, index: int) -> None:
+        speed = self.speed_combo.currentData()
+        if speed is None:
+            return
+        if self.playback_controller and hasattr(self.playback_controller, "set_playback_speed"):
+            self.playback_controller.set_playback_speed(float(speed))
+
     def save_config(self):
         if not self.config_path:
             return
@@ -405,3 +531,176 @@ class MainWindow(QMainWindow):
                 self.drum_btn.setChecked(False)  # This triggers toggle_drum_calibration(False)
         else:
             super().keyPressEvent(event)
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Detection Methods
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def run_detection(self):
+        """Launch background detection with progress dialog."""
+        if not self.frame_loader:
+            QMessageBox.warning(self, "Error", "No video loaded.")
+            return
+        
+        # Pause playback
+        if self.playback_controller and self.playback_controller.is_playing:
+            self.play_button.setChecked(False)
+        
+        # Show detection configuration dialog
+        dialog = DetectionDialog(
+            self.frame_loader.total_frames,
+            self.frame_loader.fps,
+            parent=self
+        )
+        
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return
+        
+        frame_limit = dialog.get_frame_limit()
+        
+        # Determine output path based on video name
+        video_path = self.frame_loader.file_path
+        output_path = get_detection_path(video_path)
+        
+        # Get ROI mask - prefer saved file, fallback to controller's current mask
+        roi_mask = None
+        
+        # Check for saved ROI mask file
+        detections_dir = self.config.get('paths', {}).get('detections_dir', '.')
+        roi_mask_path = f"{detections_dir}/roi_mask.png"
+        
+        if os.path.exists(roi_mask_path):
+            # Load saved mask (already in correct format: white=valid, black=ignore)
+            roi_mask = cv2.imread(roi_mask_path, cv2.IMREAD_GRAYSCALE)
+            if roi_mask is not None:
+                print(f"Loaded ROI mask from {roi_mask_path}")
+        elif self.roi_controller and self.roi_controller.center_point is not None:
+            # Generate mask from ROI controller's circle definition
+            if self.frame_loader and hasattr(self.frame_loader, 'width') and hasattr(self.frame_loader, 'height'):
+                width = self.frame_loader.width
+                height = self.frame_loader.height
+            elif self.video_widget.current_image:
+                width = self.video_widget.current_image.width()
+                height = self.video_widget.current_image.height()
+            else:
+                width, height = 1920, 1080  # Fallback
+            
+            # Create binary mask from circle
+            roi_mask = np.zeros((height, width), dtype=np.uint8)
+            center = (int(self.roi_controller.center_point.x()), int(self.roi_controller.center_point.y()))
+            radius = int(self.roi_controller.current_radius)
+            cv2.circle(roi_mask, center, radius, 255, -1)  # White filled circle
+            print(f"Generated ROI mask from circle: center={center}, radius={radius}")
+        
+        # Debug: Report ROI mask status
+        if roi_mask is not None:
+            white_pixels = np.sum(roi_mask > 0)
+            total_pixels = roi_mask.shape[0] * roi_mask.shape[1]
+            print(f"ROI mask loaded: shape={roi_mask.shape}, valid_area={white_pixels}/{total_pixels} ({100*white_pixels/total_pixels:.1f}%)")
+        else:
+            print("No ROI mask - processing entire frame")
+        
+        # Calculate total frames for progress
+        total_frames = frame_limit if frame_limit > 0 else self.frame_loader.total_frames
+        
+        # Track start time for ETA calculation
+        import time
+        self._detect_start_time = time.time()
+        self._detect_total_frames = total_frames
+        
+        # Create progress dialog
+        self.detect_progress = QProgressDialog(
+            "Running detection... (calculating ETA)", "Cancel", 0, total_frames, self
+        )
+        self.detect_progress.setWindowModality(Qt.WindowModality.WindowModal)
+        self.detect_progress.setMinimumDuration(0)
+        
+        # Create and start detection thread
+        self.detect_thread = DetectionThread(
+            video_path=video_path,
+            config=self.config,
+            output_path=output_path,
+            roi_mask=roi_mask,
+            limit=frame_limit if frame_limit > 0 else None,
+            parent=self
+        )
+        
+        self.detect_thread.progress.connect(self._on_detection_progress)
+        self.detect_thread.finished.connect(self._on_detection_finished)
+        self.detect_thread.error.connect(self._on_detection_error)
+        self.detect_progress.canceled.connect(self.detect_thread.cancel)
+        
+        self.detect_thread.start()
+
+    def _on_detection_progress(self, current: int, total: int):
+        """Update progress dialog with ETA."""
+        import time
+        self.detect_progress.setValue(current)
+        
+        if current > 0:
+            elapsed = time.time() - self._detect_start_time
+            fps = current / elapsed
+            remaining_frames = total - current
+            eta_seconds = remaining_frames / fps if fps > 0 else 0
+            
+            # Format ETA
+            if eta_seconds < 60:
+                eta_str = f"{eta_seconds:.0f}s"
+            elif eta_seconds < 3600:
+                eta_str = f"{eta_seconds/60:.1f}min"
+            else:
+                eta_str = f"{eta_seconds/3600:.1f}h"
+            
+            self.detect_progress.setLabelText(
+                f"Processing frame {current}/{total} ({fps:.1f} fps)\n"
+                f"ETA: {eta_str}"
+            )
+
+    def _on_detection_finished(self, detections_path: str):
+        """Handle successful detection completion."""
+        self.detect_progress.close()
+        
+        # Reload cache with new detections
+        self.results_cache = ResultsCache(detections_path)
+        
+        # Re-attach playback sources to use new cache
+        if self.frame_loader:
+            self.attach_playback_sources(self.frame_loader, self.results_cache)
+        
+        QMessageBox.information(
+            self, "Detection Complete",
+            f"Detections saved to:\n{detections_path}\n\n"
+            f"Loaded {len(self.results_cache._memory_cache)} frames."
+        )
+        self.statusBar().showMessage("Detection complete. Overlays ready.", 5000)
+
+    def _on_detection_error(self, error_msg: str):
+        """Handle detection failure."""
+        self.detect_progress.close()
+        QMessageBox.critical(
+            self, "Detection Failed",
+            f"Error during detection:\n{error_msg}"
+        )
+        self.statusBar().showMessage("Detection failed.", 5000)
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Export Handlers
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def _on_export_finished(self):
+        """Handle successful export completion."""
+        self.progress_dialog.close()
+        QMessageBox.information(
+            self, "Export Complete",
+            "Video exported successfully!"
+        )
+        self.statusBar().showMessage("Export complete.", 5000)
+
+    def _on_export_error(self, error_msg: str):
+        """Handle export failure."""
+        self.progress_dialog.close()
+        QMessageBox.critical(
+            self, "Export Failed",
+            f"Error during export:\n{error_msg}"
+        )
+        self.statusBar().showMessage("Export failed.", 5000)

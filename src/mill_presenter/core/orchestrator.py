@@ -1,5 +1,7 @@
 import numpy as np
+from pathlib import Path
 from typing import Optional, Callable
+from PyQt6.QtCore import QThread, pyqtSignal
 from mill_presenter.core.playback import FrameLoader
 from mill_presenter.core.processor import VisionProcessor
 from mill_presenter.core.cache import ResultsCache
@@ -7,6 +9,79 @@ from mill_presenter.core.models import FrameDetections
 from mill_presenter.utils.logging import get_logger
 
 logger = get_logger(__name__)
+
+
+class DetectionThread(QThread):
+    """
+    Background thread for running detection pipeline.
+    
+    Signals:
+        progress(current_frame, total_frames): Emitted after each frame.
+        finished(detections_path): Emitted on successful completion.
+        error(message): Emitted on failure.
+    """
+    progress = pyqtSignal(int, int)
+    finished = pyqtSignal(str)
+    error = pyqtSignal(str)
+
+    def __init__(
+        self,
+        video_path: str,
+        config: dict,
+        output_path: str,
+        roi_mask: Optional[np.ndarray] = None,
+        limit: Optional[int] = None,
+        parent=None
+    ):
+        super().__init__(parent)
+        self.video_path = video_path
+        self.config = config
+        self.output_path = output_path
+        self.roi_mask = roi_mask
+        self.limit = limit
+        self._orchestrator: Optional[ProcessorOrchestrator] = None
+
+    def run(self):
+        """Execute detection pipeline in background."""
+        loader = None
+        try:
+            # Initialize components
+            loader = FrameLoader(self.video_path)
+            processor = VisionProcessor(self.config)
+            
+            # Clear existing cache and create fresh
+            cache = ResultsCache(self.output_path)
+            cache.clear()
+            
+            self._orchestrator = ProcessorOrchestrator(loader, processor, cache)
+            
+            if self.roi_mask is not None:
+                self._orchestrator.set_roi_mask(self.roi_mask)
+
+            # Calculate total for progress
+            total = loader.total_frames
+            if self.limit is not None:
+                total = min(self.limit, total)
+
+            def progress_cb(pct: float):
+                current = int(pct / 100 * total)
+                self.progress.emit(current, total)
+
+            self._orchestrator.run(progress_callback=progress_cb, limit=self.limit)
+            self.finished.emit(self.output_path)
+
+        except Exception as e:
+            logger.exception("Detection failed")
+            self.error.emit(str(e))
+        finally:
+            if loader:
+                loader.close()
+
+    def cancel(self):
+        """Request cancellation of the detection pipeline."""
+        if self._orchestrator:
+            self._orchestrator.cancel()
+
 
 class ProcessorOrchestrator:
     """
