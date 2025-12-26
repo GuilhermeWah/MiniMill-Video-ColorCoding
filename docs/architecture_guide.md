@@ -391,6 +391,10 @@ Output: Circles drawn on the QPainter
 1. **Disk**: JSONL file (persistent, survives restart)
 2. **RAM**: Python dictionary (fast O(1) lookup during playback)
 
+**Optional (MVP+)**: The JSONL payload can include a `track_id` per detected bead.
+When enabled, this `track_id` is assigned during the one-time detection pass to keep
+bead identities stable across nearby frames (helps reduce flicker).
+
 ---
 
 ## Summary Table

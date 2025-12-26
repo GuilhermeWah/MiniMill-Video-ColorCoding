@@ -40,8 +40,44 @@ def mock_components():
     # Setup Processor to return a dummy detection
     dummy_ball = Ball(50, 50, 10, 20, 10, 0.9)
     processor.process_frame.return_value = [dummy_ball]
+
+    # Default processor config for orchestrator (tracking off unless overridden)
+    processor.config = {}
     
     return loader, processor, cache
+
+
+def test_orchestrator_tracking_assigns_stable_ids(mock_components):
+    """Milestone: Tracking - verify detection-time tracking assigns stable IDs."""
+    loader, processor, cache = mock_components
+
+    # Enable tracking and provide thresholds (keep test explicit)
+    processor.config = {
+        "tracking": {
+            "enabled": True,
+            "iou_threshold": 0.1,
+            "max_center_distance_px": 50.0,
+            "max_lost_frames": 2,
+        }
+    }
+
+    # Return a *new* Ball object each frame so track_id assignment is per-frame
+    def make_ball(_frame, roi_mask=None):
+        return [Ball(x=50, y=50, r_px=10, diameter_mm=10, cls=10, conf=0.9)]
+
+    processor.process_frame.side_effect = make_ball
+
+    orchestrator = ProcessorOrchestrator(loader, processor, cache)
+    orchestrator.run()
+
+    # Verify cache.save_frame was called and balls have a stable track_id
+    saved = [call_args[0][0] for call_args in cache.save_frame.call_args_list]
+    assert len(saved) == 10
+
+    track_ids = [frame.balls[0].track_id for frame in saved if frame.balls]
+    assert len(track_ids) == 10
+    assert all(tid is not None for tid in track_ids)
+    assert len(set(track_ids)) == 1, "Expected a single stable track_id across frames"
 
 def test_orchestrator_full_run(mock_components):
     """

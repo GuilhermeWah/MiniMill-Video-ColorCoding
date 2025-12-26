@@ -6,6 +6,7 @@ from mill_presenter.core.playback import FrameLoader
 from mill_presenter.core.processor import VisionProcessor
 from mill_presenter.core.cache import ResultsCache
 from mill_presenter.core.models import FrameDetections
+from mill_presenter.core.tracker import BallTracker
 from mill_presenter.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -101,6 +102,14 @@ class ProcessorOrchestrator:
         self.cache = cache
         self.roi_mask: Optional[np.ndarray] = None
         self._cancel_requested = False
+        processor_config = getattr(processor, "config", None)
+        if not isinstance(processor_config, dict):
+            processor_config = {}
+
+        self._tracking_enabled = bool(processor_config.get("tracking", {}).get("enabled", False))
+        self._tracker: Optional[BallTracker] = (
+            BallTracker.from_config(processor_config) if self._tracking_enabled else None
+        )
 
     def set_roi_mask(self, mask: np.ndarray):
         """Sets the Region of Interest mask for processing."""
@@ -125,6 +134,9 @@ class ProcessorOrchestrator:
             total_frames = limit
         
         logger.info(f"Starting processing for {total_frames} frames...")
+
+        if self._tracking_enabled and self._tracker is not None:
+            self._tracker.reset()
         
         for frame_idx, frame_img in self.loader.iter_frames():
             # Check cancellation
@@ -139,6 +151,10 @@ class ProcessorOrchestrator:
                 
             # 1. Process
             balls = self.processor.process_frame(frame_img, roi_mask=self.roi_mask)
+
+            # 1.5 Assign persistent IDs (detection-time tracking)
+            if self._tracking_enabled and self._tracker is not None:
+                balls = self._tracker.update(frame_idx, balls)
             
             # 2. Wrap
             # Calculate timestamp based on frame index and FPS

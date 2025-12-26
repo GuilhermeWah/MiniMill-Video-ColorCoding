@@ -38,6 +38,7 @@ def test_ball_serialization():
     assert data['diameter_mm'] == 10.0, "Diameter (mm) mismatch"
     assert data['cls'] == 10, "Class label mismatch"
     assert data['conf'] == 0.95, "Confidence score mismatch"
+    assert data.get('track_id') is None, "track_id should default to None"
 
 def test_frame_detections_serialization():
     """

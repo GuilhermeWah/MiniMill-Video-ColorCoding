@@ -14,7 +14,7 @@ bins_mm:
 calibration:
   drum_diameter_mm: 200.0
   method: ring
-  px_per_mm: 3.9607354830805837
+  px_per_mm: 4.193200325927373
 overlay:
   colors:
     4: '#FF0000'
@@ -28,6 +28,16 @@ performance:
   decode_mode: auto
   overlay_mode: auto_outlines
   preview_downscale: false
+tracking:
+  # Detection-time tracking: assigns persistent track_id to each Ball and persists it in JSONL.
+  # Goal: stable overlays across frames (best-effort; not full tracking).
+  enabled: true
+  # Minimum circle IoU required to match a detection to an existing track.
+  iou_threshold: 0.30
+  # Maximum distance (in pixels) between centers to consider a match.
+  max_center_distance_px: 20.0
+  # How many frames a track may be missing before it is dropped.
+  max_lost_frames: 2
 vision:
   hough_param1: 50
   hough_param2: 20

@@ -10,12 +10,17 @@ class Ball:
     diameter_mm: float  # Calculated diameter (mm)
     cls: int            # Class label (4, 6, 8, 10)
     conf: float         # Confidence score (0.0 - 1.0)
+    track_id: Optional[int] = None  # Persistent identity across frames (assigned in detection pass)
 
     def to_dict(self):
         return asdict(self)
 
     @classmethod
     def from_dict(cls, data: dict):
+        # Backward compatibility: older caches won't contain track_id
+        if "track_id" not in data:
+            data = dict(data)
+            data["track_id"] = None
         return cls(**data)
 
 @dataclass
