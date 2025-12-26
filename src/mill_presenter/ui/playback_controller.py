@@ -1,324 +1,336 @@
-# MillPresenter — Playback Controller (STEP-12)
+# MillPresenter — Playback Controller (TESTING_VER Style)
 
 """
-Timer-based video playback with scrubbing support.
+Iterator-based video playback with direct widget update.
 
 Features:
-- Play/pause with QTimer
-- Frame stepping (prev/next)
-- Timeline scrubbing
-- Speed control (0.25x, 0.5x, 1x)
-- Keyboard shortcuts
+- Uses frame iterator for efficient sequential playback
+- Direct widget update (no callbacks)
+- Speed control (0.15x to 1.0x)
+- Seek support with iterator reset
 """
 
-from typing import Optional, Callable
-from PySide6.QtCore import QObject, QTimer, Signal, Slot
+from __future__ import annotations
+
+from typing import Optional, Callable, Dict, List, Any
+
+import numpy as np
+from PySide6.QtCore import QObject, QTimer, Signal
 
 
 class PlaybackController(QObject):
     """
-    Controls video playback timing and frame navigation.
+    Coordinates video frames and detections for the VideoWidget.
+    
+    TESTING_VER style: owns frame_loader and video_widget references.
+    Uses iterator for sequential playback, direct widget update.
     
     Signals:
         frame_changed(int): Emitted when current frame changes
-        playback_started(): Emitted when playback starts
-        playback_stopped(): Emitted when playback stops
         position_changed(int, int, float, float): (frame, total, time_s, duration_s)
     """
-    
+
     frame_changed = Signal(int)
-    playback_started = Signal()
-    playback_stopped = Signal()
     position_changed = Signal(int, int, float, float)
-    
-    def __init__(self, parent=None):
+
+    def __init__(
+        self,
+        frame_loader=None,
+        video_widget=None,
+        overlay_widget=None,
+        parent: Optional[QObject] = None,
+    ) -> None:
         super().__init__(parent)
-        
-        # Playback state
-        self._playing = False
-        self._current_frame = 0
-        self._total_frames = 0
-        self._fps = 30.0
-        self._duration = 0.0
-        self._speed = 1.0
-        
-        # Timer for playback
+        self._frame_loader = frame_loader
+        self._video_widget = video_widget
+        self._overlay_widget = overlay_widget  # For detection lookup
         self._timer = QTimer(self)
-        self._timer.timeout.connect(self._on_timer)
-        
-        # Frame callback (set by owner to fetch frames)
-        self._frame_callback: Optional[Callable[[int], None]] = None
-    
+        self._timer.timeout.connect(self.process_next_frame)
+
+        self._frame_iter: Optional[object] = None
+        self.is_playing = False
+        self.current_frame_index: int = 0
+        self._next_frame_to_decode: int = 0
+        self._playback_speed: float = 1.0
+
     # ========================================================================
     # Configuration
     # ========================================================================
     
-    def set_video_info(self, total_frames: int, fps: float, duration: float) -> None:
-        """Set video information for playback timing."""
-        self._total_frames = total_frames
-        self._fps = fps if fps > 0 else 30.0
-        self._duration = duration
-        self._current_frame = 0
-        
-        # No frame skipping - play every frame sequentially
-        # Timer will be capped to max decode speed
-        self._frame_skip = 1
-        
-        # Update timer interval for new fps
-        self._update_timer_interval()
-        
-        self._emit_position()
+    def set_components(
+        self,
+        frame_loader=None,
+        video_widget=None,
+        overlay_widget=None,
+    ) -> None:
+        """Set or update components after initialization."""
+        if frame_loader is not None:
+            self._frame_loader = frame_loader
+            self._frame_iter = None  # Reset iterator
+            self.current_frame_index = 0
+            self._next_frame_to_decode = 0
+        if video_widget is not None:
+            self._video_widget = video_widget
+        if overlay_widget is not None:
+            self._overlay_widget = overlay_widget
+
+    # ========================================================================
+    # Properties
+    # ========================================================================
     
-    def set_frame_callback(self, callback: Callable[[int], None]) -> None:
-        """Set callback to be called when frame changes."""
-        self._frame_callback = callback
+    @property
+    def playback_speed(self) -> float:
+        return self._playback_speed
     
+    @property
+    def fps(self) -> float:
+        if self._frame_loader is None:
+            return 30.0
+        return getattr(self._frame_loader, "fps", 30.0) or 30.0
+    
+    @property
+    def frame_count(self) -> int:
+        if self._frame_loader is None:
+            return 0
+        return getattr(self._frame_loader, "frame_count", 0) or 0
+    
+    @property
+    def duration(self) -> float:
+        if self.fps > 0:
+            return self.frame_count / self.fps
+        return 0.0
+    
+    @property
+    def total_frames(self) -> int:
+        """Alias for frame_count."""
+        return self.frame_count
+
+    # ========================================================================
+    # Speed Control
+    # ========================================================================
+
+    def set_playback_speed(self, speed: float) -> None:
+        """
+        Set playback speed multiplier.
+
+        Speed is a multiplier applied to playback cadence (timer interval).
+        Values < 1.0 slow down playback; 1.0 is real-time.
+        """
+        speed = float(speed)
+        if speed <= 0:
+            raise ValueError("playback speed must be > 0")
+
+        self._playback_speed = speed
+        if self.is_playing:
+            interval = self._compute_interval_ms()
+            self._timer.setInterval(interval)
+    
+    # Alias for compatibility
     def set_speed(self, speed: float) -> None:
-        """Set playback speed (0.1x to 4.0x)."""
-        old_speed = self._speed
-        self._speed = max(0.05, min(4.0, speed))
-        # Reset frame accumulator when speed changes
-        self._frame_accumulator = 0.0
-        # Always update timer interval (even if not playing, so it's ready)
-        self._update_timer_interval()
+        """Alias for set_playback_speed."""
+        self.set_playback_speed(speed)
     
     def get_speed(self) -> float:
         """Get current playback speed."""
-        return self._speed
-    
+        return self._playback_speed
+
     # ========================================================================
-    # Playback control
+    # Playback Control
     # ========================================================================
-    
+
     def play(self) -> None:
         """Start playback."""
-        if self._total_frames <= 0:
+        if self._frame_loader is None or self._video_widget is None:
             return
         
-        if not self._playing:
-            self._playing = True
-            # Always recalculate timer interval when starting playback
-            self._update_timer_interval()
-            self._timer.start()
-            self.playback_started.emit()
-    
+        # If we've reached the end, reset to frame 0 for replay
+        if self._next_frame_to_decode >= self.frame_count:
+            self._next_frame_to_decode = 0
+        
+        # Create iterator if needed
+        if self._frame_iter is None:
+            self._frame_iter = self._frame_loader.iter_frames(
+                start_frame=self._next_frame_to_decode
+            )
+        
+        if self.is_playing:
+            return
+        
+        interval = self._compute_interval_ms()
+        self._timer.start(interval)
+        self.is_playing = True
+
     def pause(self) -> None:
         """Pause playback."""
-        if self._playing:
-            self._playing = False
-            self._timer.stop()
-            self.playback_stopped.emit()
-    
+        if not self.is_playing:
+            return
+        self._timer.stop()
+        self.is_playing = False
+
     def toggle_play_pause(self) -> None:
         """Toggle between play and pause."""
-        if self._playing:
+        if self.is_playing:
             self.pause()
         else:
             self.play()
-    
+
     def stop(self) -> None:
         """Stop playback and return to start."""
         self.pause()
-        self.seek_to_frame(0)
-    
-    def is_playing(self) -> bool:
-        """Check if currently playing."""
-        return self._playing
-    
+        self.seek(0)
+
     # ========================================================================
     # Navigation
     # ========================================================================
-    
-    def seek_to_frame(self, frame: int) -> None:
-        """Seek to a specific frame."""
-        if self._total_frames <= 0:
+
+    def seek(self, frame_index: int) -> None:
+        """Jump to a specific frame index."""
+        if self._frame_loader is None or self._video_widget is None:
             return
         
-        # Clamp to valid range
-        frame = max(0, min(self._total_frames - 1, frame))
+        frame_index = max(0, min(self.frame_count - 1, frame_index))
         
-        if frame != self._current_frame:
-            self._current_frame = frame
-            self._notify_frame_change()
-    
-    def seek_to_position(self, position: float) -> None:
-        """Seek to a normalized position (0.0 to 1.0)."""
-        if self._total_frames <= 0:
-            return
+        self._next_frame_to_decode = frame_index
+        # Reset iterator so next fetch uses the new start frame
+        self._frame_iter = None
         
-        position = max(0.0, min(1.0, position))
-        frame = int(position * (self._total_frames - 1))
-        self.seek_to_frame(frame)
-    
+        # Immediately fetch and display the frame
+        try:
+            temp_iter = self._frame_loader.iter_frames(start_frame=frame_index)
+            actual_index, frame_bgr = next(temp_iter)
+            
+            # Display frame
+            self._video_widget.set_frame(frame_bgr)
+            
+            # Set overlays
+            detections = self._get_detections(actual_index)
+            if detections is not None:
+                self._video_widget.set_overlays(detections)
+            
+            self.current_frame_index = actual_index
+            self._next_frame_to_decode = actual_index + 1
+            self._emit_position()
+            self.frame_changed.emit(actual_index)
+            
+        except StopIteration:
+            # Seeked past end
+            self.pause()
+
     def step_forward(self) -> None:
         """Step forward one frame."""
-        self.seek_to_frame(self._current_frame + 1)
-    
+        self.seek(self.current_frame_index + 1)
+
     def step_backward(self) -> None:
         """Step backward one frame."""
-        self.seek_to_frame(self._current_frame - 1)
-    
-    def skip_forward(self, seconds: float = 1.0) -> None:
-        """Skip forward by seconds."""
-        frames = int(seconds * self._fps)
-        self.seek_to_frame(self._current_frame + frames)
-    
-    def skip_backward(self, seconds: float = 1.0) -> None:
-        """Skip backward by seconds."""
-        frames = int(seconds * self._fps)
-        self.seek_to_frame(self._current_frame - frames)
-    
+        self.seek(self.current_frame_index - 1)
+
+    def seek_to_position(self, position: float) -> None:
+        """Seek to a normalized position (0.0 to 1.0)."""
+        position = max(0.0, min(1.0, position))
+        if self.frame_count > 1:
+            frame = int(position * (self.frame_count - 1))
+        else:
+            frame = 0
+        self.seek(frame)
+
+    def seek_to_frame(self, frame: int) -> None:
+        """Alias for seek() for backward compatibility."""
+        self.seek(frame)
+
+    # ========================================================================
+    # Position Info
+    # ========================================================================
+
     def get_current_frame(self) -> int:
         """Get current frame index."""
-        return self._current_frame
-    
+        return self.current_frame_index
+
     def get_current_time(self) -> float:
         """Get current time in seconds."""
-        if self._fps <= 0:
+        if self.fps <= 0:
             return 0.0
-        return self._current_frame / self._fps
-    
+        return self.current_frame_index / self.fps
+
     def get_normalized_position(self) -> float:
         """Get normalized position (0.0 to 1.0)."""
-        if self._total_frames <= 1:
+        if self.frame_count <= 1:
             return 0.0
-        return self._current_frame / (self._total_frames - 1)
-    
+        return self.current_frame_index / (self.frame_count - 1)
+
     # ========================================================================
     # Internal
     # ========================================================================
-    
-    def _update_timer_interval(self) -> None:
-        """Update timer interval based on FPS and speed."""
-        if self._fps <= 0:
-            return
-        
-        # For speeds > 1x, we use frame skipping instead of faster timer
-        # This is because we can't display faster than ~60fps (16ms minimum)
-        if self._speed > 1.0:
-            # Use base fps timing, skip frames to achieve speed
-            interval_ms = int(1000.0 / self._fps)
-            self._frame_skip = self._speed  # e.g., 2.0 means skip every other frame
-        else:
-            # For slow speeds, increase timer interval
-            interval_ms = int(1000.0 / (self._fps * self._speed))
-            self._frame_skip = 1  # No frame skipping
-        
-        # Minimum 16ms (~60fps max display rate)
-        interval_ms = max(16, interval_ms)
-        print(f"[PLAYBACK] Timer: {interval_ms}ms, skip={self._frame_skip:.2f} (fps={self._fps:.1f}, speed={self._speed})")
-        self._timer.setInterval(interval_ms)
-    
-    @Slot()
-    def _on_timer(self) -> None:
-        """Timer callback for playback."""
-        # Calculate next frame with frame skipping for fast playback
-        if self._frame_skip > 1:
-            # Accumulate fractional frame skip
-            if not hasattr(self, '_frame_accumulator'):
-                self._frame_accumulator = 0.0
-            self._frame_accumulator += self._frame_skip
-            frames_to_skip = int(self._frame_accumulator)
-            self._frame_accumulator -= frames_to_skip
-            next_frame = self._current_frame + frames_to_skip
-        else:
-            next_frame = self._current_frame + 1
-        
-        if next_frame >= self._total_frames:
-            # End of video - stop playback
+
+    def process_next_frame(self) -> None:
+        """Timer callback - fetch and display next frame."""
+        if self._frame_loader is None or self._video_widget is None:
             self.pause()
             return
         
-        self._current_frame = next_frame
-        self._notify_frame_change()
-    
-    def _notify_frame_change(self) -> None:
-        """Notify listeners of frame change."""
-        # Call frame callback
-        if self._frame_callback:
-            self._frame_callback(self._current_frame)
+        if self._frame_iter is None:
+            self._frame_iter = self._frame_loader.iter_frames(
+                start_frame=self._next_frame_to_decode
+            )
         
-        # Emit signals
-        self.frame_changed.emit(self._current_frame)
+        try:
+            frame_index, frame_bgr = next(self._frame_iter)
+        except StopIteration:
+            self._frame_iter = None
+            self.pause()
+            return
+
+        # Display frame
+        self._video_widget.set_frame(frame_bgr)
+        
+        # Set overlays
+        detections = self._get_detections(frame_index)
+        if detections is not None:
+            self._video_widget.set_overlays(detections)
+
+        self.current_frame_index = frame_index
+        self._next_frame_to_decode = frame_index + 1
         self._emit_position()
-    
+        self.frame_changed.emit(frame_index)
+
+    def _get_detections(self, frame_index: int) -> Optional[List[Dict]]:
+        """Get detections for a frame from overlay widget's cache."""
+        if self._overlay_widget is None:
+            return None
+        
+        # Use frame_lookup from OverlayWidget
+        frame_lookup = getattr(self._overlay_widget, '_frame_lookup', None)
+        if frame_lookup is None:
+            return None
+        
+        return frame_lookup.get(frame_index, [])
+
     def _emit_position(self) -> None:
         """Emit position update signal."""
-        time_s = self.get_current_time()
         self.position_changed.emit(
-            self._current_frame,
-            self._total_frames,
-            time_s,
-            self._duration
+            self.current_frame_index,
+            self.frame_count,
+            self.get_current_time(),
+            self.duration
         )
 
-
-# ============================================================================
-# Standalone test
-# ============================================================================
-
-def main():
-    """Test playback controller."""
-    import sys
-    from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QSlider
-    from PySide6.QtCore import Qt
-    
-    app = QApplication(sys.argv)
-    
-    window = QWidget()
-    window.setWindowTitle("PlaybackController Test")
-    window.resize(400, 150)
-    
-    layout = QVBoxLayout(window)
-    
-    # Status
-    status = QLabel("Frame: 0 / 0 | Time: 0.00s / 0.00s")
-    layout.addWidget(status)
-    
-    # Slider
-    slider = QSlider(Qt.Horizontal)
-    slider.setRange(0, 1000)
-    layout.addWidget(slider)
-    
-    # Controls
-    controls = QHBoxLayout()
-    btn_prev = QPushButton("⏮")
-    btn_play = QPushButton("▶")
-    btn_pause = QPushButton("⏸")
-    btn_next = QPushButton("⏭")
-    
-    controls.addWidget(btn_prev)
-    controls.addWidget(btn_play)
-    controls.addWidget(btn_pause)
-    controls.addWidget(btn_next)
-    layout.addLayout(controls)
-    
-    # Controller
-    ctrl = PlaybackController()
-    ctrl.set_video_info(total_frames=300, fps=30.0, duration=10.0)
-    
-    # Connect
-    def on_position(frame, total, time_s, duration_s):
-        status.setText(f"Frame: {frame} / {total} | Time: {time_s:.2f}s / {duration_s:.2f}s")
-        slider.blockSignals(True)
-        slider.setValue(int(1000 * frame / max(1, total - 1)))
-        slider.blockSignals(False)
-    
-    ctrl.position_changed.connect(on_position)
-    
-    btn_prev.clicked.connect(ctrl.step_backward)
-    btn_play.clicked.connect(ctrl.play)
-    btn_pause.clicked.connect(ctrl.pause)
-    btn_next.clicked.connect(ctrl.step_forward)
-    
-    slider.sliderMoved.connect(lambda v: ctrl.seek_to_position(v / 1000.0))
-    
-    # Frame callback
-    ctrl.set_frame_callback(lambda f: print(f"Frame: {f}"))
-    
-    window.show()
-    sys.exit(app.exec())
-
-
-if __name__ == "__main__":
-    main()
+    def _compute_interval_ms(self) -> int:
+        """Compute timer interval based on FPS and playback speed.
+        
+        For high-FPS videos (>60fps), we cap the effective FPS to 60 for 
+        interval calculation. This ensures speed control works correctly
+        while maintaining smooth playback (no monitor shows >60-120fps anyway).
+        """
+        fps = self.fps
+        if fps <= 0:
+            fps = 30.0
+        
+        # Cap FPS to 60 for interval calculation
+        # This makes speed control work for high-FPS videos (240fps, etc.)
+        # while still showing every frame at slower speeds
+        effective_fps = min(fps, 60.0)
+        
+        speed = self._playback_speed if self._playback_speed > 0 else 1.0
+        
+        # interval = (1000ms / effective_fps) / speed
+        interval = max(1, round((1000.0 / effective_fps) / speed))
+        return int(interval)

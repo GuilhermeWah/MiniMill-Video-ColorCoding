@@ -40,7 +40,12 @@ class DrumGeometry:
     def detect(cls, frame_bgr: np.ndarray, 
                drum_diameter_mm: float = 200.0) -> "DrumGeometry":
         """
-        Auto-detect the drum in the frame using Hough Circles.
+        Detect drum geometry - uses manual ROI if available, else auto-detect.
+        
+        Priority:
+        1. Manual ROI from config (user calibrated)
+        2. Auto-detect using Hough Circles
+        3. Fallback to frame center
         
         Args:
             frame_bgr: Input frame (BGR).
@@ -48,53 +53,94 @@ class DrumGeometry:
             
         Returns:
             DrumGeometry instance.
-            
-        Raises:
-            ValueError: If drum cannot be detected.
         """
         gray = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
         height, width = gray.shape[:2]
         min_dim = min(height, width)
         
-        # Get config parameters
-        min_ratio = config.get("drum_min_radius_ratio", 0.35)
-        max_ratio = config.get("drum_max_radius_ratio", 0.48)
-        dp = config.get("drum_hough_dp", 1)
-        param1 = config.get("drum_hough_param1", 50)
-        param2 = config.get("drum_hough_param2", 30)
-        blur_k = config.get("drum_blur_ksize", 5)
+        # Determine px_per_mm FIRST (independent of ROI)
+        # Priority: 1. Manual calibration, 2. Auto-detect drum
+        px_per_mm_manual, cal_source = config.get_calibration()
         
-        # Preprocessing for drum detection
-        blurred = cv2.GaussianBlur(gray, (blur_k, blur_k), 0)
-        
-        min_radius = int(min_dim * min_ratio)
-        max_radius = int(min_dim * max_ratio)
-        
-        circles = cv2.HoughCircles(
-            blurred,
-            cv2.HOUGH_GRADIENT,
-            dp=dp,
-            minDist=min_dim,  # Expect only one drum
-            param1=param1,
-            param2=param2,
-            minRadius=min_radius,
-            maxRadius=max_radius
-        )
-        
-        if circles is None:
-            # Fallback: exact center of frame with conservative radius
-            center_x, center_y = width // 2, height // 2
-            radius = int(min_dim * 0.42)
-            print("⚠ Drum detection failed. Using fallback geometry.")
+        if px_per_mm_manual is not None and cal_source == "manual":
+            px_per_mm = px_per_mm_manual
+            print(f"Using manual px_per_mm: {px_per_mm:.4f}")
         else:
-            # Get the strongest circle (should be the only one)
-            best_circle = circles[0][0]
-            center_x = int(best_circle[0])
-            center_y = int(best_circle[1])
-            radius = int(best_circle[2])
+            # Auto-detect drum for px_per_mm calculation
+            min_ratio = config.get("drum_min_radius_ratio", 0.35)
+            max_ratio = config.get("drum_max_radius_ratio", 0.48)
+            dp = config.get("drum_hough_dp", 1)
+            param1 = config.get("drum_hough_param1", 50)
+            param2 = config.get("drum_hough_param2", 30)
+            blur_k = config.get("drum_blur_ksize", 5)
+            
+            blurred = cv2.GaussianBlur(gray, (blur_k, blur_k), 0)
+            min_radius = int(min_dim * min_ratio)
+            max_radius = int(min_dim * max_ratio)
+            
+            circles = cv2.HoughCircles(
+                blurred,
+                cv2.HOUGH_GRADIENT,
+                dp=dp,
+                minDist=min_dim,
+                param1=param1,
+                param2=param2,
+                minRadius=min_radius,
+                maxRadius=max_radius
+            )
+            
+            if circles is not None:
+                auto_radius = int(circles[0][0][2])
+                px_per_mm = auto_radius / (drum_diameter_mm / 2)
+                print(f"Auto-detected drum for px_per_mm: {px_per_mm:.4f}")
+            else:
+                # Fallback
+                px_per_mm = int(min_dim * 0.42) / (drum_diameter_mm / 2)
+                print(f"Fallback px_per_mm: {px_per_mm:.4f}")
         
-        # Calculate calibration
-        px_per_mm = radius / (drum_diameter_mm / 2)
+        # Determine ROI region (detection area)
+        # Priority: 1. Manual ROI, 2. Auto-detect drum
+        roi_x, roi_y, roi_r, roi_source = config.get_roi()
+        
+        if roi_x is not None and roi_y is not None and roi_r is not None and roi_source == "manual":
+            # Use manual ROI for detection region
+            center_x, center_y, radius = roi_x, roi_y, roi_r
+            print(f"Using manual ROI: center=({center_x}, {center_y}), radius={radius}")
+        else:
+            # Auto-detect drum for ROI
+            min_ratio = config.get("drum_min_radius_ratio", 0.35)
+            max_ratio = config.get("drum_max_radius_ratio", 0.48)
+            dp = config.get("drum_hough_dp", 1)
+            param1 = config.get("drum_hough_param1", 50)
+            param2 = config.get("drum_hough_param2", 30)
+            blur_k = config.get("drum_blur_ksize", 5)
+            
+            blurred = cv2.GaussianBlur(gray, (blur_k, blur_k), 0)
+            min_radius = int(min_dim * min_ratio)
+            max_radius = int(min_dim * max_ratio)
+            
+            circles = cv2.HoughCircles(
+                blurred,
+                cv2.HOUGH_GRADIENT,
+                dp=dp,
+                minDist=min_dim,
+                param1=param1,
+                param2=param2,
+                minRadius=min_radius,
+                maxRadius=max_radius
+            )
+            
+            if circles is not None:
+                best_circle = circles[0][0]
+                center_x = int(best_circle[0])
+                center_y = int(best_circle[1])
+                radius = int(best_circle[2])
+                print(f"Auto-detected ROI: center=({center_x}, {center_y}), radius={radius}")
+            else:
+                # Fallback: center of frame
+                center_x, center_y = width // 2, height // 2
+                radius = int(min_dim * 0.42)
+                print("⚠ Drum detection failed. Using fallback geometry.")
         
         data = DrumGeometryData(
             center_x=center_x,

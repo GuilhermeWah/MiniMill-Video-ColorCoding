@@ -30,6 +30,8 @@ class VideoWidget(QWidget):
     """
     
     frame_clicked = Signal(int, int)  # x, y in video coordinates
+    mouse_moved = Signal(int, int)    # x, y in video coordinates (for drag)
+    mouse_released = Signal(int, int) # x, y in video coordinates (for drag end)
     zoom_changed = Signal(float)      # zoom factor
     
     # Zoom levels
@@ -80,6 +82,12 @@ class VideoWidget(QWidget):
         # Calibration overlay points
         self._calibration_points: List[Tuple[int, int]] = []
         
+        # Drum calibration overlay
+        self._drum_calibration_overlay: Optional[QImage] = None
+        self._roi_mask: Optional[QImage] = None
+        self._interaction_mode = 'none'  # 'none', 'calibration', 'drum_calibration', 'roi'
+        self.current_image: Optional[QImage] = None  # For calibration access
+        
         # Widget setup
         self.setMinimumSize(320, 240)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -112,6 +120,9 @@ class VideoWidget(QWidget):
             frame_rgb.data, w, h, bytes_per_line,
             QImage.Format_RGB888
         )
+        
+        # Store for drum calibration access
+        self.current_image = qimage.copy()
         
         # Convert to QPixmap for efficient rendering
         self._pixmap = QPixmap.fromImage(qimage)
@@ -164,6 +175,21 @@ class VideoWidget(QWidget):
     def set_calibration_points(self, points: List[Tuple[int, int]]) -> None:
         """Set calibration points to draw."""
         self._calibration_points = points or []
+        self.update()
+    
+    def set_drum_calibration_overlay(self, overlay: Optional[QImage]) -> None:
+        """Set the drum calibration overlay image."""
+        self._drum_calibration_overlay = overlay
+        self.update()
+    
+    def set_roi_mask(self, mask: Optional[QImage]) -> None:
+        """Set the ROI mask overlay (red = ignored, transparent = valid)."""
+        self._roi_mask = mask
+        self.update()
+    
+    def set_interaction_mode(self, mode: str) -> None:
+        """Set interaction mode: 'none', 'calibration', 'drum_calibration', 'roi'."""
+        self._interaction_mode = mode
         self.update()
     
     # ========================================================================
@@ -329,15 +355,23 @@ class VideoWidget(QWidget):
         if self._overlays:
             self._draw_overlays(painter, rect)
         
+        # Draw ROI mask overlay (red = ignored, transparent = valid)
+        if self._roi_mask:
+            painter.drawImage(rect.toRect(), self._roi_mask)
+        
+        # Draw drum calibration overlay
+        if self._drum_calibration_overlay:
+            painter.drawImage(rect.toRect(), self._drum_calibration_overlay)
+        
         # Draw calibration markers
         if self._calibration_points:
             self._draw_calibration_overlay(painter, rect)
     
     def _draw_calibration_overlay(self, painter: QPainter, frame_rect: QRectF) -> None:
         """Draw calibration point markers and line."""
-        # Yellow pen for calibration
+        # Thin yellow pen for precise calibration
         pen = QPen(QColor(255, 255, 0))
-        pen.setWidth(3)
+        pen.setWidth(1)  # Thin line for precision
         painter.setPen(pen)
         
         screen_points = []
@@ -347,13 +381,15 @@ class VideoWidget(QWidget):
             sy = frame_rect.y() + py * self._zoom
             screen_points.append((sx, sy))
             
-            # Draw crosshair marker
-            size = 15
+            # Draw thin crosshair marker
+            size = 12
             painter.drawLine(int(sx - size), int(sy), int(sx + size), int(sy))
             painter.drawLine(int(sx), int(sy - size), int(sx), int(sy + size))
             
-            # Draw circle around point
-            painter.drawEllipse(QPointF(sx, sy), size, size)
+            # Small center dot for exact point
+            painter.setBrush(QColor(255, 255, 0))
+            painter.drawEllipse(QPointF(sx, sy), 2, 2)
+            painter.setBrush(Qt.NoBrush)
         
         # Draw line between points if two exist
         if len(screen_points) == 2:
@@ -406,16 +442,29 @@ class VideoWidget(QWidget):
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """Handle mouse press for pan and click."""
         if event.button() == Qt.LeftButton:
-            self._dragging = True
-            self._drag_start = event.pos()
-            self._pan_start = self._pan_offset
-            self.setCursor(Qt.ClosedHandCursor)
+            # In drum_calibration or roi mode, emit signal immediately for dragging
+            if self._interaction_mode in ('drum_calibration', 'roi'):
+                frame_x, frame_y = self.widget_to_frame(event.pos())
+                if frame_x >= 0 and frame_y >= 0:
+                    self.frame_clicked.emit(frame_x, frame_y)
+            else:
+                # Normal mode: prepare for pan
+                self._dragging = True
+                self._drag_start = event.pos()
+                self._pan_start = self._pan_offset
+                self.setCursor(Qt.ClosedHandCursor)
         
         super().mousePressEvent(event)
     
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        """Handle mouse move for pan."""
-        if self._dragging:
+        """Handle mouse move for pan or calibration dragging."""
+        if self._interaction_mode in ('drum_calibration', 'roi'):
+            # Emit move signal for calibration dragging
+            frame_x, frame_y = self.widget_to_frame(event.pos())
+            if frame_x >= 0 and frame_y >= 0:
+                self.mouse_moved.emit(frame_x, frame_y)
+        elif self._dragging:
+            # Normal pan mode
             delta = event.pos() - self._drag_start
             self._pan_offset = self._pan_start + QPointF(delta.x(), delta.y())
             self._clamp_pan()
@@ -426,7 +475,12 @@ class VideoWidget(QWidget):
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         """Handle mouse release."""
         if event.button() == Qt.LeftButton:
-            if self._dragging:
+            if self._interaction_mode in ('drum_calibration', 'roi'):
+                # Emit release signal for calibration
+                frame_x, frame_y = self.widget_to_frame(event.pos())
+                if frame_x >= 0 and frame_y >= 0:
+                    self.mouse_released.emit(frame_x, frame_y)
+            elif self._dragging:
                 # Check if it was a click (minimal movement)
                 delta = event.pos() - self._drag_start
                 if abs(delta.x()) < 5 and abs(delta.y()) < 5:

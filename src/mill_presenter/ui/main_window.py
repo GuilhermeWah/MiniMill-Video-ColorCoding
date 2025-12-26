@@ -27,6 +27,7 @@ from mill_presenter.ui.playback_controller import PlaybackController
 from mill_presenter.ui.overlay_painter import OverlayWidget
 from mill_presenter.ui.detection_worker import DetectionWorker
 from mill_presenter.ui.calibration_controller import CalibrationController
+from mill_presenter.ui.roi_controller import ROIController
 from mill_presenter.core.frame_loader import FrameLoader
 from mill_presenter.utils import config
 
@@ -446,7 +447,7 @@ class TransportBar(QFrame):
         """
         self.speed_combo = QComboBox()
         self.speed_combo.setStyleSheet(speed_combo_css)
-        for speed in [0.1, 0.125, 0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0]:
+        for speed in [0.15, 0.25, 0.5, 0.75, 1.0]:
             self.speed_combo.addItem(f"{speed}×", speed)
         self.speed_combo.setCurrentIndex(4)  # Default 1.0×
         self.speed_combo.currentIndexChanged.connect(self._on_speed_changed)
@@ -636,9 +637,8 @@ class MainWindow(QMainWindow):
         self._frame_iterator = None  # For sequential playback
         self._last_sequential_frame = -1  # Track last frame from iterator
         
-        # Playback controller
-        self.playback = PlaybackController(self)
-        self.playback.set_frame_callback(self._on_playback_frame)
+        # Playback controller (components set later when cache is loaded)
+        self.playback = PlaybackController(parent=self)
         self.playback.position_changed.connect(self._on_position_changed)
         
         # Overlay painter for detection circles
@@ -649,11 +649,14 @@ class MainWindow(QMainWindow):
         self._detection_worker: Optional[DetectionWorker] = None
         self._video_path_for_detection: Optional[str] = None
         
-        # Calibration controller
+        # Calibration controller (2-point manual calibration)
         self._calibration = CalibrationController(self)
         self._calibration.calibration_complete.connect(self._on_calibration_complete)
         self._calibration.point_added.connect(self._on_calibration_point)
         self._calibration.calibration_cancelled.connect(self._on_calibration_cancelled)
+        
+        # ROI mask controller (defines detection region)
+        self._roi_controller = None  # Created when needed (requires video widget)
         
         self._build()
         self._connect()
@@ -722,8 +725,14 @@ class MainWindow(QMainWindow):
         self.btn_calibrate = QPushButton("Calibrate")
         self.btn_calibrate.setStyleSheet(btn_css)
         self.btn_calibrate.clicked.connect(self._start_calibration)
-        self.btn_calibrate.setToolTip("Click two points on a known distance to calibrate")
+        self.btn_calibrate.setToolTip("Click two points on a known distance to calibrate px/mm")
         top_l.addWidget(self.btn_calibrate)
+        
+        self.btn_roi_cal = QPushButton("ROI")
+        self.btn_roi_cal.setStyleSheet(btn_css)
+        self.btn_roi_cal.clicked.connect(self._start_roi_calibration)
+        self.btn_roi_cal.setToolTip("Calibrate drum ROI mask (optional - overrides auto-detection)")
+        top_l.addWidget(self.btn_roi_cal)
         
         self.btn_clear_cal = QPushButton("Clear Cal")
         self.btn_clear_cal.setStyleSheet(btn_css)
@@ -760,6 +769,8 @@ class MainWindow(QMainWindow):
         self.video_widget = VideoWidget()
         self.video_widget.zoom_changed.connect(self._on_video_zoom_changed)
         self.video_widget.frame_clicked.connect(self._handle_video_click)
+        self.video_widget.mouse_moved.connect(self._on_drum_mouse_move)
+        self.video_widget.mouse_released.connect(self._on_drum_mouse_release)
         canvas_l.addWidget(self.video_widget, 1)
         
         # Empty state overlay (floats on top)
@@ -902,11 +913,11 @@ class MainWindow(QMainWindow):
                 self.video_opened.emit(path)
                 self.status.showMessage(f"{Path(path).name} — {self._loader.total_frames} frames @ {self._loader.fps:.1f} fps")
                 
-                # Configure playback controller
-                self.playback.set_video_info(
-                    self._loader.total_frames,
-                    self._loader.fps,
-                    self._loader.duration
+                # Configure playback controller with frame loader
+                self.playback.set_components(
+                    frame_loader=self._loader,
+                    video_widget=self.video_widget,
+                    overlay_widget=self._overlay
                 )
                 
                 # Reset speed to 1.0x and sync UI
@@ -989,6 +1000,13 @@ class MainWindow(QMainWindow):
                 # Show first frame with overlays
                 self._show_frame(0)
                 
+                # Configure playback controller with components
+                self.playback.set_components(
+                    frame_loader=self._loader,
+                    video_widget=self.video_widget,
+                    overlay_widget=self._overlay
+                )
+                
                 self.sm.set_cache_ready(cache_path)
                 self.cache_loaded.emit()
                 self.status.showMessage(f"Detection complete: {Path(cache_path).name}")
@@ -1011,8 +1029,15 @@ class MainWindow(QMainWindow):
                 with open(path, 'r') as f:
                     self._cache_data = json.load(f)
                 
+                # Handle legacy list format cache
+                if isinstance(self._cache_data, list):
+                    self.status.showMessage("Error: Legacy cache format not supported. Please re-run detection.")
+                    return
+                
                 # Get video path from cache metadata
                 video_path = self._cache_data.get('metadata', {}).get('video_path')
+                if not video_path:
+                    video_path = self._cache_data.get('metadata', {}).get('path')
                 
                 # Set overlay cache for detection circles
                 self._overlay.set_cache(self._cache_data)
@@ -1024,19 +1049,19 @@ class MainWindow(QMainWindow):
                     self._loader = FrameLoader(video_path)
                     self._current_frame = 0
                     
-                    # Configure playback controller
-                    self.playback.set_video_info(
-                        self._loader.total_frames,
-                        self._loader.fps,
-                        self._loader.duration
-                    )
-                    
                     # Initialize frame iterator
                     self._frame_iterator = self._loader.iter_frames(0)
                     self._last_sequential_frame = -1
                 
                 # Show first frame with overlays
                 self._show_frame(0)
+                
+                # Configure playback controller with components
+                self.playback.set_components(
+                    frame_loader=self._loader,
+                    video_widget=self.video_widget,
+                    overlay_widget=self._overlay
+                )
                 
                 self.sm.set_cache_ready(path)
                 self.cache_loaded.emit()
@@ -1206,9 +1231,14 @@ class MainWindow(QMainWindow):
         elif e.key() == Qt.Key_Home and self.sm.is_action_allowed("playback"):
             self.playback.seek_to_frame(0)
         elif e.key() == Qt.Key_End and self.sm.is_action_allowed("playback"):
-            self.playback.seek_to_frame(self.playback._total_frames - 1)
+            self.playback.seek_to_frame(self.playback.total_frames - 1)
         elif e.key() == Qt.Key_Escape and self._calibration.is_active:
             self._calibration.cancel()
+        elif self._roi_controller and self._roi_controller.is_active:
+            if e.key() == Qt.Key_Return or e.key() == Qt.Key_Enter:
+                self._save_roi_mask()
+            elif e.key() == Qt.Key_Escape:
+                self._cancel_roi_calibration()
         else:
             super().keyPressEvent(e)
     
@@ -1266,11 +1296,78 @@ class MainWindow(QMainWindow):
         print(f"[MAIN_WINDOW] Click received: ({x}, {y}), calibration_active={self._calibration.is_active}")
         if self._calibration.is_active:
             self._calibration.handle_click(x, y)
+        elif self._roi_controller and self._roi_controller.is_active:
+            self._roi_controller.handle_mouse_press(x, y, left_button=True)
+    
+    def _on_drum_mouse_move(self, x: int, y: int) -> None:
+        """Forward mouse move to ROI controller."""
+        if self._roi_controller and self._roi_controller.is_active:
+            self._roi_controller.handle_mouse_move(x, y)
+    
+    def _on_drum_mouse_release(self, x: int, y: int) -> None:
+        """Forward mouse release to ROI controller."""
+        if self._roi_controller and self._roi_controller.is_active:
+            self._roi_controller.handle_mouse_release(x, y)
     
     def _clear_calibration(self) -> None:
         """Clear manual calibration and revert to auto mode."""
         config.clear_calibration()
         self.status.showMessage("Manual calibration cleared — will use auto drum detection")
+    
+    # ========================================================================
+    # ROI Mask Editing
+    # ========================================================================
+    
+    def _start_roi_calibration(self) -> None:
+        """Start ROI mask editing mode."""
+        if not self._loader:
+            self.status.showMessage("Load a video first to define ROI")
+            return
+        
+        # Create ROI controller if needed
+        if self._roi_controller is None:
+            self._roi_controller = ROIController(self.video_widget)
+        
+        # Start ROI editing mode
+        self._roi_controller.start()
+        self.btn_roi_cal.setStyleSheet(self._btn_primary)
+        self.btn_roi_cal.setText("Save ROI")
+        self.status.showMessage("ROI Mask: Drag center to move, drag edge to resize. Press Enter to save, Esc to cancel.")
+    
+    def _on_roi_mouse_press(self, x: int, y: int) -> None:
+        """Forward mouse press to ROI controller."""
+        if self._roi_controller and self._roi_controller.is_active:
+            self._roi_controller.handle_mouse_press(x, y, left_button=True)
+    
+    def _on_roi_mouse_move(self, x: int, y: int) -> None:
+        """Forward mouse move to ROI controller."""
+        if self._roi_controller and self._roi_controller.is_active:
+            self._roi_controller.handle_mouse_move(x, y)
+    
+    def _on_roi_mouse_release(self, x: int, y: int) -> None:
+        """Forward mouse release to ROI controller."""
+        if self._roi_controller and self._roi_controller.is_active:
+            self._roi_controller.handle_mouse_release(x, y)
+    
+    def _save_roi_mask(self) -> None:
+        """Save the ROI mask and center/radius to config."""
+        if self._roi_controller:
+            center, radius = self._roi_controller.get_center_and_radius()
+            if center and radius > 0:
+                config.set_roi(center.x(), center.y(), radius)
+                self.status.showMessage(f"ROI saved: center=({center.x()}, {center.y()}), radius={radius}")
+            self._roi_controller.cancel()
+        
+        self.btn_roi_cal.setStyleSheet(self._btn_css)
+        self.btn_roi_cal.setText("ROI")
+    
+    def _cancel_roi_calibration(self) -> None:
+        """Cancel ROI mask editing."""
+        if self._roi_controller:
+            self._roi_controller.cancel()
+        self.btn_roi_cal.setStyleSheet(self._btn_css)
+        self.btn_roi_cal.setText("ROI")
+        self.status.showMessage("ROI editing cancelled")
 
 
 def main():

@@ -1,0 +1,266 @@
+
+MILL PRESENTER – FULL CONTEXT (Consolidated Design + Instructions)
+===================================================================
+Version: 1.0
+
+Overview
+--------
+We are building a Windows desktop application ("MillPresenter") used for client presentations of a mini grinding mill. The app loads a 1080p/59.94 fps video, performs a one-time detection/classification of beads by diameter, and then allows the presenter to toggle overlays for 4/6/8/10 mm classes live, in real time while the video plays. Detection is cached per frame; toggles re-draw overlays only—no reprocessing—so playback stays smooth. Export is optional and provided for convenience.
+
+Stakeholders
+------------
+- Eduardo Nunez (Process Optimization) – initiator & presenter
+- Michael Hahn (Applications Engineering)
+
+Target Platform & Hardware
+--------------------------
+- OS: Windows 10/11
+- Laptop: i7 13th Gen, 16 GB RAM, NVIDIA GeForce GTX 1650 (NVDEC capable) -- not sure if they have a GPU, im assuming a low end one. Just for NVDEC purposes
+- Must also operate in CPU-only mode
+- Videos: 1920×1080 @ 59.94 fps (≈16.68 ms/frame)
+
+Primary Goals
+-------------
+- Live presentation facilitator: toggling overlays per size class during playback.
+- Smooth, responsive UI; toggles update ≤ 50 ms.
+- Simple calibration and a one-time ROI mask so the system is robust in varied rooms.
+
+Non-Goals (MVP)
+---------------
+- Cloud backends, multi-camera fusion, force estimation, DEM/physics.
+- UI display of accuracy metrics (engineering only).
+- Guarantees for extreme RPM or severe motion blur beyond nominal conditions.
+
+Inputs & Outputs
+----------------
+Inputs:
+- MP4 (H.264) files from a fixed camera.
+- Calibration information (prefer ring-based auto-calibration; fallback two-point tool).
+- Optional roi_mask.png (white=valid, black=excluded).
+
+Outputs:
+- Live playback with overlays per active toggles.
+- Optional exports: Raw MP4, or With Overlays (honors current toggles).
+- Optional detections file: detections.jsonl/CSV (per-frame cache for re-rendering).
+
+Overlay Toggle Behavior (authoritative)
+---------------------------------------
+- User can toggle 4 mm, 6 mm, 8 mm, 10 mm overlays while the video plays.
+- Example progression:
+  4mm ON → show 4mm; 6mm ON → show 4+6; 4mm OFF → only 6; 8mm ON → 6+8;
+  6mm OFF → only 8; 8mm OFF → no overlays.
+- Toggling affects only rendering; detections remain unchanged.
+
+Calibration (px/mm)
+-------------------
+Default: Ring-based auto-calibration
+- Measure once the true inner diameter (mm) of the blue ring.
+- Detect the ring in pixels (Hough circle) on a paused frame.
+- Compute px_per_mm = pixel_diameter / true_mm_diameter.
+- Advantage: no parallax/plane offset, fast, repeatable.
+
+Fallback: Two-point mini-ruler (sticker) (I poorly explained it earlier on the call, this is the idea)
+- Two dots exactly 50.0 mm apart briefly placed in the same plane as the beads (or held to the window).
+- Click both points → px_per_mm = pixel_distance / 50.0.
+- Parallax error if sticker is on window not bead plane; often ~1–2% which is acceptable for presentations.
+
+Optional: Known-ball fit
+- Fit a circle on a clearly visible bead of known diameter D_known → px_per_mm = (2*r_px)/D_known.
+
+Size Bins (Configurable)
+------------------------
+Default bin thresholds (mm):
+- 4 mm: [3.0, 5.0)
+- 6 mm: [5.0, 7.0)
+- 8 mm: [7.0, 9.0)
+- 10 mm: [9.0, 11.0)
+Thresholds are configurable in GUI and YAML to handle slight calibration error, bead wear, or different product lines.
+
+ROI Mask Tool (One-Time per clip/site) --> The area of analysis (to avoid the container of being detected)
+--------------------------------------
+Purpose: Ignore bolts, flange, wheels, hands; keep detections inside the working mill area.
+Workflow:
+1) Pause on a clear frame → open ROI Tool.
+2) Auto-Circle: Hough finds the inner ring; user can nudge center/radius; choose inner margin (10–20 px) to keep slightly inside the ring.
+3) Optional Exclusion Polygons for any intrusions (e.g., bolts near the edge).
+4) Save → writes roi_mask.png (white valid / black excluded). Stored under configs/site_XYZ/ and reused automatically.
+Runtime behavior: any detection whose center lies outside white area is discarded before scoring. A low-motion background filter further rejects static edges.
+
+Detection & Classification Pipeline (per frame)
+-----------------------------------------------
+1) Preprocess: grayscale → bilateral filter → CLAHE.
+2) Edge Extraction: Canny (auto via median heuristic) + morphology close→open.
+3) Candidate Proposals (dual path):
+   a) HoughCircles with radius windows derived from px/mm per class.
+   b) Contours filtered by circularity (4πA/P² ≥ 0.75), solidity, and minEnclosingCircle fit error.
+4) Through-hole handling (all media are annular): detect inner+outer edge pair when present; take outer radius for diameter; ignore inner hole for circularity/area.
+5) Non-Maximum Suppression (NMS): merge duplicates from Hough + Contour paths using IoU and center-distance thresholds.
+6) px→mm & Classify: diameter_mm = 2*r_px / (px_per_mm); assign class; confidence = f(edge strength, fit residual, circularity).
+7) Cache: persist per-frame detections to JSONL; keep a RAM ring buffer (~240 frames = ~4 s).
+
+UI Behavior (MVP)
+-----------------
+- Flow: Load video → Calibrate → Process → Auto-load Result → Play & Toggle → (Optional) Export.
+- After processing, annotated result is auto-loaded for preview with instant toggles.
+- Export options: Raw MP4 and With Overlays (uses current toggle state).
+- No accuracy metrics in UI.
+
+Performance Strategy
+--------------------
+Target stream: 1920×1080 @ 59.94 fps (16.68 ms per frame).
+- One-time detection pass → JSONL cache + frame index.
+- Decode: PyAV/FFmpeg. Try NVDEC (hwaccel=cuda) on GeForce 1650; fallback to CPU if unavailable.
+- Rendering: QOpenGLWidget + QPainter; reuse pens/brushes; draw outlines by default.
+- Constant-time toggles: toggles only change drawing; detections never recomputed.
+- Frame pacing: Qt timer tied to source FPS; on overrun, skip overlay draw (not decode).
+- Ring buffer: ~240 frames (~4 s) of recent detections in RAM; older frames mmap from JSONL.
+Expected Timing:
+- With NVDEC: decode 1–2 ms; overlay draw 2–5 ms; blit 1 ms → ~4–8 ms total (smooth 59.94 fps).
+- CPU-only: decode 8–12 ms; overlay 3–6 ms; blit 1–2 ms → typically 30–50 fps.
+- Safety nets: preview downscale to 960×540; outlines-only when >600 balls or a frame overrun is detected.
+
+Export Behavior
+---------------
+Exporter iterates frames once, calls the same overlay renderer with current toggles, and writes MP4/H.264 at source FPS/res. No re-detection during export.
+
+Repo / Environment Structure
+----------------------------
+mill_presenter/
+├─ src/mill_presenter/
+│  ├─ app.py
+│  ├─ models.py
+│  ├─ ui/
+│  │  ├─ main_window.py
+│  │  ├─ calibrate.py
+│  │  ├─ roi_tool.py
+│  │  └─ widgets.py
+│  ├─ core/
+│  │  ├─ playback.py
+│  │  ├─ orchestrator.py
+│  │  ├─ processor.py
+│  │  ├─ overlay.py
+│  │  ├─ exporter.py
+│  │  ├─ cache.py
+│  │  ├─ nms.py
+│  │  ├─ annulus.py
+│  │  └─ classify.py
+│  ├─ utils/
+│  │  ├─ config.py
+│  │  ├─ logging.py
+│  │  └─ paths.py
+├─ configs/
+│  ├─ sample.config.yaml
+│  └─ site_XYZ/roi_mask.png
+├─ data/ (optional dev samples)
+├─ exports/ (detections.jsonl, annotated.mp4)
+├─ scripts/ (setup.ps1, run.ps1, build.ps1, bench.ps1)
+├─ tests/ (unit tests + benches)
+├─ pyproject.toml
+├─ .env.example
+├─ README.md
+└─ LICENSE
+
+YAML Config (sample.config.yaml)
+--------------------------------
+calibration:
+  method: ring         # ring | two_point | known_ball
+  ring_inner_diameter_mm: 180.0
+  px_per_mm: null      # computed then saved
+bins_mm:
+  - {label: 4,  min: 3.0, max: 5.0}
+  - {label: 6,  min: 5.0, max: 7.0}
+  - {label: 8,  min: 7.0, max: 9.0}
+  - {label: 10, min: 9.0, max: 11.0}
+performance:
+  decode_mode: auto         # auto | cpu_only
+  preview_downscale: off    # off | 960x540
+  overlay_mode: auto_outlines  # auto_outlines | full
+paths:
+  detections_dir: ./exports
+
+Env Vars (.env.example)
+-----------------------
+MP_DECODE_MODE=auto
+MP_PREVIEW_DOWNSCALE=off
+MP_OVERLAY_MODE=auto_outlines
+MP_FFMPEG_LOG=warning
+
+Data Contracts
+--------------
+Python dataclasses:
+- Ball: x:int; y:int; r_px:float; diameter_mm:float; cls:int; conf:float
+- FrameDetections: frame_id:int; timestamp:float; balls:list[Ball]
+
+detections.jsonl (one JSON per frame):
+{"frame_id":0,"timestamp":0.00,"balls":[{"x":842,"y":316,"r_px":12.8,"diameter_mm":8.1,"cls":8,"conf":0.87}]}
+
+Scripts (PowerShell)
+--------------------
+setup.ps1
+- Create venv, install deps, sanity print versions.
+
+run.ps1
+- Activate venv, set PYTHONPATH=src, run app with config path.
+
+build.ps1
+- Package with pyinstaller; include configs/assets.
+
+bench.ps1
+- Run a small latency bench that measures toggle-to-visual time.
+
+Alignment With Diagrams
+-----------------------
+- UI Visualization / UI Player ↔ ui/main_window.py (+ overlay toggles). (daniel ui later)
+- Overlay Renderer ↔ core/overlay.py (used by live player and exporter).
+- Processor Orchestrator ↔ core/orchestrator.py (one-time detection pass).
+- Frame Loader ↔ core/playback.py (PyAV decode; NVDEC→CPU).
+- Results Cache ↔ core/cache.py (JSONL + RAM ring buffer).
+- Detection Pipeline ↔ core/processor.py (+ annulus, nms, classify modules).
+- Exporter ↔ core/exporter.py (re-renders with renderer; no detection).
+
+Capture SOP (Client Standard)
+-----------------------------
+- Video: 1080p @ 59.94 fps, MP4/H.264; fixed camera; circle fills ≥85% height; centered.
+- Exposure: shutter 1/120–1/250 s; fixed WB 5000–5600 K; two diffused LEDs at 45°; optional polarizer.
+- Calibration: prefer ring-based auto; keep two-point mini-ruler as backup (2–3 s at the start, then remove).
+- Mask: draw ROI once; save per site.
+- Acceptance: no flicker; minimal blur; test in app—instant toggles, no drops.
+
+The Claude role in here 
+---------------------------
+Claude Follow-ups (order)
+-------------------------
+1) Implement processor pipeline (OpenCV) with ROI support.
+2) Enable NVDEC with CPU fallback in playback.
+3) Implement exporter (raw/with overlays) using same overlay renderer.
+4) Implement calibration UI (ring-based + two-point fallback).
+5) Implement ROI tool (auto-circle + polygons).
+6) Performance polish (pens/brushes cache, outlines-only on heavy frames).
+
+Acceptance Checklist
+--------------------
+- Plays a 1080p/59.94 clip; smooth playback; toggles update in < 50 ms.
+- Ring-based calibration computes/saves px/mm to YAML.
+- ROI mask saved and respected; bolts/flange never detected inside ROI.
+- One-time detection pass writes JSONL; player reads cache only.
+- Export Raw and With Overlays MP4s at source FPS/res.
+- CPU-only mode ≥30 fps (enable downscale if needed).
+- Scripts work: setup.ps1, run.ps1, build.ps1.
+
+Defaults & Decisions (confirmed)
+--------------------------------
+- Class bins: 4/6/8/10 mm with ±1 mm windows (editable).
+- Detection cache saved as JSONL; RAM ring buffer ≈ 240 frames.
+- Decode Mode: Auto (NVDEC → CPU); CPU-only toggle available.
+- Overlay under load: auto outlines; preview downscale option (960×540).
+- All media identical through-hole beads; classification uses outer diameter only.
+
+Notes on Images/Frames
+----------------------
+- Hollow (donut-like) beads visible; annulus handling required (outer+inner edges).
+- Purple flange/bolts near the edge; ROI mask + radius constraints prevent false positives.
+- Lighting glare is mitigated by bilateral + CLAHE + edge-based scoring.
+- Crowding/occlusion: dual-path proposals + NMS reduce duplicates; optional short-term tracking for stability (not required for toggles).
+
+End of File
+-----------

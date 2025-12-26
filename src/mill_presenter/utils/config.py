@@ -92,6 +92,14 @@ CONFIG: Dict[str, Any] = {
     # ===========================================================================
     "calibration_px_per_mm": None,     # User-set px_per_mm (overrides auto)
     "calibration_source": "auto",       # "auto" or "manual"
+    
+    # ===========================================================================
+    # ROI Mask (Detection Region)
+    # ===========================================================================
+    "roi_center_x": None,              # User-set ROI center X (overrides auto)
+    "roi_center_y": None,              # User-set ROI center Y (overrides auto)
+    "roi_radius": None,                # User-set ROI radius (overrides auto)
+    "roi_source": "auto",              # "auto" or "manual"
 }
 
 
@@ -173,7 +181,89 @@ def get_calibration() -> Tuple[Optional[float], str]:
     return CONFIG.get("calibration_px_per_mm"), CONFIG.get("calibration_source", "auto")
 
 
-# Load calibration on module import
-_load_calibration_from_file()
+# ===========================================================================
+# ROI Mask Functions
+# ===========================================================================
 
+_ROI_FILE = Path(__file__).parent.parent / "roi_mask.json"
+
+
+def set_roi(center_x: int, center_y: int, radius: int) -> None:
+    """
+    Set manual ROI mask and save to file.
+    
+    Args:
+        center_x: Center X coordinate of detection region
+        center_y: Center Y coordinate of detection region  
+        radius: Radius of detection region
+    """
+    CONFIG["roi_center_x"] = center_x
+    CONFIG["roi_center_y"] = center_y
+    CONFIG["roi_radius"] = radius
+    CONFIG["roi_source"] = "manual"
+    
+    try:
+        data = {
+            "center_x": center_x,
+            "center_y": center_y,
+            "radius": radius,
+            "source": "manual",
+            "last_updated": datetime.now().isoformat()
+        }
+        with open(_ROI_FILE, 'w') as f:
+            json.dump(data, f, indent=2)
+        print(f"[CONFIG] ROI saved: center=({center_x}, {center_y}), radius={radius}")
+    except Exception as e:
+        print(f"[CONFIG] Failed to save ROI: {e}")
+
+
+def clear_roi() -> None:
+    """Clear manual ROI and revert to auto mode."""
+    CONFIG["roi_center_x"] = None
+    CONFIG["roi_center_y"] = None
+    CONFIG["roi_radius"] = None
+    CONFIG["roi_source"] = "auto"
+    
+    try:
+        if _ROI_FILE.exists():
+            _ROI_FILE.unlink()
+        print("[CONFIG] Manual ROI cleared. Using auto mode.")
+    except Exception as e:
+        print(f"[CONFIG] Failed to clear ROI file: {e}")
+
+
+def get_roi() -> Tuple[Optional[int], Optional[int], Optional[int], str]:
+    """
+    Get current ROI mask settings.
+    
+    Returns:
+        Tuple of (center_x, center_y, radius, source)
+    """
+    return (
+        CONFIG.get("roi_center_x"),
+        CONFIG.get("roi_center_y"),
+        CONFIG.get("roi_radius"),
+        CONFIG.get("roi_source", "auto")
+    )
+
+
+def _load_roi_from_file() -> None:
+    """Load ROI from file on startup."""
+    if _ROI_FILE.exists():
+        try:
+            with open(_ROI_FILE, 'r') as f:
+                data = json.load(f)
+            if data.get("center_x") is not None:
+                CONFIG["roi_center_x"] = data["center_x"]
+                CONFIG["roi_center_y"] = data["center_y"]
+                CONFIG["roi_radius"] = data["radius"]
+                CONFIG["roi_source"] = data.get("source", "manual")
+                print(f"[CONFIG] Loaded ROI from file: center=({data['center_x']}, {data['center_y']}), radius={data['radius']}")
+        except Exception as e:
+            print(f"[CONFIG] Failed to load ROI: {e}")
+
+
+# Load calibration and ROI on module import
+_load_calibration_from_file()
+_load_roi_from_file()
 
